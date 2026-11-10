@@ -15,11 +15,32 @@ mercado**, y las discrepancias entre ambos no contienen información real. Detal
 | **v2** | **0,6117** | **66,3 %** | **0,021** |
 | Mercado (spread de cierre) | 0,5922 | 68,6 % | 0,023 |
 
+## Portal diario (lo que se abre cada día)
+```
+python scripts/portal.py --open        # o doble clic en portal.bat (Windows) / ./portal.sh (Mac, Linux)
+```
+Genera `viz/portal-nba.html`, una página autocontenida con la jornada de hoy:
+- **Jornada**: cada partido con la probabilidad del modelo v2, las cuotas de DraftKings (vía ESPN, gratis y sin clave),
+  descanso y parte de lesiones.
+- **Jugadores**: proyección de puntos, rebotes, asistencias, triples y combinadas (P+R+A, P+R, P+A, R+A) de cada jugador,
+  con forma reciente, rival, línea de la casa y probabilidad de superarla. Se puede escribir la línea y las cuotas de otra casa.
+- **Picks**: líneas donde el modelo más discrepa de la casa, con el historial medido de ese nivel de discrepancia.
+- **Historial**: acierto real de las predicciones guardadas en días anteriores (`data/predictions/`).
+
+Conviene generarlo cerca de la hora de los partidos (lesiones y líneas cambian durante el día). Otras opciones:
+`--date AAAA-MM-DD` (otra jornada) y `--no-fetch` (no actualiza resultados). Necesita conexión a `site.api.espn.com`,
+`sports.core.api.espn.com` y GitHub.
+
+**Qué esperar del modelo de jugadores** (detalle en `docs/RESULTADOS_PROPS.md` y `docs/AUDITORIA.md`, sección 9): proyecta
+mejor que la media de temporada o de los últimos 10 partidos en todos los bloques (RMSE de puntos en TEST 6,01 frente a
+6,32), pero las líneas de DraftKings fallan algo menos que él. En 154 partidos de 2026-27, apostar siguiendo al modelo dio
+entre −1,5 % y +2,4 % según el filtro, con intervalos que incluyen pérdidas: **no hay ventaja demostrada**.
+
 ## Inicio rápido
 ```
 python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-pytest -q                                              # 13 tests
+pytest -q                                              # 39 tests
 python scripts/run_pipeline.py                         # evaluación completa -> docs/RESULTADOS.json y .md
 python scripts/run_report.py                           # informe de los partidos del snapshot (10-nov-2026)
 ```
@@ -33,7 +54,12 @@ Para reafinar parámetros (solo con DEV 2014-2019): `python scripts/run_pipeline
 - `nba_model/baselines.py`: mercado, v0 en walk-forward, siempre-local. `nba_model/ratings.py` es el v0 original.
 - `nba_model/tune.py`: búsqueda acotada con promediado del 5 % mejor. `nba_model/evaluate.py`: evaluación y pruebas contra el mercado.
 - `nba_model/market.py`, `odds.py`, `metrics.py`, `injuries.py`: utilidades. `player_model.py`: experimento descartado (ver auditoría).
-- `models/params_v2.json`: parámetros congelados (afinados solo con DEV).
+- `nba_model/props.py`: **modelo de jugadores** (minutos, ritmo por minuto, rival, bajas, distribución). `props_eval.py`: su evaluación.
+- `nba_model/espn.py`: lectores de la API pública de ESPN (jornada, cuotas, lesiones, cajas, props). `live.py`: caché en `data/live/`.
+- `nba_model/daily.py` + `web/portal_template.html` + `scripts/portal.py`: el portal diario.
+- `scripts/run_props.py`: evalúa (o reajusta con `--fit`, solo DEV) el modelo de jugadores. `scripts/fetch_market_history.py`:
+  baja las líneas de cierre de props de la temporada en curso para medirlo contra la casa.
+- `models/params_v2.json`, `models/props_v1.json`: parámetros congelados (afinados solo con DEV).
 - `docs/`: `AUDITORIA.md` (hallazgos y decisiones), `RESULTADOS.md/.json` (generados), `INFORME_2026-11-10.txt`.
 - `data/snapshot_2026-11-10/`: mercado, lesiones y descanso de los 6 partidos analizados, y resultados del 7 al 9 de noviembre.
 - `viz/mesa-cuotas-nba.html`: visualización interactiva **basada en el modelo v0** (no se ha actualizado a v2).

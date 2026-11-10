@@ -86,3 +86,46 @@ Las diferencias se reducen mucho, que es lo que ya mostraba el backtest: v0 las 
 * El calendario de ESPN llegaba hasta el 8-nov; los resultados del 9-nov se añaden desde `data/snapshot_2026-11-10/games.csv` sin cajas de jugadores.
 * Calibración: pendiente 1,05-1,08 en TEST (v2 es ligeramente poco confiado). No se recalibró para no sobreajustar.
 * PHI-BOS y PHX-LAC siguen sin línea de hoy confirmada.
+
+## 9. Modelo de jugadores (props v1) y portal diario
+
+Reproducible con `python scripts/run_props.py`; cifras completas en `docs/RESULTADOS_PROPS.md`.
+
+**Qué es.** Para cada jugador: minutos esperados × ritmo por minuto × contexto (rival, bajas de compañeros, casa, total de
+puntos del mercado), con una binomial negativa alrededor de la media para obtener P(más de la línea). 10 coeficientes de
+minutos y 7 por estadística, ajustados por mínimos cuadrados con 144.566 filas jugador-partido de DEV (2014-2019). Las
+constantes de memoria se fijaron a priori; la mezcla de forma rápida y lenta la decide la regresión.
+
+**Frente a las medias simples (RMSE, puntos).** DEV 5,65 · VAL 5,95 · TEST 6,01 · 2026-27 6,02, frente a 5,87 / 6,21 / 6,32 /
+6,43 de la media de temporada. La mejora se mantiene o crece fuera de muestra en las ocho estadísticas (IC95 % de la
+diferencia siempre por debajo de cero). Calibración de P(over) en TEST: ECE entre 0,003 y 0,015.
+
+**Frente a la casa (líneas de cierre de DraftKings, 154 partidos, 20-oct a 9-nov-2026, 14.114 líneas).**
+* La línea falla menos que el modelo en puntos (error medio 4,91 frente a 5,13) y combinadas; empatan en rebotes y triples.
+* Apuestas simuladas a precios reales: −1,5 % (todas), −0,6 % (ventaja ≥ 3 pp), +0,8 % (≥ 6 pp), +2,4 % (≥ 10 pp, IC95 %
+  [−2,2; +6,8]). Ningún intervalo excluye el cero. Umbrales fijados antes de mirar.
+* El modelo aporta algo que la casa no tiene del todo (peso 0,25 ± 0,03 en una regresión conjunta, casa 0,77 ± 0,10), pero
+  no lo bastante para superar el margen de forma demostrable.
+
+**Cautelas de ese contraste.** (1) Son tres semanas. (2) Las bajas se toman de quién jugó de verdad (como en el resto del
+proyecto); en vivo se usa el parte de lesiones, más incierto. (3) Solo cuentan jugadores que jugaron (si no, la apuesta se
+anula). (4) ESPN fecha esas líneas después del partido (liquidación); su error, 4,9 puntos, es el de una línea previa al
+partido, pero no hay marca de tiempo que lo confirme. (5) Ese periodo ya se miró (punto siguiente). La prueba limpia es el
+historial que el portal guarda cada día.
+
+**Qué se corrigió y qué se descartó.**
+* *Sesgo de inicio de temporada.* La primera versión sobreestimaba minutos (+1,8) y puntos (+1,7) en las tres primeras
+  semanas de 2026-27. Se comprobó que pasaba igual en todas las temporadas de DEV (+0,9 a +1,3 minutos), se añadieron dos
+  variables (`depth`: minutos habituales de los que juegan frente a 240; `early`: partidos del jugador en la temporada), se
+  validaron solo con DEV (sesgo inicial de minutos −0,05 y −0,39 en las dos mitades; MAE de puntos 4,452 → 4,432 y 4,342 →
+  4,319) y se reevaluó. Consecuencia: TEST se miró dos veces y el periodo 2026-27 ya no es virgen.
+* *Encogimiento hacia la liga.* Daba triples a pívots que no tiran; se cambió por encogimiento hacia la media de carrera.
+* *Varianza proporcional a la media.* Infravaloraba la dispersión de suplentes; se cambió a a·mu^p ajustada por tramos.
+* *Descartado: bajas de larga duración* (`missl`, lo que falta hoy frente a lo que faltaba durante la memoria del ritmo
+  lento). Mejora en DEV de 0,02 % en RMSE: no compensa la complejidad.
+* *Alineación esperada en vivo.* Con DEV 2018-19: contar a todos los sanos da 248 minutos, ponderar a todos por su fracción
+  de apariciones 215, y la regla elegida (peso 1 si jugó al menos la mitad de los últimos partidos) 232 frente a 235 reales.
+
+**Datos nuevos.** La API pública de ESPN da jornada, cuotas de DraftKings (apertura y actual), parte de lesiones, cajas y
+props de jugador. No etiqueta cuál precio es over y cuál under: van en ese orden, comprobado con el mercado de «hitos» en
+475 de 493 casos (los 18 restantes tenían los dos precios casi iguales); si un hito lo contradice, el precio no se usa.
