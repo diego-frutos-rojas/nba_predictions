@@ -11,19 +11,31 @@ Convención: `season` = año en que termina la temporada (2012 = 2011-12).
 from __future__ import annotations
 
 import json
+import urllib.error
 import urllib.request
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
+FIRST_SEASON = 2012
+
+
+def current_season(today=None) -> int:
+    """Temporada en curso (año en que termina): de octubre a diciembre es la del año siguiente."""
+    d = pd.Timestamp(today) if today is not None else pd.Timestamp.now()
+    return d.year + 1 if d.month >= 10 else d.year
+
+
+LAST_SEASON = max(2027, current_season())      # los ficheros por temporada llegan hasta la que está en juego
+
 URLS = {
     "sbr.json": "https://raw.githubusercontent.com/flancast90/sportsbookreview-scraper/master/data/nba_archive_10Y.json",
     "hoopr_lines.parquet": "https://raw.githubusercontent.com/sportsdataverse/hoopR-nba-data/main/nba/betting_lines/closing_lines_odds_api.parquet",
     **{f"sched_{y}.parquet": f"https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_nba_schedules/nba_schedule_{y}.parquet"
-       for y in range(2012, 2028)},
+       for y in range(FIRST_SEASON, LAST_SEASON + 1)},
     **{f"pbox_{y}.parquet": f"https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_nba_player_boxscores/player_box_{y}.parquet"
-       for y in range(2012, 2028)},
+       for y in range(FIRST_SEASON, LAST_SEASON + 1)},
 }
 
 NICK = {
@@ -51,7 +63,7 @@ COLS = ["game_id", "date", "season", "home", "away", "home_pts", "away_pts", "ne
         "close_spread_home", "close_ml_home", "close_ml_away", "close_total", "source"]
 
 
-def fetch_history(dest: str | Path, force: bool = False, current_season: int = 2027) -> None:
+def fetch_history(dest: str | Path, force: bool = False, season: int | None = None) -> None:
     """Descarga los ficheros crudos a `dest` (≈ 20 MB la primera vez).
 
     Los ficheros históricos solo se bajan si faltan. Los de la temporada en curso (calendario, cajas de jugadores)
@@ -59,15 +71,23 @@ def fetch_history(dest: str | Path, force: bool = False, current_season: int = 2
     """
     dest = Path(dest)
     dest.mkdir(parents=True, exist_ok=True)
-    always = {f"sched_{current_season}.parquet", f"pbox_{current_season}.parquet", "hoopr_lines.parquet"}
+    season = season or current_season()
+    always = {f"sched_{season}.parquet", f"pbox_{season}.parquet", "hoopr_lines.parquet"}
     for name, url in URLS.items():
         f = dest / name
         if f.exists() and not force and name not in always:
             continue
         print("descargando", name)
         req = urllib.request.Request(url, headers={"User-Agent": "nba-model/0.2"})
-        with urllib.request.urlopen(req, timeout=120) as r:
-            f.write_bytes(r.read())
+        try:
+            with urllib.request.urlopen(req, timeout=120) as r:
+                data = r.read()
+        except urllib.error.HTTPError as e:
+            if e.code == 404 and name in always:                 # la temporada nueva aún no está publicada
+                print("  (todavía no existe en el origen, se omite)")
+                continue
+            raise
+        f.write_bytes(data)                                      # solo se escribe si la descarga terminó entera
 
 
 def _repair_sbr_lines(a: pd.DataFrame) -> pd.DataFrame:
@@ -119,7 +139,7 @@ def load_sbr(path: str | Path) -> pd.DataFrame:
     return df[COLS]
 
 
-def load_espn(raw_dir: str | Path, seasons=range(2012, 2028)) -> pd.DataFrame:
+def load_espn(raw_dir: str | Path, seasons=range(FIRST_SEASON, LAST_SEASON + 1)) -> pd.DataFrame:
     """Temporada regular completada de ESPN (2011-12 en adelante). Fuente única de resultados."""
     parts = []
     for y in seasons:

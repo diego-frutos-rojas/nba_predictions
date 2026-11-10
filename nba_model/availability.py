@@ -27,7 +27,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .data import ABBR
+from .data import ABBR, FIRST_SEASON, LAST_SEASON
 
 M_ALPHA = 0.25      # peso del último partido en la media móvil de minutos
 Q_ALPHA = 0.15      # peso del último partido en la media móvil de Game Score por minuto
@@ -39,7 +39,7 @@ WARMUP = 5          # partidos iniciales de cada temporada con delta = 0
 BASE_N = 10         # partidos para el T habitual
 
 
-def load_boxes(raw_dir: str | Path, seasons=range(2012, 2028), with_names: bool = False) -> pd.DataFrame:
+def load_boxes(raw_dir: str | Path, seasons=range(FIRST_SEASON, LAST_SEASON + 1), with_names: bool = False) -> pd.DataFrame:
     parts = []
     for y in seasons:
         f = Path(raw_dir) / f"pbox_{y}.parquet"
