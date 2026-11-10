@@ -1,0 +1,14 @@
+Ventaja de campo actual (adaptativa): +1.55 pts | sigma del margen estimada: 14.3 pts
+
+Partido   Margen P(local)  Mercado          Tipo Gap pts     z  Bajas(avail)  Lectura
+MIL@NYK    +15.0    86.3%    91.6% spread_conver    -0.5  -0.1          +6.5  alineado
+BOS@PHI     -3.2    40.7%    47.1%      provider    +nan  +nan         +23.4  sin línea: solo referencia del proveedor
+LAC@PHX     -0.1    49.7%    60.5%      provider    +nan  +nan         +20.5  sin línea: solo referencia del proveedor
+MIA@UTA     -6.3    32.4%    22.5%     ml_no_vig    +3.2  +1.0         -18.3  alineado
+           home  cuota +324: EV con este modelo +0.37 por 1 (el EV del modelo NO es fiable: ver docs/AUDITORIA.md)
+           away  cuota -432: EV con este modelo -0.17 por 1 (el EV del modelo NO es fiable: ver docs/AUDITORIA.md)
+ORL@SAC     -4.3    37.8%    33.5%     ml_no_vig    +1.2  +0.4         +12.4  alineado
+           home  cuota +186: EV con este modelo +0.08 por 1 (el EV del modelo NO es fiable: ver docs/AUDITORIA.md)
+           away  cuota -228: EV con este modelo -0.11 por 1 (el EV del modelo NO es fiable: ver docs/AUDITORIA.md)
+OKC@POR     -2.7    42.3%    45.0% ml_one_side_w    -0.2  -0.1         +18.8  alineado
+           away  cuota -122: EV con este modelo +0.05 por 1 (el EV del modelo NO es fiable: ver docs/AUDITORIA.md)

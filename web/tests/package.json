@@ -1,0 +1,1 @@
+{ "name": "nba-web-tests", "private": true, "scripts": { "parity": "node web_parity.js" }, "devDependencies": { "jsdom": "^26.0.0" } }

@@ -1,0 +1,2476 @@
+{
+ "asof": "2026-11-10",
+ "season": 2027,
+ "model": {
+  "hca": 1.5545,
+  "sigma": 13.7334,
+  "rest_b2b": -1.5251405854750675,
+  "rest_long": 0.37014556860898323,
+  "avail": 0.044692886712767284,
+  "avail_clip": 60.0,
+  "warmup": 5
+ },
+ "teams": {
+  "ATL": {
+   "name": "Atlanta Hawks",
+   "rating": 1.3339,
+   "last_game": "2026-11-09",
+   "record": [
+    7,
+    5
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Jalen Johnson",
+     "value": 35.14,
+     "frac": 0.6
+    },
+    {
+     "name": "Nickeil Alexander-Walker",
+     "value": 33.17,
+     "frac": 0.9
+    },
+    {
+     "name": "Dyson Daniels",
+     "value": 31.0,
+     "frac": 0.9
+    },
+    {
+     "name": "Onyeka Okongwu",
+     "value": 30.69,
+     "frac": 0.9
+    },
+    {
+     "name": "Aaron Wiggins",
+     "value": 22.54,
+     "frac": 0.9
+    },
+    {
+     "name": "CJ McCollum",
+     "value": 18.59,
+     "frac": 0.9
+    },
+    {
+     "name": "Luguentz Dort",
+     "value": 14.69,
+     "frac": 0.9
+    },
+    {
+     "name": "Corey Kispert",
+     "value": 13.91,
+     "frac": 0.5
+    },
+    {
+     "name": "Kingston Flemings",
+     "value": 12.46,
+     "frac": 0.8
+    },
+    {
+     "name": "Jock Landale",
+     "value": 10.67,
+     "frac": 0.5
+    },
+    {
+     "name": "Asa Newell",
+     "value": 9.28,
+     "frac": 0.4
+    },
+    {
+     "name": "Zuby Ejiofor",
+     "value": 6.89,
+     "frac": 0.5
+    }
+   ]
+  },
+  "BOS": {
+   "name": "Boston Celtics",
+   "rating": 6.8856,
+   "last_game": "2026-11-08",
+   "record": [
+    8,
+    2
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Jayson Tatum",
+     "value": 45.46,
+     "frac": 0.9
+    },
+    {
+     "name": "Paul George",
+     "value": 30.63,
+     "frac": 0.9
+    },
+    {
+     "name": "Derrick White",
+     "value": 25.19,
+     "frac": 1.0
+    },
+    {
+     "name": "Payton Pritchard",
+     "value": 23.87,
+     "frac": 1.0
+    },
+    {
+     "name": "Neemias Queta",
+     "value": 21.81,
+     "frac": 1.0
+    },
+    {
+     "name": "Mitchell Robinson",
+     "value": 19.14,
+     "frac": 0.9
+    },
+    {
+     "name": "Luka Garza",
+     "value": 14.64,
+     "frac": 1.0
+    },
+    {
+     "name": "Sam Hauser",
+     "value": 14.07,
+     "frac": 1.0
+    },
+    {
+     "name": "Baylor Scheierman",
+     "value": 13.09,
+     "frac": 1.0
+    },
+    {
+     "name": "Mike Conley",
+     "value": 6.33,
+     "frac": 0.4
+    },
+    {
+     "name": "Hugo Gonzalez",
+     "value": 6.21,
+     "frac": 1.0
+    },
+    {
+     "name": "Jordan Walsh",
+     "value": 4.54,
+     "frac": 1.0
+    }
+   ]
+  },
+  "BKN": {
+   "name": "Brooklyn Nets",
+   "rating": -7.5387,
+   "last_game": "2026-11-08",
+   "record": [
+    2,
+    8
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Michael Porter Jr.",
+     "value": 31.12,
+     "frac": 1.0
+    },
+    {
+     "name": "Julius Randle",
+     "value": 29.8,
+     "frac": 1.0
+    },
+    {
+     "name": "Nolan Traore",
+     "value": 22.96,
+     "frac": 1.0
+    },
+    {
+     "name": "Day'Ron Sharpe",
+     "value": 22.85,
+     "frac": 1.0
+    },
+    {
+     "name": "Danny Wolf",
+     "value": 18.44,
+     "frac": 0.5
+    },
+    {
+     "name": "Moritz Wagner",
+     "value": 15.75,
+     "frac": 1.0
+    },
+    {
+     "name": "Ben Saraf",
+     "value": 15.05,
+     "frac": 0.1
+    },
+    {
+     "name": "Mikel Brown Jr.",
+     "value": 14.53,
+     "frac": 0.7
+    },
+    {
+     "name": "Josh Minott",
+     "value": 13.51,
+     "frac": 0.5
+    },
+    {
+     "name": "Egor Demin",
+     "value": 9.6,
+     "frac": 0.4
+    },
+    {
+     "name": "Chaney Johnson",
+     "value": 7.46,
+     "frac": 1.0
+    },
+    {
+     "name": "Keon Ellis",
+     "value": 7.38,
+     "frac": 0.9
+    },
+    {
+     "name": "Terance Mann",
+     "value": 5.4,
+     "frac": 0.5
+    },
+    {
+     "name": "Noah Clowney",
+     "value": 5.23,
+     "frac": 1.0
+    },
+    {
+     "name": "Drake Powell",
+     "value": 4.97,
+     "frac": 0.3
+    }
+   ]
+  },
+  "CHA": {
+   "name": "Charlotte Hornets",
+   "rating": -1.7594,
+   "last_game": "2026-11-09",
+   "record": [
+    4,
+    7
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Moussa Diabate",
+     "value": 23.85,
+     "frac": 0.8
+    },
+    {
+     "name": "Naz Reid",
+     "value": 21.44,
+     "frac": 0.9
+    },
+    {
+     "name": "Brandon Miller",
+     "value": 19.51,
+     "frac": 0.9
+    },
+    {
+     "name": "Grayson Allen",
+     "value": 19.17,
+     "frac": 0.9
+    },
+    {
+     "name": "Kon Knueppel",
+     "value": 17.33,
+     "frac": 0.1
+    },
+    {
+     "name": "Ryan Kalkbrenner",
+     "value": 13.68,
+     "frac": 0.9
+    },
+    {
+     "name": "Coby White",
+     "value": 12.85,
+     "frac": 0.3
+    },
+    {
+     "name": "Dennis Schroder",
+     "value": 11.97,
+     "frac": 0.8
+    },
+    {
+     "name": "Hannes Steinbach",
+     "value": 11.75,
+     "frac": 0.4
+    },
+    {
+     "name": "Sion James",
+     "value": 11.2,
+     "frac": 0.9
+    },
+    {
+     "name": "Tidjane Salaun",
+     "value": 10.75,
+     "frac": 0.9
+    },
+    {
+     "name": "Royce O'Neale",
+     "value": 9.83,
+     "frac": 0.9
+    },
+    {
+     "name": "Christian Anderson",
+     "value": 4.16,
+     "frac": 0.8
+    }
+   ]
+  },
+  "CHI": {
+   "name": "Chicago Bulls",
+   "rating": -7.5237,
+   "last_game": "2026-11-08",
+   "record": [
+    1,
+    8
+   ],
+   "n_hist": 9,
+   "roster": [
+    {
+     "name": "Josh Giddey",
+     "value": 25.93,
+     "frac": 1.0
+    },
+    {
+     "name": "Norman Powell",
+     "value": 24.74,
+     "frac": 0.889
+    },
+    {
+     "name": "Jalen Smith",
+     "value": 21.92,
+     "frac": 1.0
+    },
+    {
+     "name": "Tre Jones",
+     "value": 20.93,
+     "frac": 1.0
+    },
+    {
+     "name": "Matas Buzelis",
+     "value": 20.38,
+     "frac": 1.0
+    },
+    {
+     "name": "Nic Claxton",
+     "value": 18.05,
+     "frac": 0.111
+    },
+    {
+     "name": "Caleb Wilson",
+     "value": 17.49,
+     "frac": 1.0
+    },
+    {
+     "name": "Leonard Miller",
+     "value": 12.47,
+     "frac": 0.889
+    },
+    {
+     "name": "Patrick Williams",
+     "value": 11.2,
+     "frac": 0.222
+    },
+    {
+     "name": "Isaac Okoro",
+     "value": 10.42,
+     "frac": 1.0
+    },
+    {
+     "name": "Jordan Hawkins",
+     "value": 9.71,
+     "frac": 0.556
+    },
+    {
+     "name": "Noa Essengue",
+     "value": 5.29,
+     "frac": 0.889
+    }
+   ]
+  },
+  "CLE": {
+   "name": "Cleveland Cavaliers",
+   "rating": 2.1,
+   "last_game": "2026-11-09",
+   "record": [
+    5,
+    6
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Donovan Mitchell",
+     "value": 41.59,
+     "frac": 0.9
+    },
+    {
+     "name": "Evan Mobley",
+     "value": 37.21,
+     "frac": 0.9
+    },
+    {
+     "name": "Jarrett Allen",
+     "value": 29.33,
+     "frac": 0.7
+    },
+    {
+     "name": "James Harden",
+     "value": 27.42,
+     "frac": 0.9
+    },
+    {
+     "name": "Peyton Watson",
+     "value": 19.54,
+     "frac": 0.7
+    },
+    {
+     "name": "Meleek Thomas",
+     "value": 19.16,
+     "frac": 0.7
+    },
+    {
+     "name": "Tyrese Proctor",
+     "value": 17.99,
+     "frac": 0.8
+    },
+    {
+     "name": "Thomas Bryant",
+     "value": 14.28,
+     "frac": 0.5
+    },
+    {
+     "name": "Jaylon Tyson",
+     "value": 13.34,
+     "frac": 0.4
+    },
+    {
+     "name": "Mario Hezonja",
+     "value": 13.28,
+     "frac": 0.9
+    },
+    {
+     "name": "Sam Merrill",
+     "value": 12.76,
+     "frac": 0.8
+    }
+   ]
+  },
+  "DAL": {
+   "name": "Dallas Mavericks",
+   "rating": -1.2366,
+   "last_game": "2026-11-09",
+   "record": [
+    7,
+    4
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Cooper Flagg",
+     "value": 47.56,
+     "frac": 0.8
+    },
+    {
+     "name": "Kyrie Irving",
+     "value": 35.2,
+     "frac": 0.7
+    },
+    {
+     "name": "P.J. Washington",
+     "value": 24.51,
+     "frac": 0.9
+    },
+    {
+     "name": "Daniel Gafford",
+     "value": 24.23,
+     "frac": 0.9
+    },
+    {
+     "name": "Santi Aldama",
+     "value": 21.5,
+     "frac": 0.2
+    },
+    {
+     "name": "Naji Marshall",
+     "value": 17.82,
+     "frac": 0.6
+    },
+    {
+     "name": "Walter Clayton Jr.",
+     "value": 15.7,
+     "frac": 0.9
+    },
+    {
+     "name": "Morez Johnson Jr.",
+     "value": 13.89,
+     "frac": 0.9
+    },
+    {
+     "name": "Zaccharie Risacher",
+     "value": 13.05,
+     "frac": 0.9
+    },
+    {
+     "name": "Marcus Sasser",
+     "value": 6.09,
+     "frac": 0.8
+    },
+    {
+     "name": "Caleb Martin",
+     "value": 5.83,
+     "frac": 0.6
+    },
+    {
+     "name": "Max Christie",
+     "value": 5.19,
+     "frac": 0.8
+    }
+   ]
+  },
+  "DEN": {
+   "name": "Denver Nuggets",
+   "rating": 3.1348,
+   "last_game": "2026-11-09",
+   "record": [
+    5,
+    4
+   ],
+   "n_hist": 9,
+   "roster": [
+    {
+     "name": "Nikola Jokic",
+     "value": 55.26,
+     "frac": 0.889
+    },
+    {
+     "name": "Jamal Murray",
+     "value": 43.58,
+     "frac": 0.889
+    },
+    {
+     "name": "Cameron Johnson",
+     "value": 24.21,
+     "frac": 0.556
+    },
+    {
+     "name": "Christian Braun",
+     "value": 24.06,
+     "frac": 0.889
+    },
+    {
+     "name": "Aaron Gordon",
+     "value": 21.97,
+     "frac": 0.889
+    },
+    {
+     "name": "DeMar DeRozan",
+     "value": 19.91,
+     "frac": 0.778
+    },
+    {
+     "name": "Marvin Bagley III",
+     "value": 14.0,
+     "frac": 0.889
+    },
+    {
+     "name": "Trevon Brazile",
+     "value": 12.1,
+     "frac": 0.889
+    },
+    {
+     "name": "Ryan Nembhard",
+     "value": 10.54,
+     "frac": 0.333
+    },
+    {
+     "name": "Spencer Jones",
+     "value": 9.49,
+     "frac": 0.111
+    },
+    {
+     "name": "Cam Whitmore",
+     "value": 8.9,
+     "frac": 0.222
+    },
+    {
+     "name": "Tyus Jones",
+     "value": 8.2,
+     "frac": 0.889
+    },
+    {
+     "name": "Alpha Diallo",
+     "value": 4.35,
+     "frac": 0.333
+    },
+    {
+     "name": "Bryce Hopkins",
+     "value": 3.96,
+     "frac": 0.667
+    }
+   ]
+  },
+  "DET": {
+   "name": "Detroit Pistons",
+   "rating": 6.611,
+   "last_game": "2026-11-09",
+   "record": [
+    7,
+    3
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Cade Cunningham",
+     "value": 41.72,
+     "frac": 0.9
+    },
+    {
+     "name": "Jalen Duren",
+     "value": 37.48,
+     "frac": 0.2
+    },
+    {
+     "name": "Duncan Robinson",
+     "value": 29.68,
+     "frac": 0.9
+    },
+    {
+     "name": "Paul Reed",
+     "value": 25.6,
+     "frac": 0.9
+    },
+    {
+     "name": "Ausar Thompson",
+     "value": 22.95,
+     "frac": 0.8
+    },
+    {
+     "name": "Daniss Jenkins",
+     "value": 20.55,
+     "frac": 0.9
+    },
+    {
+     "name": "Kevin Huerter",
+     "value": 20.11,
+     "frac": 0.9
+    },
+    {
+     "name": "Isaiah Joe",
+     "value": 15.79,
+     "frac": 0.3
+    },
+    {
+     "name": "John Collins",
+     "value": 14.81,
+     "frac": 0.9
+    },
+    {
+     "name": "Taurean Prince",
+     "value": 14.71,
+     "frac": 0.2
+    },
+    {
+     "name": "Elijah Harkless",
+     "value": 13.13,
+     "frac": 0.1
+    },
+    {
+     "name": "Javonte Green",
+     "value": 12.47,
+     "frac": 0.9
+    },
+    {
+     "name": "Ronald Holland II",
+     "value": 9.32,
+     "frac": 0.9
+    }
+   ]
+  },
+  "GSW": {
+   "name": "Golden State Warriors",
+   "rating": 2.1902,
+   "last_game": "2026-11-09",
+   "record": [
+    8,
+    3
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Stephen Curry",
+     "value": 54.26,
+     "frac": 0.7
+    },
+    {
+     "name": "Yaxel Lendeborg",
+     "value": 32.05,
+     "frac": 0.9
+    },
+    {
+     "name": "Brandin Podziemski",
+     "value": 31.5,
+     "frac": 0.8
+    },
+    {
+     "name": "Brandon Williams",
+     "value": 18.48,
+     "frac": 0.8
+    },
+    {
+     "name": "Charles Bassey",
+     "value": 17.75,
+     "frac": 0.8
+    },
+    {
+     "name": "Georges Niang",
+     "value": 15.69,
+     "frac": 0.9
+    },
+    {
+     "name": "Draymond Green",
+     "value": 15.67,
+     "frac": 0.7
+    },
+    {
+     "name": "De'Anthony Melton",
+     "value": 14.78,
+     "frac": 0.9
+    },
+    {
+     "name": "Al Horford",
+     "value": 12.23,
+     "frac": 0.7
+    },
+    {
+     "name": "Gui Santos",
+     "value": 10.31,
+     "frac": 0.6
+    },
+    {
+     "name": "Will Richard",
+     "value": 10.18,
+     "frac": 0.9
+    },
+    {
+     "name": "Gary Payton II",
+     "value": 9.73,
+     "frac": 0.9
+    }
+   ]
+  },
+  "HOU": {
+   "name": "Houston Rockets",
+   "rating": 6.1868,
+   "last_game": "2026-11-09",
+   "record": [
+    8,
+    3
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Alperen Sengun",
+     "value": 40.96,
+     "frac": 0.7
+    },
+    {
+     "name": "Kevin Durant",
+     "value": 36.94,
+     "frac": 0.9
+    },
+    {
+     "name": "Jabari Smith Jr.",
+     "value": 33.1,
+     "frac": 0.9
+    },
+    {
+     "name": "Amen Thompson",
+     "value": 30.65,
+     "frac": 0.9
+    },
+    {
+     "name": "Fred VanVleet",
+     "value": 23.29,
+     "frac": 0.7
+    },
+    {
+     "name": "Tari Eason",
+     "value": 16.03,
+     "frac": 0.9
+    },
+    {
+     "name": "Steven Adams",
+     "value": 15.44,
+     "frac": 0.1
+    },
+    {
+     "name": "Reed Sheppard",
+     "value": 15.12,
+     "frac": 0.6
+    },
+    {
+     "name": "Clint Capela",
+     "value": 11.99,
+     "frac": 0.5
+    },
+    {
+     "name": "Marcus Smart",
+     "value": 10.48,
+     "frac": 0.6
+    }
+   ]
+  },
+  "IND": {
+   "name": "Indiana Pacers",
+   "rating": -5.0662,
+   "last_game": "2026-11-09",
+   "record": [
+    3,
+    8
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Tyrese Haliburton",
+     "value": 48.3,
+     "frac": 0.3
+    },
+    {
+     "name": "Pascal Siakam",
+     "value": 35.66,
+     "frac": 0.8
+    },
+    {
+     "name": "Andrew Nembhard",
+     "value": 31.51,
+     "frac": 0.7
+    },
+    {
+     "name": "Obi Toppin",
+     "value": 24.42,
+     "frac": 0.6
+    },
+    {
+     "name": "T.J. McConnell",
+     "value": 21.13,
+     "frac": 0.1
+    },
+    {
+     "name": "Quenton Jackson",
+     "value": 19.98,
+     "frac": 0.9
+    },
+    {
+     "name": "Ivica Zubac",
+     "value": 18.02,
+     "frac": 0.4
+    },
+    {
+     "name": "Aaron Nesmith",
+     "value": 16.23,
+     "frac": 0.8
+    },
+    {
+     "name": "Jarace Walker",
+     "value": 16.2,
+     "frac": 0.9
+    },
+    {
+     "name": "Kobe Brown",
+     "value": 13.7,
+     "frac": 0.5
+    },
+    {
+     "name": "Larry Nance Jr.",
+     "value": 13.59,
+     "frac": 0.8
+    },
+    {
+     "name": "Kelly Oubre Jr.",
+     "value": 13.01,
+     "frac": 0.7
+    },
+    {
+     "name": "Ben Sheppard",
+     "value": 11.73,
+     "frac": 0.0
+    },
+    {
+     "name": "Jay Huff",
+     "value": 11.03,
+     "frac": 0.9
+    },
+    {
+     "name": "Jalen Slawson",
+     "value": 10.24,
+     "frac": 0.9
+    },
+    {
+     "name": "Braden Smith",
+     "value": 4.69,
+     "frac": 0.6
+    }
+   ]
+  },
+  "LAC": {
+   "name": "LA Clippers",
+   "rating": -0.2047,
+   "last_game": "2026-11-08",
+   "record": [
+    2,
+    7
+   ],
+   "n_hist": 9,
+   "roster": [
+    {
+     "name": "Darius Garland",
+     "value": 31.61,
+     "frac": 1.0
+    },
+    {
+     "name": "Brook Lopez",
+     "value": 23.88,
+     "frac": 1.0
+    },
+    {
+     "name": "Kris Dunn",
+     "value": 22.53,
+     "frac": 1.0
+    },
+    {
+     "name": "Keaton Wagler",
+     "value": 22.22,
+     "frac": 1.0
+    },
+    {
+     "name": "Rui Hachimura",
+     "value": 21.97,
+     "frac": 0.778
+    },
+    {
+     "name": "Derrick Jones Jr.",
+     "value": 19.13,
+     "frac": 0.889
+    },
+    {
+     "name": "Isaiah Jackson",
+     "value": 16.63,
+     "frac": 0.889
+    },
+    {
+     "name": "Max Strus",
+     "value": 14.94,
+     "frac": 0.333
+    },
+    {
+     "name": "Kobe Sanders",
+     "value": 14.06,
+     "frac": 1.0
+    },
+    {
+     "name": "Gradey Dick",
+     "value": 12.25,
+     "frac": 1.0
+    }
+   ]
+  },
+  "LAL": {
+   "name": "Los Angeles Lakers",
+   "rating": 5.0433,
+   "last_game": "2026-11-09",
+   "record": [
+    10,
+    2
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Luka Doncic",
+     "value": 70.82,
+     "frac": 0.7
+    },
+    {
+     "name": "Austin Reaves",
+     "value": 40.28,
+     "frac": 0.9
+    },
+    {
+     "name": "Walker Kessler",
+     "value": 34.49,
+     "frac": 0.9
+    },
+    {
+     "name": "Ziaire Williams",
+     "value": 21.48,
+     "frac": 0.6
+    },
+    {
+     "name": "Sandro Mamukelashvili",
+     "value": 15.18,
+     "frac": 0.9
+    },
+    {
+     "name": "Jake LaRavia",
+     "value": 14.35,
+     "frac": 0.9
+    },
+    {
+     "name": "Matisse Thybulle",
+     "value": 13.04,
+     "frac": 0.9
+    },
+    {
+     "name": "Collin Sexton",
+     "value": 12.31,
+     "frac": 0.9
+    },
+    {
+     "name": "Quentin Grimes",
+     "value": 11.8,
+     "frac": 0.9
+    },
+    {
+     "name": "Jarred Vanderbilt",
+     "value": 7.92,
+     "frac": 0.6
+    },
+    {
+     "name": "Lawson Lovering",
+     "value": 6.13,
+     "frac": 0.2
+    }
+   ]
+  },
+  "MEM": {
+   "name": "Memphis Grizzlies",
+   "rating": -2.4093,
+   "last_game": "2026-11-09",
+   "record": [
+    7,
+    3
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Ty Jerome",
+     "value": 38.94,
+     "frac": 0.8
+    },
+    {
+     "name": "Cedric Coward",
+     "value": 26.7,
+     "frac": 0.8
+    },
+    {
+     "name": "Cam Spencer",
+     "value": 23.05,
+     "frac": 0.9
+    },
+    {
+     "name": "Cameron Boozer",
+     "value": 20.78,
+     "frac": 0.9
+    },
+    {
+     "name": "Zach Edey",
+     "value": 20.0,
+     "frac": 0.8
+    },
+    {
+     "name": "Javon Small",
+     "value": 19.67,
+     "frac": 0.2
+    },
+    {
+     "name": "Isaiah Stewart",
+     "value": 19.36,
+     "frac": 0.7
+    },
+    {
+     "name": "Jerami Grant",
+     "value": 16.28,
+     "frac": 0.9
+    },
+    {
+     "name": "Jaylen Wells",
+     "value": 13.0,
+     "frac": 0.9
+    },
+    {
+     "name": "Scotty Pippen Jr.",
+     "value": 12.09,
+     "frac": 0.5
+    },
+    {
+     "name": "GG Jackson",
+     "value": 11.35,
+     "frac": 0.8
+    },
+    {
+     "name": "Jahmai Mashack",
+     "value": 7.65,
+     "frac": 0.2
+    },
+    {
+     "name": "Quinten Post",
+     "value": 7.0,
+     "frac": 0.7
+    },
+    {
+     "name": "Kris Murray",
+     "value": 6.67,
+     "frac": 0.6
+    }
+   ]
+  },
+  "MIA": {
+   "name": "Miami Heat",
+   "rating": -1.1234,
+   "last_game": "2026-11-08",
+   "record": [
+    4,
+    6
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Giannis Antetokounmpo",
+     "value": 52.33,
+     "frac": 1.0
+    },
+    {
+     "name": "Bam Adebayo",
+     "value": 42.38,
+     "frac": 1.0
+    },
+    {
+     "name": "Davion Mitchell",
+     "value": 32.02,
+     "frac": 1.0
+    },
+    {
+     "name": "Klay Thompson",
+     "value": 23.53,
+     "frac": 1.0
+    },
+    {
+     "name": "Pelle Larsson",
+     "value": 21.41,
+     "frac": 1.0
+    },
+    {
+     "name": "Ryan Conwell",
+     "value": 13.82,
+     "frac": 0.8
+    },
+    {
+     "name": "Andrew Wiggins",
+     "value": 11.83,
+     "frac": 1.0
+    },
+    {
+     "name": "Bobby Portis",
+     "value": 11.29,
+     "frac": 1.0
+    }
+   ]
+  },
+  "MIL": {
+   "name": "Milwaukee Bucks",
+   "rating": -8.3079,
+   "last_game": "2026-11-08",
+   "record": [
+    1,
+    9
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Tyler Herro",
+     "value": 31.62,
+     "frac": 1.0
+    },
+    {
+     "name": "Brayden Burries",
+     "value": 24.53,
+     "frac": 1.0
+    },
+    {
+     "name": "Jaime Jaquez Jr.",
+     "value": 24.15,
+     "frac": 1.0
+    },
+    {
+     "name": "Kyle Kuzma",
+     "value": 22.17,
+     "frac": 1.0
+    },
+    {
+     "name": "Ryan Rollins",
+     "value": 17.01,
+     "frac": 1.0
+    },
+    {
+     "name": "Myles Turner",
+     "value": 13.27,
+     "frac": 1.0
+    },
+    {
+     "name": "AJ Green",
+     "value": 11.02,
+     "frac": 1.0
+    },
+    {
+     "name": "Kel'el Ware",
+     "value": 8.98,
+     "frac": 1.0
+    },
+    {
+     "name": "Jericho Sims",
+     "value": 8.36,
+     "frac": 0.6
+    },
+    {
+     "name": "Kasparas Jakucionis",
+     "value": 8.03,
+     "frac": 1.0
+    },
+    {
+     "name": "Ousmane Dieng",
+     "value": 7.29,
+     "frac": 0.7
+    },
+    {
+     "name": "Gary Trent Jr.",
+     "value": 7.08,
+     "frac": 0.2
+    },
+    {
+     "name": "Nate Ament",
+     "value": 6.42,
+     "frac": 0.8
+    }
+   ]
+  },
+  "MIN": {
+   "name": "Minnesota Timberwolves",
+   "rating": 6.342,
+   "last_game": "2026-11-08",
+   "record": [
+    8,
+    3
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Anthony Edwards",
+     "value": 40.28,
+     "frac": 0.3
+    },
+    {
+     "name": "Ayo Dosunmu",
+     "value": 34.95,
+     "frac": 1.0
+    },
+    {
+     "name": "LaMelo Ball",
+     "value": 32.38,
+     "frac": 1.0
+    },
+    {
+     "name": "Jaden McDaniels",
+     "value": 29.16,
+     "frac": 1.0
+    },
+    {
+     "name": "Rudy Gobert",
+     "value": 21.48,
+     "frac": 0.9
+    },
+    {
+     "name": "Jonathan Kuminga",
+     "value": 19.59,
+     "frac": 1.0
+    },
+    {
+     "name": "Bones Hyland",
+     "value": 15.9,
+     "frac": 1.0
+    },
+    {
+     "name": "Terrence Shannon Jr.",
+     "value": 15.36,
+     "frac": 0.7
+    },
+    {
+     "name": "Trey Lyles",
+     "value": 15.35,
+     "frac": 1.0
+    },
+    {
+     "name": "Joan Beringer",
+     "value": 13.82,
+     "frac": 1.0
+    },
+    {
+     "name": "Jaylen Clark",
+     "value": 10.43,
+     "frac": 0.9
+    }
+   ]
+  },
+  "NOP": {
+   "name": "New Orleans Pelicans",
+   "rating": -3.1257,
+   "last_game": "2026-11-09",
+   "record": [
+    4,
+    7
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Zion Williamson",
+     "value": 40.85,
+     "frac": 0.9
+    },
+    {
+     "name": "Jeremiah Fears",
+     "value": 33.44,
+     "frac": 0.9
+    },
+    {
+     "name": "Trey Murphy III",
+     "value": 30.41,
+     "frac": 0.8
+    },
+    {
+     "name": "Saddiq Bey",
+     "value": 29.83,
+     "frac": 0.9
+    },
+    {
+     "name": "Dejounte Murray",
+     "value": 26.02,
+     "frac": 0.6
+    },
+    {
+     "name": "Yves Missi",
+     "value": 22.66,
+     "frac": 0.1
+    },
+    {
+     "name": "Derik Queen",
+     "value": 18.8,
+     "frac": 0.9
+    },
+    {
+     "name": "Karlo Matkovic",
+     "value": 16.8,
+     "frac": 0.9
+    },
+    {
+     "name": "Julian Reese",
+     "value": 15.23,
+     "frac": 0.2
+    },
+    {
+     "name": "DeAndre Jordan",
+     "value": 14.2,
+     "frac": 0.2
+    },
+    {
+     "name": "Trendon Watford",
+     "value": 12.55,
+     "frac": 0.6
+    },
+    {
+     "name": "Jordan Poole",
+     "value": 12.29,
+     "frac": 0.3
+    },
+    {
+     "name": "Bennedict Mathurin",
+     "value": 8.34,
+     "frac": 0.9
+    },
+    {
+     "name": "Herbert Jones",
+     "value": 6.89,
+     "frac": 0.9
+    }
+   ]
+  },
+  "NYK": {
+   "name": "New York Knicks",
+   "rating": 4.5165,
+   "last_game": "2026-11-07",
+   "record": [
+    5,
+    4
+   ],
+   "n_hist": 9,
+   "roster": [
+    {
+     "name": "Jalen Brunson",
+     "value": 44.26,
+     "frac": 1.0
+    },
+    {
+     "name": "Karl-Anthony Towns",
+     "value": 42.77,
+     "frac": 1.0
+    },
+    {
+     "name": "OG Anunoby",
+     "value": 26.53,
+     "frac": 1.0
+    },
+    {
+     "name": "Josh Hart",
+     "value": 19.32,
+     "frac": 0.778
+    },
+    {
+     "name": "Mikal Bridges",
+     "value": 13.81,
+     "frac": 1.0
+    },
+    {
+     "name": "Andre Drummond",
+     "value": 12.78,
+     "frac": 1.0
+    },
+    {
+     "name": "Landry Shamet",
+     "value": 12.15,
+     "frac": 1.0
+    },
+    {
+     "name": "Jordan Clarkson",
+     "value": 11.16,
+     "frac": 0.889
+    },
+    {
+     "name": "Miles McBride",
+     "value": 10.48,
+     "frac": 1.0
+    },
+    {
+     "name": "Mohamed Diawara",
+     "value": 7.4,
+     "frac": 0.444
+    },
+    {
+     "name": "Jose Alvarado",
+     "value": 5.78,
+     "frac": 0.444
+    }
+   ]
+  },
+  "OKC": {
+   "name": "Oklahoma City Thunder",
+   "rating": 7.5251,
+   "last_game": "2026-11-07",
+   "record": [
+    8,
+    2
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Shai Gilgeous-Alexander",
+     "value": 49.11,
+     "frac": 1.0
+    },
+    {
+     "name": "Chet Holmgren",
+     "value": 34.36,
+     "frac": 0.3
+    },
+    {
+     "name": "Jalen Williams",
+     "value": 29.99,
+     "frac": 0.3
+    },
+    {
+     "name": "Ajay Mitchell",
+     "value": 29.91,
+     "frac": 1.0
+    },
+    {
+     "name": "Aday Mara",
+     "value": 20.96,
+     "frac": 1.0
+    },
+    {
+     "name": "Isaiah Hartenstein",
+     "value": 20.71,
+     "frac": 1.0
+    },
+    {
+     "name": "Jared McCain",
+     "value": 18.78,
+     "frac": 1.0
+    },
+    {
+     "name": "Kenrich Williams",
+     "value": 16.09,
+     "frac": 1.0
+    },
+    {
+     "name": "Bennett Stirtz",
+     "value": 15.6,
+     "frac": 1.0
+    },
+    {
+     "name": "Alex Caruso",
+     "value": 15.53,
+     "frac": 0.7
+    },
+    {
+     "name": "Cason Wallace",
+     "value": 11.78,
+     "frac": 0.3
+    },
+    {
+     "name": "Micah Peavy",
+     "value": 10.18,
+     "frac": 0.6
+    },
+    {
+     "name": "Jaylin Williams",
+     "value": 9.31,
+     "frac": 0.7
+    },
+    {
+     "name": "Josh Dix",
+     "value": 5.35,
+     "frac": 0.6
+    }
+   ]
+  },
+  "ORL": {
+   "name": "Orlando Magic",
+   "rating": -2.3941,
+   "last_game": "2026-11-07",
+   "record": [
+    2,
+    7
+   ],
+   "n_hist": 9,
+   "roster": [
+    {
+     "name": "Paolo Banchero",
+     "value": 37.43,
+     "frac": 0.222
+    },
+    {
+     "name": "Franz Wagner",
+     "value": 36.79,
+     "frac": 1.0
+    },
+    {
+     "name": "Wendell Carter Jr.",
+     "value": 29.82,
+     "frac": 1.0
+    },
+    {
+     "name": "Anthony Black",
+     "value": 26.21,
+     "frac": 0.667
+    },
+    {
+     "name": "Desmond Bane",
+     "value": 24.59,
+     "frac": 0.889
+    },
+    {
+     "name": "Jalen Suggs",
+     "value": 22.16,
+     "frac": 0.333
+    },
+    {
+     "name": "Tristan da Silva",
+     "value": 21.57,
+     "frac": 1.0
+    },
+    {
+     "name": "Jamal Cain",
+     "value": 12.46,
+     "frac": 1.0
+    },
+    {
+     "name": "Jase Richardson",
+     "value": 9.58,
+     "frac": 1.0
+    },
+    {
+     "name": "Jevon Carter",
+     "value": 8.86,
+     "frac": 0.556
+    }
+   ]
+  },
+  "PHI": {
+   "name": "Philadelphia 76ers",
+   "rating": 1.0505,
+   "last_game": "2026-11-08",
+   "record": [
+    9,
+    2
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Tyrese Maxey",
+     "value": 43.09,
+     "frac": 1.0
+    },
+    {
+     "name": "Jaylen Brown",
+     "value": 40.52,
+     "frac": 0.9
+    },
+    {
+     "name": "LeBron James",
+     "value": 32.73,
+     "frac": 0.8
+    },
+    {
+     "name": "Joel Embiid",
+     "value": 31.59,
+     "frac": 0.8
+    },
+    {
+     "name": "VJ Edgecombe",
+     "value": 28.13,
+     "frac": 0.9
+    },
+    {
+     "name": "Rayan Rupert",
+     "value": 17.39,
+     "frac": 0.1
+    },
+    {
+     "name": "Jabari Walker",
+     "value": 13.06,
+     "frac": 0.6
+    },
+    {
+     "name": "Kentavious Caldwell-Pope",
+     "value": 11.58,
+     "frac": 1.0
+    },
+    {
+     "name": "Dean Wade",
+     "value": 8.62,
+     "frac": 0.9
+    },
+    {
+     "name": "Anfernee Simons",
+     "value": 7.9,
+     "frac": 1.0
+    },
+    {
+     "name": "Adem Bona",
+     "value": 5.89,
+     "frac": 0.8
+    }
+   ]
+  },
+  "PHX": {
+   "name": "Phoenix Suns",
+   "rating": -1.2598,
+   "last_game": "2026-11-09",
+   "record": [
+    3,
+    6
+   ],
+   "n_hist": 9,
+   "roster": [
+    {
+     "name": "Devin Booker",
+     "value": 42.22,
+     "frac": 0.889
+    },
+    {
+     "name": "Miles Bridges",
+     "value": 35.28,
+     "frac": 0.889
+    },
+    {
+     "name": "Dillon Brooks",
+     "value": 25.92,
+     "frac": 0.889
+    },
+    {
+     "name": "Jalen Green",
+     "value": 19.28,
+     "frac": 0.889
+    },
+    {
+     "name": "Jordan Goodwin",
+     "value": 17.54,
+     "frac": 0.556
+    },
+    {
+     "name": "Ryan Dunn",
+     "value": 16.89,
+     "frac": 0.889
+    },
+    {
+     "name": "Khaman Maluach",
+     "value": 16.72,
+     "frac": 0.889
+    },
+    {
+     "name": "Luke Kennard",
+     "value": 15.23,
+     "frac": 0.778
+    },
+    {
+     "name": "Oso Ighodaro",
+     "value": 15.08,
+     "frac": 0.667
+    },
+    {
+     "name": "Collin Gillespie",
+     "value": 12.23,
+     "frac": 0.889
+    },
+    {
+     "name": "Rasheer Fleming",
+     "value": 5.67,
+     "frac": 0.222
+    }
+   ]
+  },
+  "POR": {
+   "name": "Portland Trail Blazers",
+   "rating": 2.4585,
+   "last_game": "2026-11-07",
+   "record": [
+    6,
+    3
+   ],
+   "n_hist": 9,
+   "roster": [
+    {
+     "name": "Deni Avdija",
+     "value": 36.39,
+     "frac": 1.0
+    },
+    {
+     "name": "Ja Morant",
+     "value": 32.79,
+     "frac": 0.444
+    },
+    {
+     "name": "Damian Lillard",
+     "value": 31.97,
+     "frac": 1.0
+    },
+    {
+     "name": "Donovan Clingan",
+     "value": 27.35,
+     "frac": 1.0
+    },
+    {
+     "name": "Jrue Holiday",
+     "value": 24.34,
+     "frac": 1.0
+    },
+    {
+     "name": "Robert Williams III",
+     "value": 19.81,
+     "frac": 0.778
+    },
+    {
+     "name": "Toumani Camara",
+     "value": 17.69,
+     "frac": 1.0
+    },
+    {
+     "name": "Branden Carlson",
+     "value": 11.71,
+     "frac": 0.444
+    },
+    {
+     "name": "Micah Potter",
+     "value": 10.02,
+     "frac": 0.556
+    },
+    {
+     "name": "Chris Youngblood",
+     "value": 9.5,
+     "frac": 0.556
+    },
+    {
+     "name": "Sidy Cissoko",
+     "value": 9.29,
+     "frac": 1.0
+    },
+    {
+     "name": "Scoot Henderson",
+     "value": 9.18,
+     "frac": 1.0
+    }
+   ]
+  },
+  "SAC": {
+   "name": "Sacramento Kings",
+   "rating": -8.4003,
+   "last_game": "2026-11-08",
+   "record": [
+    1,
+    9
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Domantas Sabonis",
+     "value": 36.17,
+     "frac": 0.9
+    },
+    {
+     "name": "Darius Acuff Jr.",
+     "value": 30.38,
+     "frac": 1.0
+    },
+    {
+     "name": "Zach LaVine",
+     "value": 27.24,
+     "frac": 1.0
+    },
+    {
+     "name": "Precious Achiuwa",
+     "value": 19.49,
+     "frac": 1.0
+    },
+    {
+     "name": "De'Andre Hunter",
+     "value": 16.55,
+     "frac": 0.9
+    },
+    {
+     "name": "Dylan Cardwell",
+     "value": 15.99,
+     "frac": 0.3
+    },
+    {
+     "name": "Leaky Black",
+     "value": 14.66,
+     "frac": 0.5
+    },
+    {
+     "name": "Malik Monk",
+     "value": 14.42,
+     "frac": 0.9
+    },
+    {
+     "name": "Keegan Murray",
+     "value": 14.15,
+     "frac": 0.3
+    },
+    {
+     "name": "Emanuel Sharp",
+     "value": 7.47,
+     "frac": 1.0
+    },
+    {
+     "name": "Daeqwon Plowden",
+     "value": 6.96,
+     "frac": 0.7
+    }
+   ]
+  },
+  "SAS": {
+   "name": "San Antonio Spurs",
+   "rating": 8.2127,
+   "last_game": "2026-11-09",
+   "record": [
+    9,
+    2
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Victor Wembanyama",
+     "value": 56.7,
+     "frac": 0.9
+    },
+    {
+     "name": "Dylan Harper",
+     "value": 30.69,
+     "frac": 0.9
+    },
+    {
+     "name": "Stephon Castle",
+     "value": 26.49,
+     "frac": 0.9
+    },
+    {
+     "name": "De'Aaron Fox",
+     "value": 26.12,
+     "frac": 0.9
+    },
+    {
+     "name": "Devin Vassell",
+     "value": 25.62,
+     "frac": 0.9
+    },
+    {
+     "name": "Julian Champagnie",
+     "value": 17.42,
+     "frac": 0.9
+    },
+    {
+     "name": "Keldon Johnson",
+     "value": 16.29,
+     "frac": 0.9
+    },
+    {
+     "name": "Harrison Barnes",
+     "value": 11.49,
+     "frac": 0.7
+    },
+    {
+     "name": "Luke Kornet",
+     "value": 10.82,
+     "frac": 0.9
+    }
+   ]
+  },
+  "TOR": {
+   "name": "Toronto Raptors",
+   "rating": 1.6502,
+   "last_game": "2026-11-09",
+   "record": [
+    5,
+    5
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Kawhi Leonard",
+     "value": 41.1,
+     "frac": 0.2
+    },
+    {
+     "name": "Scottie Barnes",
+     "value": 39.0,
+     "frac": 0.8
+    },
+    {
+     "name": "RJ Barrett",
+     "value": 34.5,
+     "frac": 0.9
+    },
+    {
+     "name": "Immanuel Quickley",
+     "value": 30.92,
+     "frac": 0.8
+    },
+    {
+     "name": "Collin Murray-Boyles",
+     "value": 22.37,
+     "frac": 0.9
+    },
+    {
+     "name": "Ja'Kobe Walter",
+     "value": 17.73,
+     "frac": 0.9
+    },
+    {
+     "name": "Jakob Poeltl",
+     "value": 17.64,
+     "frac": 0.7
+    },
+    {
+     "name": "Jamal Shead",
+     "value": 16.2,
+     "frac": 0.9
+    },
+    {
+     "name": "Jamison Battle",
+     "value": 11.89,
+     "frac": 0.9
+    },
+    {
+     "name": "Alijah Martin",
+     "value": 10.73,
+     "frac": 0.8
+    },
+    {
+     "name": "Allen Graves",
+     "value": 9.51,
+     "frac": 0.9
+    }
+   ]
+  },
+  "UTA": {
+   "name": "Utah Jazz",
+   "rating": -8.136,
+   "last_game": "2026-11-08",
+   "record": [
+    1,
+    9
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Lauri Markkanen",
+     "value": 33.86,
+     "frac": 0.8
+    },
+    {
+     "name": "Keyonte George",
+     "value": 31.69,
+     "frac": 1.0
+    },
+    {
+     "name": "Jaren Jackson Jr.",
+     "value": 27.01,
+     "frac": 0.4
+    },
+    {
+     "name": "Darryn Peterson",
+     "value": 25.33,
+     "frac": 1.0
+    },
+    {
+     "name": "Jaxson Hayes",
+     "value": 22.29,
+     "frac": 0.9
+    },
+    {
+     "name": "Ace Bailey",
+     "value": 17.97,
+     "frac": 1.0
+    },
+    {
+     "name": "Mo Bamba",
+     "value": 16.77,
+     "frac": 0.6
+    },
+    {
+     "name": "Isaiah Collier",
+     "value": 11.25,
+     "frac": 1.0
+    },
+    {
+     "name": "Brice Sensabaugh",
+     "value": 7.62,
+     "frac": 1.0
+    },
+    {
+     "name": "Josh Green",
+     "value": 6.85,
+     "frac": 0.8
+    },
+    {
+     "name": "Josh Okogie",
+     "value": 6.34,
+     "frac": 0.9
+    },
+    {
+     "name": "Svi Mykhailiuk",
+     "value": 4.57,
+     "frac": 1.0
+    }
+   ]
+  },
+  "WAS": {
+   "name": "Washington Wizards",
+   "rating": -6.7553,
+   "last_game": "2026-11-09",
+   "record": [
+    4,
+    7
+   ],
+   "n_hist": 10,
+   "roster": [
+    {
+     "name": "Anthony Davis",
+     "value": 41.24,
+     "frac": 0.7
+    },
+    {
+     "name": "Kyshawn George",
+     "value": 32.49,
+     "frac": 0.9
+    },
+    {
+     "name": "Trae Young",
+     "value": 31.7,
+     "frac": 0.9
+    },
+    {
+     "name": "AJ Dybantsa",
+     "value": 27.4,
+     "frac": 0.6
+    },
+    {
+     "name": "Alex Sarr",
+     "value": 23.59,
+     "frac": 0.8
+    },
+    {
+     "name": "Justin Champagnie",
+     "value": 19.39,
+     "frac": 0.3
+    },
+    {
+     "name": "Deandre Ayton",
+     "value": 15.9,
+     "frac": 0.9
+    },
+    {
+     "name": "Bub Carrington",
+     "value": 13.22,
+     "frac": 0.9
+    },
+    {
+     "name": "Anthony Gill",
+     "value": 12.59,
+     "frac": 0.2
+    },
+    {
+     "name": "Bilal Coulibaly",
+     "value": 12.34,
+     "frac": 0.9
+    },
+    {
+     "name": "Will Riley",
+     "value": 8.13,
+     "frac": 0.8
+    },
+    {
+     "name": "Reece Beekman",
+     "value": 7.44,
+     "frac": 0.1
+    },
+    {
+     "name": "Tre Johnson",
+     "value": 6.87,
+     "frac": 0.8
+    },
+    {
+     "name": "Khris Middleton",
+     "value": 4.18,
+     "frac": 0.4
+    }
+   ]
+  }
+ },
+ "slate": [
+  {
+   "home": "NYK",
+   "away": "MIL",
+   "tip_utc": "2026-11-11T00:30:00Z",
+   "provider_home_prob": 0.901,
+   "spread_home_margin": 15.5,
+   "odds": {
+    "home": null,
+    "away": null
+   },
+   "injuries": {
+    "home": [
+     {
+      "player": "Josh Hart",
+      "status": "questionable",
+      "detail": "ankle"
+     }
+    ],
+    "away": [
+     {
+      "player": "Tyler Herro",
+      "status": "questionable",
+      "detail": "knee"
+     }
+    ]
+   }
+  },
+  {
+   "home": "PHI",
+   "away": "BOS",
+   "tip_utc": "2026-11-11T01:00:00Z",
+   "provider_home_prob": 0.471,
+   "spread_home_margin": null,
+   "odds": {
+    "home": null,
+    "away": null
+   },
+   "injuries": {
+    "home": [
+     {
+      "player": "Ariel Hukporti",
+      "status": "out",
+      "detail": "achilles, season"
+     },
+     {
+      "player": "Adem Bona",
+      "status": "out",
+      "detail": "spine"
+     },
+     {
+      "player": "Dominick Barlow",
+      "status": "out",
+      "detail": "back"
+     }
+    ],
+    "away": [
+     {
+      "player": "Devin Carter",
+      "status": "out",
+      "detail": "illness"
+     }
+    ]
+   }
+  },
+  {
+   "home": "PHX",
+   "away": "LAC",
+   "tip_utc": "2026-11-11T02:00:00Z",
+   "provider_home_prob": 0.605,
+   "spread_home_margin": null,
+   "odds": {
+    "home": null,
+    "away": null
+   },
+   "injuries": {
+    "home": [],
+    "away": [
+     {
+      "player": "Bradley Beal",
+      "status": "listed",
+      "detail": "knee management"
+     },
+     {
+      "player": "Cam Christie",
+      "status": "questionable",
+      "detail": "ankle"
+     }
+    ]
+   }
+  },
+  {
+   "home": "UTA",
+   "away": "MIA",
+   "tip_utc": "2026-11-11T02:00:00Z",
+   "provider_home_prob": 0.218,
+   "spread_home_margin": -9.5,
+   "odds": {
+    "home": 324,
+    "away": -432
+   },
+   "injuries": {
+    "home": [
+     {
+      "player": "Keyonte George",
+      "status": "out",
+      "detail": "ankle"
+     },
+     {
+      "player": "Jusuf Nurkic",
+      "status": "out",
+      "detail": "foot"
+     },
+     {
+      "player": "Jaren Jackson Jr.",
+      "status": "out",
+      "detail": "knee"
+     },
+     {
+      "player": "Lauri Markkanen",
+      "status": "questionable",
+      "detail": "wrist"
+     }
+    ],
+    "away": [
+     {
+      "player": "Giannis Antetokounmpo",
+      "status": "questionable",
+      "detail": "wrist"
+     }
+    ]
+   }
+  },
+  {
+   "home": "SAC",
+   "away": "ORL",
+   "tip_utc": "2026-11-11T03:00:00Z",
+   "provider_home_prob": 0.33,
+   "spread_home_margin": -5.5,
+   "odds": {
+    "home": 186,
+    "away": -228
+   },
+   "injuries": {
+    "home": [
+     {
+      "player": "Domantas Sabonis",
+      "status": "questionable",
+      "detail": "knee"
+     },
+     {
+      "player": "Keegan Murray",
+      "status": "questionable",
+      "detail": "wrist"
+     }
+    ],
+    "away": [
+     {
+      "player": "Paolo Banchero",
+      "status": "out",
+      "detail": "high ankle sprain"
+     },
+     {
+      "player": "Jonathan Isaac",
+      "status": "out",
+      "detail": "knee management"
+     },
+     {
+      "player": "Jalen Suggs",
+      "status": "out",
+      "detail": "knee contusion"
+     },
+     {
+      "player": "Noah Penda",
+      "status": "out",
+      "detail": "partial hamstring tear"
+     },
+     {
+      "player": "Izaiyah Nelson",
+      "status": "out",
+      "detail": "ankle"
+     }
+    ]
+   }
+  },
+  {
+   "home": "POR",
+   "away": "OKC",
+   "tip_utc": "2026-11-11T04:00:00Z",
+   "provider_home_prob": 0.445,
+   "spread_home_margin": -2.5,
+   "odds": {
+    "home": null,
+    "away": -122
+   },
+   "injuries": {
+    "home": [
+     {
+      "player": "Ja Morant",
+      "status": "out",
+      "detail": "hamstring"
+     },
+     {
+      "player": "Shaedon Sharpe",
+      "status": "out",
+      "detail": "meniscus"
+     },
+     {
+      "player": "Vit Krejci",
+      "status": "out",
+      "detail": "ankle fracture"
+     },
+     {
+      "player": "Robert Williams III",
+      "status": "available",
+      "detail": "rests tomorrow (back-to-back)"
+     }
+    ],
+    "away": [
+     {
+      "player": "Jalen Williams",
+      "status": "out",
+      "detail": "ankle"
+     },
+     {
+      "player": "Cason Wallace",
+      "status": "out",
+      "detail": "shoulder"
+     },
+     {
+      "player": "Chet Holmgren",
+      "status": "out",
+      "detail": "knee"
+     },
+     {
+      "player": "Nikola Topic",
+      "status": "questionable",
+      "detail": "back"
+     },
+     {
+      "player": "Thomas Sorber",
+      "status": "questionable",
+      "detail": "knee"
+     },
+     {
+      "player": "Jaylin Williams",
+      "status": "questionable",
+      "detail": "back"
+     }
+    ]
+   }
+  }
+ ],
+ "evidence": {
+  "blend": {
+   "a": 0.0035164098065749464,
+   "b_mercado": 0.9549874492897059,
+   "b_modelo": 0.022863342809123333
+  },
+  "sigma_market": 11.25,
+  "gap_sd": 3.0630588424709817,
+  "gap_c2": -0.0664670134068455,
+  "gap_c2_ci": 0.1241804227887599,
+  "roi_test": {
+   "1": {
+    "roi": -0.06074122131214014,
+    "n": 4484,
+    "lo": -0.08846814635838846,
+    "hi": -0.03301429626589182
+   },
+   "2": {
+    "roi": -0.06449208384269059,
+    "n": 3049,
+    "lo": -0.09811170054620419,
+    "hi": -0.030872467139176983
+   },
+   "3": {
+    "roi": -0.07037018925130813,
+    "n": 1859,
+    "lo": -0.11338512111480592,
+    "hi": -0.027355257387810326
+   },
+   "4": {
+    "roi": -0.0884904086738949,
+    "n": 1090,
+    "lo": -0.14463172606161206,
+    "hi": -0.03234909128617774
+   },
+   "5": {
+    "roi": -0.10374331550802139,
+    "n": 595,
+    "lo": -0.17939261047595978,
+    "hi": -0.02809402054008299
+   }
+  },
+  "test_ll": {
+   "v0_ridge": 0.6328815725704411,
+   "v2_elo": 0.611680390412634,
+   "mercado": 0.5921618944827941
+  },
+  "test_acc": {
+   "v0_ridge": 0.6496018202502845,
+   "v2_elo": 0.6627661303429222,
+   "mercado": 0.6855795805560072
+  }
+ }
+}

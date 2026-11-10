@@ -1,0 +1,290 @@
+{
+  "as_of": "2026-11-10",
+  "notes": "Lineas y partes recogidos el 10-nov-2026 por la manana. Cambian hasta el tip-off. PHI-BOS y PHX-LAC sin linea de hoy confirmada. Descanso calculado del calendario.",
+  "games": [
+    {
+      "home": "NYK",
+      "away": "MIL",
+      "tip_utc": "2026-11-11T00:30:00Z",
+      "provider_home_prob": 0.901,
+      "spread_home_margin": 15.5,
+      "spread_source": "Dimers (titular: Bucks +15.5)",
+      "odds": {
+        "home": null,
+        "away": null
+      },
+      "rest_days": {
+        "home": 2,
+        "away": 1
+      },
+      "injuries": {
+        "home": [
+          {
+            "player": "Josh Hart",
+            "status": "questionable",
+            "detail": "ankle"
+          }
+        ],
+        "away": [
+          {
+            "player": "Tyler Herro",
+            "status": "questionable",
+            "detail": "knee"
+          }
+        ]
+      }
+    },
+    {
+      "home": "PHI",
+      "away": "BOS",
+      "tip_utc": "2026-11-11T01:00:00Z",
+      "provider_home_prob": 0.471,
+      "spread_home_margin": null,
+      "spread_source": null,
+      "odds": {
+        "home": null,
+        "away": null
+      },
+      "rest_days": {
+        "home": 1,
+        "away": 1
+      },
+      "injuries": {
+        "home": [
+          {
+            "player": "Ariel Hukporti",
+            "status": "out",
+            "detail": "achilles, season"
+          },
+          {
+            "player": "Adem Bona",
+            "status": "out",
+            "detail": "spine"
+          },
+          {
+            "player": "Dominick Barlow",
+            "status": "out",
+            "detail": "back"
+          }
+        ],
+        "away": [
+          {
+            "player": "Devin Carter",
+            "status": "out",
+            "detail": "illness"
+          }
+        ]
+      }
+    },
+    {
+      "home": "PHX",
+      "away": "LAC",
+      "tip_utc": "2026-11-11T02:00:00Z",
+      "provider_home_prob": 0.605,
+      "spread_home_margin": null,
+      "spread_source": null,
+      "odds": {
+        "home": null,
+        "away": null
+      },
+      "rest_days": {
+        "home": 0,
+        "away": 1
+      },
+      "injuries": {
+        "home": [],
+        "away": [
+          {
+            "player": "Bradley Beal",
+            "status": "listed",
+            "detail": "knee management"
+          },
+          {
+            "player": "Cam Christie",
+            "status": "questionable",
+            "detail": "ankle"
+          }
+        ]
+      }
+    },
+    {
+      "home": "UTA",
+      "away": "MIA",
+      "tip_utc": "2026-11-11T02:00:00Z",
+      "provider_home_prob": 0.218,
+      "spread_home_margin": -9.5,
+      "spread_source": "Bleacher Nation / iHeart (Heat -9.5, total 227.5)",
+      "odds": {
+        "home": 324,
+        "away": -432
+      },
+      "odds_source": "capperspicks.com",
+      "rest_days": {
+        "home": 1,
+        "away": 1
+      },
+      "injuries": {
+        "home": [
+          {
+            "player": "Keyonte George",
+            "status": "out",
+            "detail": "ankle"
+          },
+          {
+            "player": "Jusuf Nurkic",
+            "status": "out",
+            "detail": "foot"
+          },
+          {
+            "player": "Jaren Jackson Jr.",
+            "status": "out",
+            "detail": "knee"
+          },
+          {
+            "player": "Lauri Markkanen",
+            "status": "questionable",
+            "detail": "wrist"
+          }
+        ],
+        "away": [
+          {
+            "player": "Giannis Antetokounmpo",
+            "status": "questionable",
+            "detail": "wrist"
+          }
+        ]
+      }
+    },
+    {
+      "home": "SAC",
+      "away": "ORL",
+      "tip_utc": "2026-11-11T03:00:00Z",
+      "provider_home_prob": 0.33,
+      "spread_home_margin": -5.5,
+      "spread_source": "Magic -5.5 (-6.5 en algun libro), total 221.5",
+      "odds": {
+        "home": 186,
+        "away": -228
+      },
+      "odds_source": "capperspicks.com (Pick Dawgz: -237/+196)",
+      "rest_days": {
+        "home": 1,
+        "away": 2
+      },
+      "injuries": {
+        "home": [
+          {
+            "player": "Domantas Sabonis",
+            "status": "questionable",
+            "detail": "knee"
+          },
+          {
+            "player": "Keegan Murray",
+            "status": "questionable",
+            "detail": "wrist"
+          }
+        ],
+        "away": [
+          {
+            "player": "Paolo Banchero",
+            "status": "out",
+            "detail": "high ankle sprain"
+          },
+          {
+            "player": "Jonathan Isaac",
+            "status": "out",
+            "detail": "knee management"
+          },
+          {
+            "player": "Jalen Suggs",
+            "status": "out",
+            "detail": "knee contusion"
+          },
+          {
+            "player": "Noah Penda",
+            "status": "out",
+            "detail": "partial hamstring tear"
+          },
+          {
+            "player": "Izaiyah Nelson",
+            "status": "out",
+            "detail": "ankle"
+          }
+        ]
+      }
+    },
+    {
+      "home": "POR",
+      "away": "OKC",
+      "tip_utc": "2026-11-11T04:00:00Z",
+      "provider_home_prob": 0.445,
+      "spread_home_margin": -2.5,
+      "spread_source": "Dimers (Thunder -2.5)",
+      "odds": {
+        "home": null,
+        "away": -122
+      },
+      "odds_source": "BetRivers via Dimers (solo un lado)",
+      "rest_days": {
+        "home": 2,
+        "away": 2
+      },
+      "injuries": {
+        "home": [
+          {
+            "player": "Ja Morant",
+            "status": "out",
+            "detail": "hamstring"
+          },
+          {
+            "player": "Shaedon Sharpe",
+            "status": "out",
+            "detail": "meniscus"
+          },
+          {
+            "player": "Vit Krejci",
+            "status": "out",
+            "detail": "ankle fracture"
+          },
+          {
+            "player": "Robert Williams III",
+            "status": "available",
+            "detail": "rests tomorrow (back-to-back)"
+          }
+        ],
+        "away": [
+          {
+            "player": "Jalen Williams",
+            "status": "out",
+            "detail": "ankle"
+          },
+          {
+            "player": "Cason Wallace",
+            "status": "out",
+            "detail": "shoulder"
+          },
+          {
+            "player": "Chet Holmgren",
+            "status": "out",
+            "detail": "knee"
+          },
+          {
+            "player": "Nikola Topic",
+            "status": "questionable",
+            "detail": "back"
+          },
+          {
+            "player": "Thomas Sorber",
+            "status": "questionable",
+            "detail": "knee"
+          },
+          {
+            "player": "Jaylin Williams",
+            "status": "questionable",
+            "detail": "back"
+          }
+        ]
+      }
+    }
+  ]
+}

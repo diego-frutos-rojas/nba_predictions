@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mesa de cuotas NBA: modelo frente al mercado</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #eef1ee;
+  --surface: #ffffff;
+  --surface-2: #e6ebe7;
+  --sel: #dfe8f5;
+  --ink: #13202b;
+  --muted: #566772;
+  --line: #cfd8d2;
+  --model: #1b5fd1;
+  --market: #c8430c;
+  --good: #0c7a50;
+  --warn: #9a6200;
+  --gap-small: #8fa09a;
+  --gap-mid: #d9a21b;
+  --gap-big: #c8430c;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1720;
+    --surface: #16212c;
+    --surface-2: #1d2b39;
+    --sel: #1a2c44;
+    --ink: #e8eef2;
+    --muted: #93a3af;
+    --line: #2a3a4b;
+    --model: #7ab0ff;
+    --market: #ff9358;
+    --good: #52d19b;
+    --warn: #e7b04a;
+    --gap-small: #5d7280;
+    --gap-mid: #e7b04a;
+    --gap-big: #ff9358;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1720;
+  --surface: #16212c;
+  --surface-2: #1d2b39;
+  --sel: #1a2c44;
+  --ink: #e8eef2;
+  --muted: #93a3af;
+  --line: #2a3a4b;
+  --model: #7ab0ff;
+  --market: #ff9358;
+  --good: #52d19b;
+  --warn: #e7b04a;
+  --gap-small: #5d7280;
+  --gap-mid: #e7b04a;
+  --gap-big: #ff9358;
+  color-scheme: dark;
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+main { max-width: 1080px; margin: 0 auto; padding: 28px 16px 56px; }
+h1 { font-size: clamp(30px, 6vw, 48px); line-height: 1.04; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 14px; max-width: 18ch; }
+h2 { font-size: 20px; letter-spacing: -0.01em; font-weight: 650; margin: 0 0 6px; }
+h3 { font-size: 16px; font-weight: 650; margin: 0 0 10px; }
+p { margin: 0 0 10px; }
+.lead { font-size: 18px; max-width: 66ch; }
+.meta { color: var(--muted); font-size: 14px; max-width: 70ch; }
+section { margin-top: 34px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: 22px; }
+.ctrl label { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.ctrl output { font-weight: 650; }
+.ctrl small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; line-height: 1.35; }
+input[type="range"] { width: 100%; accent-color: var(--model); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13.5px; color: var(--muted); margin: 6px 0 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend svg { flex: none; }
+#chart { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 4px 0; }
+#chart svg { display: block; width: 100%; height: auto; }
+#chart [role="button"] { cursor: pointer; outline: none; }
+#chart [role="button"]:focus-visible rect.focus { stroke: var(--model); stroke-width: 2; }
+.axis-note { font-size: 13px; color: var(--muted); }
+.detail-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.detail-head p { color: var(--muted); font-size: 14px; margin: 0; }
+.reading { background: var(--surface); border-left: 4px solid var(--model); padding: 12px 14px; border-radius: 0 8px 8px 0; margin: 12px 0 16px; max-width: 80ch; }
+.reading.big { border-left-color: var(--market); }
+.reading.small { border-left-color: var(--good); }
+.grid2 { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
+@media (min-width: 820px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; }
+button { font: inherit; font-size: 14px; font-weight: 550; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; cursor: pointer; }
+button:hover { border-color: var(--model); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--model); outline-offset: 2px; }
+input[type="number"] { font: inherit; width: 96px; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 14.5px; margin: 8px 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; font-weight: 600; text-align: right; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 13px; }
+td.num, th.num { text-align: right; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.tablewrap tr.pick { background: var(--sel); }
+.tablewrap tbody tr { cursor: pointer; }
+.tag { display: inline-block; font-size: 12.5px; font-weight: 600; border-radius: 4px; padding: 1px 7px; border: 1px solid var(--line); background: var(--surface-2); }
+.tag.out { color: var(--market); border-color: var(--market); }
+.tag.dtd { color: var(--warn); border-color: var(--warn); }
+.tag.ok { color: var(--good); border-color: var(--good); }
+.inj { list-style: none; margin: 0 0 12px; padding: 0; font-size: 14.5px; }
+.inj li { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; padding: 3px 0; }
+.inj .d { color: var(--muted); font-size: 13.5px; }
+.team-label { font-weight: 650; font-size: 14px; margin: 6px 0 2px; }
+.notes { margin: 0; padding-left: 20px; }
+.notes li { margin-bottom: 8px; max-width: 70ch; }
+.src { font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+.src a, footer a { color: var(--model); }
+.warn { color: var(--warn); font-weight: 600; }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-top: 34px; }
+summary { cursor: pointer; font-weight: 650; }
+details p, details li { max-width: 74ch; font-size: 14.5px; }
+.picks .panel { margin-bottom: 14px; }
+.picks .panel.value { border-left: 4px solid var(--market); }
+.picks .panel.sure { border-left: 4px solid var(--good); }
+.picks .panel.avoid { border-left: 4px solid var(--muted); }
+.picks .notes li { max-width: 76ch; }
+footer { margin-top: 28px; font-size: 13px; color: var(--muted); }
+footer ul { padding-left: 18px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Mesa de cuotas NBA</h1>
+    <p class="lead" id="lead">Comparo mi modelo base con las cuotas y con el proveedor de datos en los seis partidos de esta noche (hora de EE. UU.). En los cuatro partidos con línea de hoy confirmada, el mercado y el proveedor coinciden entre sí y se alejan de mi modelo en tres. Esas diferencias señalan información que al modelo le falta, no errores del mercado.</p>
+    <p class="meta">Datos recogidos el 10 de noviembre de 2026. Las líneas y los partes de lesiones cambian hasta el salto inicial. Es una herramienta de análisis, no una lista de apuestas. Solo para mayores de 18 años.</p>
+  </header>
+
+  <section class="controls" aria-label="Ajustes del modelo">
+    <div class="ctrl">
+      <label for="c-hca"><span>Ventaja de campo</span><output id="o-hca">3,0 pts</output></label>
+      <input type="range" id="c-hca" min="0" max="5" step="0.5" value="3">
+      <small>El histórico de la NBA ronda los 3 puntos.</small>
+    </div>
+    <div class="ctrl">
+      <label for="c-sig"><span>Dispersión del margen</span><output id="o-sig">12,0 pts</output></label>
+      <input type="range" id="c-sig" min="10" max="14" step="0.5" value="12">
+      <small>Desviación típica del margen final. Convierte puntos en probabilidad.</small>
+    </div>
+    <div class="ctrl">
+      <label for="c-thr"><span>Diferencia grande desde</span><output id="o-thr">10 pp</output></label>
+      <input type="range" id="c-thr" min="5" max="20" step="1" value="10">
+      <small>Puntos porcentuales entre modelo y referencia.</small>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-chart">
+    <h2 id="h-chart">Dónde discrepan el modelo y el mercado</h2>
+    <p class="axis-note">Probabilidad de victoria del equipo local. Pulsa un partido para ver el detalle y ajustar el modelo.</p>
+    <div class="legend" aria-hidden="true">
+      <span><svg width="16" height="16"><circle cx="8" cy="8" r="5.5" fill="none" stroke="var(--model)" stroke-width="2"/></svg>Modelo base</span>
+      <span><svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="var(--model)"/></svg>Modelo ajustado</span>
+      <span><svg width="16" height="16"><polygon points="8,1 15,8 8,15 1,8" fill="var(--market)"/></svg>Mercado</span>
+      <span><svg width="16" height="16"><line x1="8" y1="2" x2="8" y2="14" stroke="var(--muted)" stroke-width="2.5"/></svg>Proveedor</span>
+    </div>
+    <div id="chart"></div>
+  </section>
+
+  <section id="detail" aria-live="polite" aria-labelledby="d-title">
+    <div class="detail-head">
+      <h2 id="d-title"></h2>
+      <p id="d-sub"></p>
+    </div>
+    <p class="reading" id="d-reading"></p>
+
+    <div class="grid2">
+      <div class="panel">
+        <h3>Ajusta el modelo con el contexto</h3>
+        <dl class="kv">
+          <dt>Margen base del local</dt><dd id="d-base"></dd>
+        </dl>
+        <div class="ctrl">
+          <label for="c-adj"><span>Ajuste de contexto, a favor del local</span><output id="o-adj"></output></label>
+          <input type="range" id="c-adj" min="-15" max="15" step="0.5" value="0">
+          <small>Lesiones, descanso, rotaciones. Positivo ayuda al local, negativo ayuda al visitante.</small>
+        </div>
+        <div class="row">
+          <button type="button" id="b-match"></button>
+          <button type="button" id="b-reset">Restablecer</button>
+        </div>
+        <dl class="kv">
+          <dt>Margen ajustado del local</dt><dd id="d-adjm"></dd>
+          <dt>Probabilidad base</dt><dd id="d-pbase"></dd>
+          <dt>Probabilidad ajustada</dt><dd id="d-padj"></dd>
+          <dt>Ajuste que iguala la referencia</dt><dd id="d-need"></dd>
+        </dl>
+      </div>
+
+      <div class="panel">
+        <h3>Mercado</h3>
+        <div class="row">
+          <label for="i-home">Cuota local</label><input type="number" id="i-home" inputmode="numeric" step="1" placeholder="sin línea">
+          <label for="i-away">Cuota visitante</label><input type="number" id="i-away" inputmode="numeric" step="1" placeholder="sin línea">
+        </div>
+        <p class="meta" id="d-mkt-note"></p>
+        <dl class="kv" id="d-spread"></dl>
+        <div class="tablewrap" id="d-ev-wrap">
+          <table>
+            <thead><tr><th>Lado</th><th class="num">Cuota</th><th class="num">Implícita sin margen</th><th class="num">Modelo</th><th class="num">Valor esperado por 1 €</th><th class="num">Kelly al 25 %</th></tr></thead>
+            <tbody id="d-ev"></tbody>
+          </table>
+        </div>
+        <p class="meta" style="margin-top:10px">El valor esperado solo es real si el modelo sabe lo que sabe el mercado. Con diferencias grandes casi nunca es así.</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <h3>Lesiones, descanso y forma</h3>
+        <div id="d-inj"></div>
+      </div>
+      <div class="panel">
+        <h3>Por qué puede haber diferencia</h3>
+        <ul class="notes" id="d-notes"></ul>
+        <p class="src" id="d-src"></p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-table">
+    <h2 id="h-table">Los seis partidos</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Partido</th>
+            <th class="num">Modelo base</th>
+            <th class="num">Modelo ajustado</th>
+            <th class="num">Referencia</th>
+            <th class="num">Diferencia</th>
+            <th class="num">Información que falta</th>
+            <th>Lectura</th>
+          </tr>
+        </thead>
+        <tbody id="t-body"></tbody>
+      </table>
+    </div>
+    <p class="meta" style="margin-top:8px">La referencia es el mercado cuando hay línea de hoy confirmada y el proveedor cuando no la hay. «Información que falta» son los puntos de margen que el modelo necesitaría añadir para coincidir con la referencia.</p>
+  </section>
+
+  <details>
+    <summary>Cómo funciona el modelo y dónde falla</summary>
+    <p><strong>Modelo base.</strong> Un rating de fuerza en puntos por equipo, estimado con regresión de crestas sobre el margen de los 20 partidos más recientes, con un prior que sale del récord de victorias y derrotas. El margen esperado del local es rating local menos rating visitante más la ventaja de campo. La probabilidad sale de una normal con la dispersión que elijas arriba.</p>
+    <p><strong>Límites.</strong></p>
+    <ul>
+      <li>Muestra de 9 a 12 partidos por equipo. El ruido pesa más que la señal.</li>
+      <li>El prior usa récords que ya incluyen los partidos que luego se «predicen», así que cualquier acierto histórico del modelo está inflado.</li>
+      <li>No conoce lesiones, descanso, ritmo de juego ni la fortaleza de la temporada anterior. El mercado sí.</li>
+      <li>La probabilidad de victoria por spread es una conversión mía con la dispersión elegida, no una cuota publicada.</li>
+    </ul>
+    <p><strong>Cómo leer una diferencia.</strong> Si el modelo y el mercado se separan más de unos 4 puntos de margen, lo habitual es que falte información en el modelo. Una ventaja sostenida exige un modelo con lesiones, descanso y datos de temporadas anteriores, y un backtest limpio contra cuotas de cierre.</p>
+  </details>
+
+  <section class="picks" aria-labelledby="h-picks">
+    <h2 id="h-picks">Resumen: dónde hay valor y qué es más fiable</h2>
+    <p class="meta" style="margin-bottom:14px">Con los ajustes por defecto y la información recogida el 10 de noviembre. Los porcentajes de ventaja vienen de Dimers, un modelo externo. Mi modelo actúa solo como segunda opinión, porque con 20 partidos y sin lesiones no es fiable por sí solo. No es asesoramiento financiero ni una recomendación de apuesta.</p>
+
+    <div class="panel value">
+      <h3>Con más valor, de mayor a menor ventaja estimada</h3>
+      <ul class="notes">
+        <li><strong>Kings +5,5 ante Orlando.</strong> Dimers calcula un 4,5 % de ventaja (52,6 % de probabilidad de cubrir, a +108). Mi modelo base da <span data-cover="4:home"></span> de cubrir, una cifra inflada. A favor: Orlando juega sin cinco jugadores y el Sports Gambling Podcast también apunta a Sacramento. En contra: Sabonis y Murray son dudas y los Kings están 0-5 en casa.</li>
+        <li><strong>Thunder −2,5 en Portland.</strong> Dimers calcula un 3,9 % de ventaja (53,5 %). En la moneyline (−122) la ventaja baja al 2,2 % (57,1 %). Mi modelo base da <span data-cover="5:away"></span> de cubrir. A favor: Oklahoma es 8-2 y tanto el mercado como el proveedor lo ven favorito, alrededor del 55 %. En contra: faltan Jalen Williams, Wallace y Holmgren, hay tres dudas más, y Portland recupera a Robert Williams III.</li>
+        <li><strong>Jazz +9,5 ante Miami.</strong> Dimers calcula un 3,6 % de ventaja (54,6 %) y el Sports Gambling Podcast lo elige también, con una línea propia mucho más corta. Mi modelo base da <span data-cover="3:home"></span> de cubrir, la cifra más inflada de las tres. A favor: Giannis es duda y Miami lleva 2 coberturas en 10 partidos. En contra: Utah solo ha cubierto 1 de 10 y juega sin George, Nurkic y Jackson Jr. Las señales están cruzadas.</li>
+        <li><strong>Bucks +15,5 en Nueva York.</strong> Aparece en el titular de las mejores apuestas de Dimers, pero no he podido confirmar su cifra de ventaja. Mi modelo base da <span data-cover="0:away"></span> de cubrir.</li>
+      </ul>
+    </div>
+
+    <div class="panel sure">
+      <h3>Más fiables, es decir, más probables (con poco o ningún valor)</h3>
+      <ul class="notes">
+        <li><strong>Knicks ganan a Milwaukee, alrededor del 90 %.</strong> Mercado, proveedor (90,1 %) y mi modelo (85,8 %) coinciden. Milwaukee es 1-9. La cuota paga muy poco y el spread de 15,5 depende del margen final.</li>
+        <li><strong>Heat ganan en Utah, 77,5 % sin margen.</strong> El proveedor da 78,2 %. Mi modelo da menos (57 %), pero señala al mismo ganador. Giannis es duda.</li>
+        <li><strong>Magic ganan en Sacramento, 66,5 % sin margen.</strong> El proveedor da 67 %. Orlando pierde cuatro seguidos y juega sin cinco jugadores, así que es la menos sólida de las tres.</li>
+        <li><strong>Phoenix en casa, 60,5 % según el proveedor.</strong> Mi modelo da 55,7 %. No hay línea confirmada y Phoenix juega en back-to-back, así que la confianza es menor.</li>
+        <li>Fiable aquí significa probable, no rentable: la cuota ya descuenta lo que vemos.</li>
+      </ul>
+    </div>
+
+    <div class="panel avoid">
+      <h3>Lo que el modelo no respalda, aunque salga valor positivo</h3>
+      <ul class="notes">
+        <li><strong>Utah (+324), Sacramento (+186) y Oklahoma (−122) a ganar.</strong> Con mi modelo base sale valor esperado positivo en los tres, pero es el falso positivo más claro: el mercado y el proveedor ven esos partidos de forma muy distinta, y casi seguro por lesiones que mi modelo no conoce.</li>
+        <li><strong>Celtics–76ers y Suns–Clippers.</strong> No hay línea de hoy confirmada, así que no se puede calcular valor.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h3>Cómo leer este resumen</h3>
+      <ul class="notes">
+        <li>Las ventajas del 2 al 5 % están dentro del ruido: una racha corta puede borrarlas.</li>
+        <li>Mi modelo tiende a favorecer a los equipos malos por construcción, porque encoge sus ratings hacia la media. Por eso que coincida con Dimers en los underdogs no cuenta como confirmación independiente.</li>
+        <li>Confirma las alineaciones antes del salto inicial. Sabonis, Giannis, Markkanen y los dudosos de Oklahoma pueden mover las líneas.</li>
+        <li>Para convertir esto en takes fiables hacen falta lesiones, descanso y temporadas anteriores dentro del modelo, y un backtest contra cuotas de cierre.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <p>Fuentes consultadas el 10 de noviembre de 2026. Resumido con mis palabras.</p>
+    <ul id="f-src"></ul>
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Datos ---------- */
+  var RATING = { NYK: 2.49, MIL: -7.38, PHI: 4.47, BOS: 5.98, PHX: -4.07, LAC: -2.80, UTA: -5.87, MIA: -0.67, SAC: -6.33, ORL: -2.72, POR: -0.32, OKC: 7.81 };
+
+  var SRC = {
+    okcpor: { t: "iHeart: parte de lesiones Thunder–Trail Blazers", u: "https://ripcityradio.iheart.com/content/2026-11-10-thunder-vs-trail-blazers-injury-report-nov-10/" },
+    blazers: { t: "Blazer’s Edge: parte de lesiones de Portland", u: "https://blazersedge.com/trail-blazers-injury-report/118193/portland-trail-blazers-nba-injury-report-oklahoma-city-thunder-robert-williams-ja-morant-news-lakers-spurs" },
+    heatjazz: { t: "iHeart: parte de lesiones Heat–Jazz", u: "https://foxsports940.iheart.com/content/2026-11-10-heat-vs-jazz-injury-report-nov-10/" },
+    heatjazzOdds: { t: "iHeart: predicciones y tendencias Heat–Jazz", u: "https://foxsports940.iheart.com/content/2026-11-10-heat-vs-jazz-predictions-odds-stats-nov-10/" },
+    slc: { t: "SLC Dunk: lesiones de Utah", u: "https://slcdunk.com/utah-jazz-game-coverage/70653/another-blow-to-the-utah-jazz-on-their-injury-report" },
+    bnJazz: { t: "Bleacher Nation: Heat–Jazz", u: "https://www.bleachernation.com/picks/2026/11/10/heat-vs-jazz-predictions-best-bets-and-odds-tuesday-november-10-2026/" },
+    bnKings: { t: "Bleacher Nation: Magic–Kings", u: "https://www.bleachernation.com/picks/2026/11/10/magic-vs-kings-predictions-best-bets-and-odds-tuesday-november-10-2026/" },
+    cappersJazz: { t: "Cappers Picks: Heat–Jazz", u: "https://www.capperspicks.com/free-picks/ai/miami-heat-at-utah-jazz-pick-nba-prediction-preview-odds-11-10-2026/" },
+    cappersKings: { t: "Cappers Picks: Magic–Kings", u: "https://capperspicks.com/free-picks/ai/orlando-magic-at-sacramento-kings-pick-nba-prediction-preview-odds-11-10-2026" },
+    dawgz: { t: "Pick Dawgz: Magic–Kings", u: "https://pickdawgz.com/nba-picks/magic-vs-kings-prediction-11-10-2026-nba-picks-today" },
+    podcast: { t: "Sports Gambling Podcast: picks del 10 de noviembre", u: "https://www.sportsgamblingpodcast.com/2026/11/09/nba-picks-preview-predictions-for-tuesday-nov-10th/" },
+    dimers: { t: "Dimers: mejores apuestas del 10 de noviembre", u: "https://www.dimers.com/nba/news/nba-best-bets-11-10-2026-ac" },
+    talk: { t: "TalkBasket: parte de lesiones del 10 de noviembre", u: "https://www.talkbasket.net/227305-nba-injury-report-giannis-sabonis-listed-on-tuesday-november-10" },
+    dk: { t: "DraftKings Network: parte de lesiones", u: "https://dknetwork.draftkings.com/2026/11/09/tyler-herro-headlines-todays-nba-injury-report-tuesday-11-10-26/" },
+    fd: { t: "FanDuel Research: noticias de lesiones", u: "https://www.fanduel.com/research/nba/player-news/injuries" },
+    celtsix: { t: "iHeart: parte de lesiones Celtics–76ers", u: "https://foxsports1300.iheart.com/content/2026-11-10-celtics-vs-76ers-injury-report-nov-10/" }
+  };
+
+  var G = [
+    {
+      home: "NYK", away: "MIL", homeName: "New York Knicks", awayName: "Milwaukee Bucks",
+      tip: "miércoles 01:30 en Madrid (19:30 ET del martes)", provider: 0.901,
+      spread: 15.5, spreadText: "Knicks −15,5 (Bucks +15,5)", odds: { home: null, away: null },
+      record: { home: "5-4", away: "1-9" }, rest: { home: 2, away: 1 },
+      last: { home: "Ganó 109-97 en Cleveland (7 nov)", away: "Perdió 97-117 ante Boston (8 nov)" },
+      inj: {
+        home: [{ n: "Josh Hart", s: "Duda", d: "tobillo" }],
+        away: [{ n: "Tyler Herro", s: "Duda", d: "rodilla" }]
+      },
+      notes: [
+        "La diferencia es pequeña: mi modelo ya ve a Milwaukee (1-9) como el peor equipo de la liga. Con un spread de 15,5 puntos el margen de error del propio mercado es grande.",
+        "Giannis Antetokounmpo figura ahora en el parte de Miami y no en el de Milwaukee, algo que un modelo basado solo en resultados no puede saber.",
+        "Con un favorito tan claro la cuota de victoria directa paga muy poco. Si hubiera valor, estaría en el spread o en el total, que no he podido confirmar."
+      ],
+      sources: ["dk", "fd", "dimers", "heatjazz"]
+    },
+    {
+      home: "PHI", away: "BOS", homeName: "Philadelphia 76ers", awayName: "Boston Celtics",
+      tip: "miércoles 02:00 en Madrid (20:00 ET del martes)", provider: 0.471,
+      spread: null, spreadText: "", odds: { home: null, away: null },
+      record: { home: "9-2", away: "8-2" }, rest: { home: 1, away: 1 },
+      last: { home: "Ganó 127-121 en Chicago (8 nov)", away: "Ganó 117-97 en Milwaukee (8 nov)" },
+      inj: {
+        home: [
+          { n: "Ariel Hukporti", s: "Fuera", d: "Aquiles, toda la temporada" },
+          { n: "Adem Bona", s: "Fuera", d: "columna" },
+          { n: "Dominick Barlow", s: "Fuera", d: "espalda" }
+        ],
+        away: [{ n: "Devin Carter", s: "Fuera", d: "enfermedad" }]
+      },
+      notes: [
+        "No he encontrado una línea de hoy fiable. Las páginas con cuotas de Celtics–76ers que aparecían eran de la temporada pasada y las descarté.",
+        "Sin mercado, solo puedo comparar con el proveedor: 7,8 puntos de diferencia, dentro del ruido de un modelo con diez partidos por equipo.",
+        "Las bajas de Filadelfia son jugadores de rotación y Boston solo pierde a Carter por enfermedad. Con 9-2 y 8-2 es un duelo entre los mejores de la conferencia."
+      ],
+      sources: ["celtsix"]
+    },
+    {
+      home: "PHX", away: "LAC", homeName: "Phoenix Suns", awayName: "LA Clippers",
+      tip: "miércoles 03:00 en Madrid (21:00 ET del martes)", provider: 0.605,
+      spread: null, spreadText: "", odds: { home: null, away: null },
+      record: { home: "3-6", away: "2-7" }, rest: { home: 0, away: 1 },
+      last: { home: "Perdió 96-122 ante San Antonio (9 nov)", away: "Ganó 139-123 ante Nueva Orleans (8 nov)" },
+      inj: {
+        home: [],
+        away: [
+          { n: "Bradley Beal", s: "En parte", d: "rodilla, gestión" },
+          { n: "Cam Christie", s: "Duda", d: "tobillo" }
+        ]
+      },
+      notes: [
+        "Tampoco he podido confirmar una línea de hoy para este partido, así que la referencia es el proveedor.",
+        "Según el calendario, Phoenix juega en back-to-back (perdió anoche por 26 contra San Antonio) y los Clippers llegan con un día de descanso. El proveedor aun así da ventaja al local.",
+        "Los Clippers tienen a Beal con gestión de rodilla y a Christie en duda. Phoenix no había enviado su parte cuando se publicó el listado que consulté."
+      ],
+      sources: ["talk", "dk"]
+    },
+    {
+      home: "UTA", away: "MIA", homeName: "Utah Jazz", awayName: "Miami Heat",
+      tip: "miércoles 03:00 en Madrid (21:00 ET del martes)", provider: 0.218,
+      spread: -9.5, spreadText: "Heat −9,5, total 227,5", odds: { home: 324, away: -432 },
+      record: { home: "1-9", away: "4-6" }, rest: { home: 1, away: 1 },
+      last: { home: "Perdió 100-115 en Minnesota (8 nov)", away: "Ganó 114-108 en Sacramento (8 nov)" },
+      inj: {
+        home: [
+          { n: "Keyonte George", s: "Fuera", d: "tobillo" },
+          { n: "Jusuf Nurkic", s: "Fuera", d: "pie" },
+          { n: "Jaren Jackson Jr.", s: "Fuera", d: "rodilla" },
+          { n: "Lauri Markkanen", s: "Duda", d: "muñeca" }
+        ],
+        away: [{ n: "Giannis Antetokounmpo", s: "Duda", d: "muñeca" }]
+      },
+      notes: [
+        "El mercado (Heat −432 y Jazz +324, 22,5 % para Utah sin margen) y el proveedor (21,8 %) coinciden. Mi modelo daba 42,7 %: le faltaban unos 7 puntos de margen.",
+        "Utah tiene el peor récord (1-9), anota 106,2 puntos por partido (29.º) y recibe 117,9. Además pierde a George, Nurkic y Jackson Jr., y Markkanen es duda. Un modelo de resultados no ve nada de eso.",
+        "Cautela con el spread: Giannis es duda, Miami lleva 2 coberturas en 10 partidos y los modelos públicos no se ponen de acuerdo (uno da 117-113 para Utah, otro 120-108 para Miami). Si hay valor, está en cubrir +9,5 y no en que Utah gane.",
+        "Utah ha perdido los nueve partidos en que fue underdog por moneyline este año."
+      ],
+      sources: ["heatjazz", "slc", "heatjazzOdds", "bnJazz", "cappersJazz", "podcast", "dimers"]
+    },
+    {
+      home: "SAC", away: "ORL", homeName: "Sacramento Kings", awayName: "Orlando Magic",
+      tip: "miércoles 04:00 en Madrid (22:00 ET del martes)", provider: 0.33,
+      spread: -5.5, spreadText: "Magic −5,5 (−6,5 en algún libro), total 221,5", odds: { home: 186, away: -228 },
+      record: { home: "1-9", away: "2-7" }, rest: { home: 1, away: 2 },
+      last: { home: "Perdió 108-114 ante Miami (8 nov)", away: "Perdió 119-126 en Golden State (7 nov)" },
+      inj: {
+        home: [
+          { n: "Domantas Sabonis", s: "Duda", d: "rodilla" },
+          { n: "Keegan Murray", s: "Duda", d: "muñeca" }
+        ],
+        away: [
+          { n: "Paolo Banchero", s: "Fuera", d: "esguince alto de tobillo" },
+          { n: "Jonathan Isaac", s: "Fuera", d: "gestión de rodilla" },
+          { n: "Jalen Suggs", s: "Fuera", d: "rodilla, contusión" },
+          { n: "Noah Penda", s: "Fuera", d: "isquio parcialmente roto" },
+          { n: "Izaiyah Nelson", s: "Fuera", d: "tobillo" }
+        ]
+      },
+      notes: [
+        "Otra vez el mercado (Magic −228 y Kings +186, 33,5 % para Sacramento sin margen) y el proveedor (33,0 %) coinciden y mi modelo se aleja: daba 48 %.",
+        "Es llamativo: Orlando juega sin Banchero, Suggs, Isaac, Penda y Nelson y sigue siendo favorito. El mercado considera a Sacramento (1-9, 0-5 en casa) muy inferior, algo que mi prior de récord suavizó demasiado.",
+        "Sabonis y Murray son dudas. Si Sabonis no juega, la línea puede moverse hacia Orlando. Dimers calcula un 4,5 % de ventaja en Kings +5,5, una cifra pequeña y dentro del ruido.",
+        "Orlando pierde cuatro seguidos, está 0-4 en casa y 3-6 contra el spread. Sacramento también encadena cuatro derrotas."
+      ],
+      sources: ["talk", "dk", "bnKings", "cappersKings", "dawgz", "podcast", "dimers"]
+    },
+    {
+      home: "POR", away: "OKC", homeName: "Portland Trail Blazers", awayName: "Oklahoma City Thunder",
+      tip: "miércoles 05:00 en Madrid (23:00 ET del martes)", provider: 0.445,
+      spread: -2.5, spreadText: "Thunder −2,5", odds: { home: null, away: -122 },
+      record: { home: "6-3", away: "8-2" }, rest: { home: 2, away: 2 },
+      last: { home: "Perdió 103-125 ante San Antonio (7 nov)", away: "Ganó 114-75 ante Washington (7 nov)" },
+      inj: {
+        home: [
+          { n: "Ja Morant", s: "Fuera", d: "isquio" },
+          { n: "Shaedon Sharpe", s: "Fuera", d: "menisco" },
+          { n: "Vit Krejci", s: "Fuera", d: "fractura de tobillo" },
+          { n: "Robert Williams III", s: "Disponible", d: "hoy sí, mañana descansa" }
+        ],
+        away: [
+          { n: "Jalen Williams", s: "Fuera", d: "tobillo" },
+          { n: "Cason Wallace", s: "Fuera", d: "hombro" },
+          { n: "Chet Holmgren", s: "Fuera", d: "rodilla" },
+          { n: "Nikola Topic", s: "Duda", d: "espalda" },
+          { n: "Thomas Sorber", s: "Duda", d: "rodilla" },
+          { n: "Jaylin Williams", s: "Duda", d: "espalda" }
+        ]
+      },
+      notes: [
+        "Aquí el error de mi modelo va en sentido contrario: daba 66,6 % a Oklahoma y el mercado (Thunder −122, spread −2,5) y el proveedor (55,5 %) lo dejan en torno al 54-55 %.",
+        "Oklahoma es 8-2, pero llega sin Jalen Williams, Wallace y Holmgren, con tres más en duda. Mi modelo solo veía el récord.",
+        "Portland también pierde a Morant, Sharpe y Krejci, pero recupera a Robert Williams III. Según Blazer’s Edge, el miércoles hay revancha contra Oklahoma y Williams no jugará, lo que hace este primer partido especialmente importante para Portland.",
+        "Dimers calcula ventajas pequeñas en Thunder −2,5 (3,9 %) y Thunder moneyline (2,2 %). Con tantas dudas en Oklahoma, la alineación final puede cambiar todo."
+      ],
+      sources: ["okcpor", "blazers", "talk", "dimers"]
+    }
+  ];
+
+  var S = {
+    sel: 0, hca: 3, sigma: 12, thr: 10,
+    adj: G.map(function () { return 0; }),
+    odds: G.map(function (g) { return { home: g.odds.home, away: g.odds.away }; })
+  };
+
+  /* ---------- Matemática ---------- */
+  function erf(x) {
+    var s = x < 0 ? -1 : 1; x = Math.abs(x);
+    var t = 1 / (1 + 0.3275911 * x);
+    var y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+    return s * y;
+  }
+  function cdf(x) { return 0.5 * (1 + erf(x / Math.SQRT2)); }
+  function ppf(p) {
+    var lo = -7, hi = 7;
+    for (var i = 0; i < 70; i++) { var m = (lo + hi) / 2; if (cdf(m) < p) lo = m; else hi = m; }
+    return (lo + hi) / 2;
+  }
+  function validOdds(o) { return typeof o === "number" && isFinite(o) && Math.abs(o) >= 100; }
+  function imp(o) { return o < 0 ? (-o) / (-o + 100) : 100 / (o + 100); }
+  function dec(o) { return o > 0 ? 1 + o / 100 : 1 + 100 / (-o); }
+
+  function baseMargin(i) { var g = G[i]; return RATING[g.home] - RATING[g.away] + S.hca; }
+  function adjMargin(i) { return baseMargin(i) + S.adj[i]; }
+  function pBase(i) { return cdf(baseMargin(i) / S.sigma); }
+  function pAdj(i) { return cdf(adjMargin(i) / S.sigma); }
+
+  function marketRef(i) {
+    var g = G[i], o = S.odds[i], h = validOdds(o.home), a = validOdds(o.away);
+    if (h && a) {
+      var ph = imp(o.home), pa = imp(o.away);
+      return { p: ph / (ph + pa), kind: "ml", label: "cuotas sin margen", vig: ph + pa - 1 };
+    }
+    if (h) return { p: imp(o.home), kind: "ml1", label: "cuota local con margen" };
+    if (a) return { p: 1 - imp(o.away), kind: "ml1", label: "cuota visitante con margen" };
+    if (g.spread != null) return { p: cdf(g.spread / S.sigma), kind: "spread", label: "spread convertido a probabilidad" };
+    return null;
+  }
+  function reference(i) {
+    var m = marketRef(i);
+    if (m) return { p: m.p, isMarket: true, label: m.label, kind: m.kind };
+    return { p: G[i].provider, isMarket: false, label: "proveedor", kind: "provider" };
+  }
+  function gapPP(i) { return (pAdj(i) - reference(i).p) * 100; }
+  function needPts(i) {
+    var target = S.sigma * ppf(Math.min(0.999, Math.max(0.001, reference(i).p)));
+    return target - baseMargin(i);
+  }
+  function signal(gap) {
+    var a = Math.abs(gap);
+    if (a < 5) return { t: "Alineado", c: "var(--gap-small)", k: "small" };
+    if (a < S.thr) return { t: "Diferencia moderada", c: "var(--gap-mid)", k: "mid" };
+    return { t: "Diferencia grande", c: "var(--gap-big)", k: "big" };
+  }
+
+  /* ---------- Formato ---------- */
+  function fmt(n, d) { return n.toFixed(d == null ? 1 : d).replace(".", ","); }
+  function signed(n, d) { var s = n > 0.0001 ? "+" : (n < -0.0001 ? "−" : ""); return s + fmt(Math.abs(n), d); }
+  function pct(p) { return fmt(p * 100, 1) + " %"; }
+  function eur(n) { return signed(n, 2) + " €"; }
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function ns(tag, attrs) {
+    var e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  /* ---------- Gráfico ---------- */
+  function renderChart() {
+    var box = $("chart"); box.textContent = "";
+    var W = Math.max(300, box.clientWidth || 600), padX = 14, top = 40, rowH = 78;
+    var H = top + G.length * rowH + 6;
+    var svg = ns("svg", { viewBox: "0 0 " + W + " " + H, role: "group", "aria-label": "Probabilidad de victoria del local: modelo frente a mercado" });
+    function x(p) { return padX + (W - 2 * padX) * p; }
+
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (t) {
+      svg.appendChild(ns("line", { x1: x(t), x2: x(t), y1: 26, y2: H - 4, stroke: "var(--line)", "stroke-width": t === 0.5 ? 2 : 1 }));
+      var tx = ns("text", { x: x(t), y: 17, "text-anchor": t === 0 ? "start" : (t === 1 ? "end" : "middle"), fill: "var(--muted)", "font-size": 12 });
+      tx.textContent = Math.round(t * 100) + " %";
+      svg.appendChild(tx);
+    });
+
+    G.forEach(function (g, i) {
+      var y0 = top + i * rowH, yT = y0 + 58;
+      var pa = pAdj(i), pb = pBase(i), ref = reference(i), gap = gapPP(i), sg = signal(gap);
+      var row = ns("g", { role: "button", tabindex: "0", "aria-label": g.away + " en " + g.home + ". Modelo " + pct(pa) + ", " + ref.label + " " + pct(ref.p) + ". " + sg.t });
+      row.appendChild(ns("rect", { class: "focus", x: 3, y: y0, width: W - 6, height: rowH - 6, rx: 8, fill: i === S.sel ? "var(--sel)" : "transparent", stroke: "none" }));
+
+      var title = ns("text", { x: padX + 4, y: y0 + 20, fill: "var(--ink)", "font-size": 15, "font-weight": 650 });
+      title.textContent = g.away + " en " + g.home;
+      row.appendChild(title);
+
+      var info = ns("text", { x: W - padX - 4, y: y0 + 20, "text-anchor": "end", fill: "var(--muted)", "font-size": 12.5 });
+      info.textContent = "Modelo " + fmt(pa * 100, 0) + " %, " + (ref.isMarket ? "mercado " : "proveedor ") + fmt(ref.p * 100, 0) + " %";
+      row.appendChild(info);
+
+      var sub = ns("text", { x: padX + 4, y: y0 + 38, fill: sg.c === "var(--gap-small)" ? "var(--muted)" : "var(--ink)", "font-size": 13 });
+      sub.textContent = sg.t + ": " + signed(gap, 1) + " puntos";
+      row.appendChild(sub);
+
+      row.appendChild(ns("line", { x1: x(0), x2: x(1), y1: yT, y2: yT, stroke: "var(--line)", "stroke-width": 2 }));
+      row.appendChild(ns("line", { x1: x(pa), x2: x(ref.p), y1: yT, y2: yT, stroke: sg.c, "stroke-width": 5, "stroke-linecap": "round", opacity: 0.75 }));
+
+      row.appendChild(ns("line", { x1: x(g.provider), x2: x(g.provider), y1: yT - 9, y2: yT + 9, stroke: "var(--muted)", "stroke-width": 2.5 }));
+
+      var m = marketRef(i);
+      if (m) {
+        var mx = x(m.p), d = 8;
+        row.appendChild(ns("polygon", { points: (mx) + "," + (yT - d) + " " + (mx + d) + "," + yT + " " + mx + "," + (yT + d) + " " + (mx - d) + "," + yT, fill: "var(--market)" }));
+      }
+      if (Math.abs(pa - pb) > 0.001) {
+        row.appendChild(ns("circle", { cx: x(pb), cy: yT, r: 6, fill: "var(--surface)", stroke: "var(--model)", "stroke-width": 2 }));
+      }
+      row.appendChild(ns("circle", { cx: x(pa), cy: yT, r: 7, fill: "var(--model)" }));
+
+      row.addEventListener("click", function () { select(i); });
+      row.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(i); } });
+      svg.appendChild(row);
+    });
+    box.appendChild(svg);
+  }
+
+  /* ---------- Detalle ---------- */
+  function renderStatic() {
+    var g = G[S.sel];
+    $("d-title").textContent = g.away + " en " + g.home + ": " + g.awayName + " contra " + g.homeName;
+    $("d-sub").textContent = "Hora: " + g.tip + ". Récord " + g.home + " " + g.record.home + ", " + g.away + " " + g.record.away + ".";
+
+    var inj = $("d-inj"); inj.textContent = "";
+    [["home", g.home, g.homeName], ["away", g.away, g.awayName]].forEach(function (side) {
+      var key = side[0];
+      inj.appendChild(el("div", "team-label", side[2]));
+      var ul = el("ul", "inj");
+      if (!g.inj[key].length) {
+        var li0 = el("li"); li0.appendChild(el("span", "d", "Sin parte publicado en las fuentes consultadas")); ul.appendChild(li0);
+      }
+      g.inj[key].forEach(function (p) {
+        var li = el("li");
+        var cls = p.s === "Fuera" ? "tag out" : (p.s === "Disponible" ? "tag ok" : "tag dtd");
+        li.appendChild(el("span", cls, p.s));
+        li.appendChild(el("span", null, p.n));
+        li.appendChild(el("span", "d", p.d));
+        ul.appendChild(li);
+      });
+      inj.appendChild(ul);
+      var rest = g.rest[key];
+      var restTxt = rest === 0 ? "Juega en back-to-back (sin día de descanso)" : (rest === 1 ? "1 día de descanso" : rest + " días de descanso");
+      var p1 = el("p", "meta", restTxt + ". " + g.last[key] + ".");
+      p1.style.marginBottom = "14px";
+      inj.appendChild(p1);
+    });
+    var note = el("p", "src", "El descanso lo he calculado a partir del calendario de resultados.");
+    inj.appendChild(note);
+
+    var notes = $("d-notes"); notes.textContent = "";
+    g.notes.forEach(function (n) { notes.appendChild(el("li", null, n)); });
+
+    var src = $("d-src"); src.textContent = "";
+    src.appendChild(document.createTextNode("Fuentes: "));
+    g.sources.forEach(function (k, idx) {
+      var a = document.createElement("a");
+      a.href = SRC[k].u; a.target = "_blank"; a.rel = "noopener noreferrer"; a.textContent = SRC[k].t;
+      src.appendChild(a);
+      if (idx < g.sources.length - 1) src.appendChild(document.createTextNode("; "));
+    });
+
+    $("i-home").value = S.odds[S.sel].home == null ? "" : S.odds[S.sel].home;
+    $("i-away").value = S.odds[S.sel].away == null ? "" : S.odds[S.sel].away;
+    $("c-adj").value = S.adj[S.sel];
+  }
+
+  function updateNumbers() {
+    var i = S.sel, g = G[i];
+    var base = baseMargin(i), am = adjMargin(i), ref = reference(i), mk = marketRef(i);
+    var pa = pAdj(i), pb = pBase(i), gap = gapPP(i), sg = signal(gap);
+
+    $("o-adj").textContent = signed(S.adj[i], 1) + " pts";
+    $("d-base").textContent = signed(base, 1) + " pts";
+    $("d-adjm").textContent = signed(am, 1) + " pts";
+    $("d-pbase").textContent = pct(pb);
+    $("d-padj").textContent = pct(pa);
+    var need = needPts(i);
+    $("d-need").textContent = signed(need, 1) + " pts";
+    $("b-match").textContent = mk ? "Igualar al mercado" : "Igualar al proveedor";
+
+    var txt = "El modelo da " + pct(pa) + " de victoria a " + g.homeName + ". " + (ref.isMarket ? "El mercado (" + ref.label + ")" : "El proveedor") + " da " + pct(ref.p) + ". Diferencia: " + signed(gap, 1) + " puntos porcentuales. ";
+    if (sg.k === "big") {
+      txt += "Una diferencia así casi siempre significa que al modelo le falta información, no que el mercado se equivoque. Para verla como valor, antes tienes que explicarla con el ajuste de contexto. " + (ref.isMarket ? "" : "Además aquí no hay línea de hoy confirmada, así que la referencia es más débil.");
+    } else if (sg.k === "mid") {
+      txt += "Es una diferencia moderada. Revisa lesiones y descanso antes de darle peso, porque puede ser ruido de una muestra pequeña.";
+    } else {
+      txt += "El modelo y la referencia están alineados. No hay discrepancia que explotar en este partido.";
+    }
+    var r = $("d-reading"); r.textContent = txt; r.className = "reading " + sg.k;
+
+    // Mercado
+    var mn = "";
+    if (!mk) mn = "No he encontrado una línea de hoy confirmada. Introduce cuotas americanas (por ejemplo −150 o +130) para calcular el valor esperado.";
+    else if (mk.kind === "ml") mn = "Margen de la casa en estas cuotas: " + fmt(mk.vig * 100, 1) + " %. La probabilidad implícita está calculada quitándolo.";
+    else if (mk.kind === "ml1") mn = "Solo hay una cuota. La probabilidad implícita incluye el margen de la casa, así que sobrestima ligeramente a ese equipo.";
+    else mn = "Solo hay spread. Lo convierto a probabilidad con la dispersión elegida, así que es una estimación mía.";
+    $("d-mkt-note").textContent = mn;
+
+    var sp = $("d-spread"); sp.textContent = "";
+    if (g.spread != null) {
+      var row = function (k, v) { sp.appendChild(el("dt", null, k)); sp.appendChild(el("dd", null, v)); };
+      row("Línea", g.spreadText);
+      row("Margen esperado según el mercado (local)", signed(g.spread, 1) + " pts");
+      row("Margen según el modelo ajustado (local)", signed(am, 1) + " pts");
+      var diff = am - g.spread;
+      row("Diferencia de margen", signed(diff, 1) + " pts");
+      row("Probabilidad de cubrir del local según el modelo", pct(cdf(diff / S.sigma)));
+      if (Math.abs(diff) > 4) {
+        var w = el("dd", "warn", "Más de 4 puntos de diferencia: lo normal es que falte información en el modelo.");
+        sp.appendChild(el("dt", null, "Aviso")); sp.appendChild(w);
+      }
+    }
+
+    var tb = $("d-ev"); tb.textContent = "";
+    var o = S.odds[i], hv = validOdds(o.home), av = validOdds(o.away);
+    if (!hv && !av) {
+      var tr0 = el("tr"); var td0 = el("td", null, "Sin cuotas introducidas."); td0.colSpan = 6; tr0.appendChild(td0); tb.appendChild(tr0);
+    } else {
+      var ph = hv ? imp(o.home) : null, pa2 = av ? imp(o.away) : null;
+      var tot = (hv && av) ? ph + pa2 : null;
+      [[g.home, hv, o.home, pa, tot ? ph / tot : null], [g.away, av, o.away, 1 - pa, tot ? pa2 / tot : null]].forEach(function (s) {
+        var tr = el("tr");
+        tr.appendChild(el("td", null, s[0]));
+        var c = el("td", "num", s[1] ? (s[2] > 0 ? "+" : "−") + Math.abs(s[2]) : "sin cuota"); tr.appendChild(c);
+        tr.appendChild(el("td", "num", s[4] != null ? pct(s[4]) : (s[1] ? pct(imp(s[2])) + " (con margen)" : "")));
+        tr.appendChild(el("td", "num", pct(s[3])));
+        if (s[1]) {
+          var d = dec(s[2]), ev = s[3] * (d - 1) - (1 - s[3]);
+          var k = Math.max(0, (s[3] * d - 1) / (d - 1)) * 0.25;
+          var evc = el("td", "num", eur(ev)); if (ev > 0) evc.className = "num warn"; tr.appendChild(evc);
+          tr.appendChild(el("td", "num", k > 0 ? fmt(k * 100, 1) + " %" : "0 %"));
+        } else { tr.appendChild(el("td", "num", "")); tr.appendChild(el("td", "num", "")); }
+        tb.appendChild(tr);
+      });
+    }
+    renderChart();
+    renderTable();
+    renderPicks();
+  }
+
+  function renderPicks() {
+    var nodes = document.querySelectorAll("[data-cover]");
+    for (var n = 0; n < nodes.length; n++) {
+      var parts = nodes[n].getAttribute("data-cover").split(":");
+      var i = parseInt(parts[0], 10), g = G[i];
+      var homeCover = cdf((baseMargin(i) - g.spread) / S.sigma);
+      nodes[n].textContent = pct(parts[1] === "home" ? homeCover : 1 - homeCover);
+    }
+  }
+
+  /* ---------- Tabla ---------- */
+  function renderTable() {
+    var tb = $("t-body"); tb.textContent = "";
+    G.forEach(function (g, i) {
+      var ref = reference(i), gap = gapPP(i), sg = signal(gap);
+      var tr = el("tr"); if (i === S.sel) tr.className = "pick";
+      tr.tabIndex = 0;
+      tr.appendChild(el("td", null, g.away + " en " + g.home));
+      tr.appendChild(el("td", "num", pct(pBase(i))));
+      tr.appendChild(el("td", "num", pct(pAdj(i))));
+      tr.appendChild(el("td", "num", pct(ref.p) + " (" + (ref.isMarket ? "mercado" : "proveedor") + ")"));
+      tr.appendChild(el("td", "num", signed(gap, 1) + " pp"));
+      tr.appendChild(el("td", "num", signed(needPts(i), 1) + " pts"));
+      tr.appendChild(el("td", null, sg.t));
+      tr.addEventListener("click", function () { select(i); window.scrollTo({ top: $("detail").offsetTop - 10, behavior: "smooth" }); });
+      tr.addEventListener("keydown", function (e) { if (e.key === "Enter") select(i); });
+      tb.appendChild(tr);
+    });
+  }
+
+  function select(i) { S.sel = i; renderStatic(); updateNumbers(); }
+
+  /* ---------- Eventos ---------- */
+  $("c-hca").addEventListener("input", function (e) { S.hca = parseFloat(e.target.value); $("o-hca").textContent = fmt(S.hca, 1) + " pts"; updateNumbers(); });
+  $("c-sig").addEventListener("input", function (e) { S.sigma = parseFloat(e.target.value); $("o-sig").textContent = fmt(S.sigma, 1) + " pts"; updateNumbers(); });
+  $("c-thr").addEventListener("input", function (e) { S.thr = parseFloat(e.target.value); $("o-thr").textContent = S.thr + " pp"; updateNumbers(); });
+  $("c-adj").addEventListener("input", function (e) { S.adj[S.sel] = parseFloat(e.target.value); updateNumbers(); });
+  $("b-reset").addEventListener("click", function () { S.adj[S.sel] = 0; $("c-adj").value = 0; updateNumbers(); });
+  $("b-match").addEventListener("click", function () {
+    var v = Math.max(-15, Math.min(15, Math.round(needPts(S.sel) * 2) / 2));
+    S.adj[S.sel] = v; $("c-adj").value = v; updateNumbers();
+  });
+  function oddsInput(side) {
+    return function (e) {
+      var v = e.target.value === "" ? null : parseFloat(e.target.value);
+      S.odds[S.sel][side] = (v != null && isFinite(v)) ? v : null;
+      updateNumbers();
+    };
+  }
+  $("i-home").addEventListener("input", oddsInput("home"));
+  $("i-away").addEventListener("input", oddsInput("away"));
+
+  var raf = null;
+  window.addEventListener("resize", function () { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(renderChart); });
+
+  /* ---------- Pie ---------- */
+  var seen = {}, fl = $("f-src");
+  G.forEach(function (g) { g.sources.forEach(function (k) { seen[k] = true; }); });
+  Object.keys(seen).forEach(function (k) {
+    var li = document.createElement("li"), a = document.createElement("a");
+    a.href = SRC[k].u; a.target = "_blank"; a.rel = "noopener noreferrer"; a.textContent = SRC[k].t;
+    li.appendChild(a); fl.appendChild(li);
+  });
+
+  /* ---------- Inicio ---------- */
+  select(3);
+})();
+</script>
+</body>
+</html>

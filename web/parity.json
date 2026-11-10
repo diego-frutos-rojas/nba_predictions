@@ -1,0 +1,38 @@
+[
+ {
+  "home": "NYK",
+  "away": "MIL",
+  "margin": 15.0408,
+  "prob_home": 0.8633
+ },
+ {
+  "home": "PHI",
+  "away": "BOS",
+  "margin": -3.2335,
+  "prob_home": 0.4069
+ },
+ {
+  "home": "PHX",
+  "away": "LAC",
+  "margin": -0.1082,
+  "prob_home": 0.4969
+ },
+ {
+  "home": "UTA",
+  "away": "MIA",
+  "margin": -6.2769,
+  "prob_home": 0.3238
+ },
+ {
+  "home": "SAC",
+  "away": "ORL",
+  "margin": -4.2692,
+  "prob_home": 0.378
+ },
+ {
+  "home": "POR",
+  "away": "OKC",
+  "margin": -2.6698,
+  "prob_home": 0.4229
+ }
+]

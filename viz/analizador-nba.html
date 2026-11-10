@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Analizador de partidos NBA</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #eef1ee; --surface: #ffffff; --surface-2: #e6ebe7; --sel: #dfe8f5;
+  --ink: #13202b; --muted: #566772; --line: #cfd8d2;
+  --model: #1b5fd1; --market: #c8430c; --good: #0c7a50; --warn: #9a6200; --bad: #b3261e;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1720; --surface: #16212c; --surface-2: #1d2b39; --sel: #1a2c44;
+    --ink: #e8eef2; --muted: #93a3af; --line: #2a3a4b;
+    --model: #7ab0ff; --market: #ff9358; --good: #52d19b; --warn: #e7b04a; --bad: #ff8a80;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1720; --surface: #16212c; --surface-2: #1d2b39; --sel: #1a2c44;
+  --ink: #e8eef2; --muted: #93a3af; --line: #2a3a4b;
+  --model: #7ab0ff; --market: #ff9358; --good: #52d19b; --warn: #e7b04a; --bad: #ff8a80;
+  color-scheme: dark;
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; font-size: 16px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+main { max-width: 1120px; margin: 0 auto; padding: 26px 16px 60px; }
+h1 { font-size: clamp(30px, 6vw, 46px); line-height: 1.05; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 12px; max-width: 16ch; }
+h2 { font-size: 19px; letter-spacing: -0.01em; font-weight: 650; margin: 0 0 10px; }
+h3 { font-size: 15px; font-weight: 650; margin: 0 0 8px; }
+p { margin: 0 0 10px; }
+.lead { font-size: 18px; max-width: 62ch; }
+.meta { color: var(--muted); font-size: 14px; max-width: 72ch; }
+.banner { background: var(--surface); border-left: 4px solid var(--warn); padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 14.5px; display: none; }
+.banner.show { display: block; }
+section { margin-top: 24px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.cols { display: grid; grid-template-columns: 1fr; gap: 22px; align-items: start; }
+@media (min-width: 960px) { .cols { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } .cols .right { position: sticky; top: calc(12px + env(safe-area-inset-top, 0px)); } }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+button, select, input { font: inherit; }
+button { font-size: 14px; font-weight: 550; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; cursor: pointer; }
+button:hover { border-color: var(--model); }
+button.chip.active { background: var(--sel); border-color: var(--model); }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--model); outline-offset: 2px; }
+input[type="text"], input[type="number"], input[type="date"], select, textarea { font-size: 15px; padding: 7px 9px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); max-width: 100%; }
+input[type="number"] { width: 92px; }
+textarea { width: 100%; min-height: 70px; resize: vertical; }
+label { font-size: 14px; color: var(--muted); }
+.row { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 8px 0; }
+.row > .grow { flex: 1 1 200px; }
+.field { display: flex; flex-direction: column; gap: 3px; }
+.search { width: 100%; }
+.found { font-size: 14px; color: var(--muted); min-height: 21px; }
+.teamhead { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; margin-bottom: 4px; }
+.teamhead .sub { color: var(--muted); font-size: 13.5px; }
+.pl { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+.pl:last-child { border-bottom: 0; }
+.pl .v { color: var(--muted); font-size: 12.5px; }
+.pl select { font-size: 13.5px; padding: 4px 6px; }
+.pl.out select { border-color: var(--bad); color: var(--bad); }
+.pl.dtd select { border-color: var(--warn); color: var(--warn); }
+.two { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 520px) { .two { grid-template-columns: 1fr 1fr; } }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-weight: 600; color: var(--muted); font-size: 12.5px; }
+td.num, th.num { text-align: right; }
+.big { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.stat .k { color: var(--muted); font-size: 13px; }
+.stat .v { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+.stat .s { color: var(--muted); font-size: 13px; }
+.stat.mod .v { color: var(--model); }
+.stat.mkt .v { color: var(--market); }
+#chart svg { display: block; width: 100%; height: auto; }
+.comp { display: grid; grid-template-columns: 130px 1fr 56px; gap: 6px 10px; align-items: center; font-size: 14px; }
+.comp .bar { position: relative; height: 14px; background: var(--surface-2); border-radius: 3px; }
+.comp .bar i { position: absolute; top: 0; bottom: 0; border-radius: 3px; }
+.comp .bar b { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 2px; background: var(--muted); }
+.comp .n { text-align: right; font-weight: 600; }
+ol.takes { list-style: none; counter-reset: t; margin: 0; padding: 0; display: grid; gap: 10px; }
+ol.takes li { counter-increment: t; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px 12px 46px; position: relative; }
+ol.takes li::before { content: counter(t); position: absolute; left: 14px; top: 12px; width: 22px; height: 22px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--line); text-align: center; font-size: 13px; font-weight: 650; line-height: 20px; }
+ol.takes .top { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+ol.takes .kind { font-size: 13px; font-weight: 650; padding: 1px 8px; border-radius: 4px; border: 1px solid var(--line); background: var(--surface-2); }
+ol.takes .kind.price { border-color: var(--good); color: var(--good); }
+ol.takes .kind.alert { border-color: var(--warn); color: var(--warn); }
+ol.takes .kind.disc { border-color: var(--market); color: var(--market); }
+ol.takes .conf { font-size: 13px; color: var(--muted); margin-left: auto; }
+ol.takes h3 { margin: 0; font-size: 16px; }
+ol.takes p { margin: 6px 0 0; font-size: 14.5px; max-width: 70ch; }
+ol.takes .ev { color: var(--muted); font-size: 13px; }
+.note { font-size: 13.5px; color: var(--muted); max-width: 74ch; }
+.pos { color: var(--good); font-weight: 600; } .neg { color: var(--bad); font-weight: 600; }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-top: 14px; }
+summary { cursor: pointer; font-weight: 650; }
+details p, details li { font-size: 14.5px; max-width: 74ch; }
+.empty { color: var(--muted); padding: 18px 4px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Analizador de partidos NBA</h1>
+    <p class="lead">Elige un partido, ajusta las lesiones y mete las cuotas. El modelo v2 calcula el margen y la probabilidad y te dice qué tomar con cautela y qué no.</p>
+    <p class="meta" id="asof"></p>
+    <div class="banner" id="stale"></div>
+  </header>
+
+  <section aria-labelledby="h-pick">
+    <h2 id="h-pick">Elige el partido</h2>
+    <div class="chips" id="chips" role="group" aria-label="Partidos de la jornada"></div>
+    <div class="row">
+      <div class="field grow">
+        <label for="q">Busca un partido</label>
+        <input type="text" id="q" class="search" placeholder="Escribe «MIA @ UTA», «Heat en Jazz» o «Lakers vs Suns»" autocomplete="off">
+      </div>
+    </div>
+    <div class="found" id="found"></div>
+    <div class="row">
+      <div class="field"><label for="away">Visitante</label><select id="away"></select></div>
+      <div class="field"><label for="home">Local</label><select id="home"></select></div>
+      <div class="field"><label for="date">Fecha (hora de EE. UU.)</label><input type="date" id="date"></div>
+      <button type="button" id="swap">Intercambiar</button>
+    </div>
+  </section>
+
+  <div class="cols">
+    <div class="left">
+      <section aria-labelledby="h-ctx">
+        <h2 id="h-ctx">Contexto</h2>
+        <div class="panel">
+          <div class="two" id="ctx"></div>
+          <div class="row">
+            <div class="field"><label for="restH">Descanso del local</label>
+              <select id="restH"><option value="auto">Automático</option><option value="1">Back-to-back (jugó ayer)</option><option value="2">1 día libre</option><option value="3">2 o más días libres</option></select></div>
+            <div class="field"><label for="restA">Descanso del visitante</label>
+              <select id="restA"><option value="auto">Automático</option><option value="1">Back-to-back (jugó ayer)</option><option value="2">1 día libre</option><option value="3">2 o más días libres</option></select></div>
+            <label><input type="checkbox" id="neutral"> Pista neutral</label>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-inj">
+        <h2 id="h-inj">Lesiones</h2>
+        <div class="panel">
+          <div class="two" id="inj"></div>
+          <details>
+            <summary>Pegar un parte de lesiones</summary>
+            <p class="note">Pega el texto de ESPN, NBA.com o cualquier parte. Busco los nombres de la rotación de estos dos equipos y su estado (Out, Questionable, Day-To-Day, Doubtful, Probable).</p>
+            <textarea id="paste" placeholder="Keyonte George - Out (ankle)&#10;Lauri Markkanen: Day-To-Day (wrist)"></textarea>
+            <div class="row"><button type="button" id="apply">Aplicar</button><span class="note" id="applied"></span></div>
+          </details>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-mkt">
+        <h2 id="h-mkt">Mercado</h2>
+        <div class="panel">
+          <div class="row">
+            <div class="field"><label for="spread">Spread del local</label><input type="number" id="spread" step="0.5" placeholder="−9,5"></div>
+            <p class="note" style="flex:1 1 220px;margin:0">Como lo ves en la casa: negativo si el local es favorito (por ejemplo −9,5), positivo si es underdog.</p>
+          </div>
+          <table>
+            <thead><tr><th>Casa</th><th class="num">Cuota local</th><th class="num">Cuota visitante</th></tr></thead>
+            <tbody id="books"></tbody>
+          </table>
+          <p class="note" style="margin-top:8px">Cuotas americanas (−150, +130). Con dos o más casas se compara el precio de cada una contra el precio justo de consenso.</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="right">
+      <section aria-labelledby="h-out" id="out">
+        <h2 id="h-out">Lectura del partido</h2>
+        <div id="result"></div>
+      </section>
+    </div>
+  </div>
+
+  <details>
+    <summary>Cómo se calcula y qué tan fiable es</summary>
+    <p>El modelo v2 suma al margen esperado del local: la diferencia de ratings de los dos equipos, la ventaja de campo actual, el efecto del descanso (back-to-back) y el efecto de las bajas, que compara el talento que juega hoy con el habitual del equipo en sus últimos 10 partidos. La probabilidad sale de una normal con la dispersión actual del margen.</p>
+    <p id="evidence"></p>
+    <p>Por eso los takes se ordenan por robustez y no por rentabilidad esperada: la única ventaja medible que no depende de mi modelo es el precio (una casa paga más que el consenso). Herramienta de análisis, no asesoramiento financiero ni recomendación de apuesta. Solo para mayores de 18 años.</p>
+  </details>
+</main>
+
+<script>
+const STATE = {"asof":"2026-11-10","season":2027,"model":{"hca":1.5545,"sigma":13.7334,"rest_b2b":-1.5251405854750675,"rest_long":0.37014556860898323,"avail":0.044692886712767284,"avail_clip":60.0,"warmup":5},"teams":{"ATL":{"name":"Atlanta Hawks","rating":1.3339,"last_game":"2026-11-09","record":[7,5],"n_hist":10,"roster":[{"name":"Jalen Johnson","value":35.14,"frac":0.6},{"name":"Nickeil Alexander-Walker","value":33.17,"frac":0.9},{"name":"Dyson Daniels","value":31.0,"frac":0.9},{"name":"Onyeka Okongwu","value":30.69,"frac":0.9},{"name":"Aaron Wiggins","value":22.54,"frac":0.9},{"name":"CJ McCollum","value":18.59,"frac":0.9},{"name":"Luguentz Dort","value":14.69,"frac":0.9},{"name":"Corey Kispert","value":13.91,"frac":0.5},{"name":"Kingston Flemings","value":12.46,"frac":0.8},{"name":"Jock Landale","value":10.67,"frac":0.5},{"name":"Asa Newell","value":9.28,"frac":0.4},{"name":"Zuby Ejiofor","value":6.89,"frac":0.5}]},"BOS":{"name":"Boston Celtics","rating":6.8856,"last_game":"2026-11-08","record":[8,2],"n_hist":10,"roster":[{"name":"Jayson Tatum","value":45.46,"frac":0.9},{"name":"Paul George","value":30.63,"frac":0.9},{"name":"Derrick White","value":25.19,"frac":1.0},{"name":"Payton Pritchard","value":23.87,"frac":1.0},{"name":"Neemias Queta","value":21.81,"frac":1.0},{"name":"Mitchell Robinson","value":19.14,"frac":0.9},{"name":"Luka Garza","value":14.64,"frac":1.0},{"name":"Sam Hauser","value":14.07,"frac":1.0},{"name":"Baylor Scheierman","value":13.09,"frac":1.0},{"name":"Mike Conley","value":6.33,"frac":0.4},{"name":"Hugo Gonzalez","value":6.21,"frac":1.0},{"name":"Jordan Walsh","value":4.54,"frac":1.0}]},"BKN":{"name":"Brooklyn Nets","rating":-7.5387,"last_game":"2026-11-08","record":[2,8],"n_hist":10,"roster":[{"name":"Michael Porter Jr.","value":31.12,"frac":1.0},{"name":"Julius Randle","value":29.8,"frac":1.0},{"name":"Nolan Traore","value":22.96,"frac":1.0},{"name":"Day'Ron Sharpe","value":22.85,"frac":1.0},{"name":"Danny Wolf","value":18.44,"frac":0.5},{"name":"Moritz Wagner","value":15.75,"frac":1.0},{"name":"Ben Saraf","value":15.05,"frac":0.1},{"name":"Mikel Brown Jr.","value":14.53,"frac":0.7},{"name":"Josh Minott","value":13.51,"frac":0.5},{"name":"Egor Demin","value":9.6,"frac":0.4},{"name":"Chaney Johnson","value":7.46,"frac":1.0},{"name":"Keon Ellis","value":7.38,"frac":0.9},{"name":"Terance Mann","value":5.4,"frac":0.5},{"name":"Noah Clowney","value":5.23,"frac":1.0},{"name":"Drake Powell","value":4.97,"frac":0.3}]},"CHA":{"name":"Charlotte Hornets","rating":-1.7594,"last_game":"2026-11-09","record":[4,7],"n_hist":10,"roster":[{"name":"Moussa Diabate","value":23.85,"frac":0.8},{"name":"Naz Reid","value":21.44,"frac":0.9},{"name":"Brandon Miller","value":19.51,"frac":0.9},{"name":"Grayson Allen","value":19.17,"frac":0.9},{"name":"Kon Knueppel","value":17.33,"frac":0.1},{"name":"Ryan Kalkbrenner","value":13.68,"frac":0.9},{"name":"Coby White","value":12.85,"frac":0.3},{"name":"Dennis Schroder","value":11.97,"frac":0.8},{"name":"Hannes Steinbach","value":11.75,"frac":0.4},{"name":"Sion James","value":11.2,"frac":0.9},{"name":"Tidjane Salaun","value":10.75,"frac":0.9},{"name":"Royce O'Neale","value":9.83,"frac":0.9},{"name":"Christian Anderson","value":4.16,"frac":0.8}]},"CHI":{"name":"Chicago Bulls","rating":-7.5237,"last_game":"2026-11-08","record":[1,8],"n_hist":9,"roster":[{"name":"Josh Giddey","value":25.93,"frac":1.0},{"name":"Norman Powell","value":24.74,"frac":0.889},{"name":"Jalen Smith","value":21.92,"frac":1.0},{"name":"Tre Jones","value":20.93,"frac":1.0},{"name":"Matas Buzelis","value":20.38,"frac":1.0},{"name":"Nic Claxton","value":18.05,"frac":0.111},{"name":"Caleb Wilson","value":17.49,"frac":1.0},{"name":"Leonard Miller","value":12.47,"frac":0.889},{"name":"Patrick Williams","value":11.2,"frac":0.222},{"name":"Isaac Okoro","value":10.42,"frac":1.0},{"name":"Jordan Hawkins","value":9.71,"frac":0.556},{"name":"Noa Essengue","value":5.29,"frac":0.889}]},"CLE":{"name":"Cleveland Cavaliers","rating":2.1,"last_game":"2026-11-09","record":[5,6],"n_hist":10,"roster":[{"name":"Donovan Mitchell","value":41.59,"frac":0.9},{"name":"Evan Mobley","value":37.21,"frac":0.9},{"name":"Jarrett Allen","value":29.33,"frac":0.7},{"name":"James Harden","value":27.42,"frac":0.9},{"name":"Peyton Watson","value":19.54,"frac":0.7},{"name":"Meleek Thomas","value":19.16,"frac":0.7},{"name":"Tyrese Proctor","value":17.99,"frac":0.8},{"name":"Thomas Bryant","value":14.28,"frac":0.5},{"name":"Jaylon Tyson","value":13.34,"frac":0.4},{"name":"Mario Hezonja","value":13.28,"frac":0.9},{"name":"Sam Merrill","value":12.76,"frac":0.8}]},"DAL":{"name":"Dallas Mavericks","rating":-1.2366,"last_game":"2026-11-09","record":[7,4],"n_hist":10,"roster":[{"name":"Cooper Flagg","value":47.56,"frac":0.8},{"name":"Kyrie Irving","value":35.2,"frac":0.7},{"name":"P.J. Washington","value":24.51,"frac":0.9},{"name":"Daniel Gafford","value":24.23,"frac":0.9},{"name":"Santi Aldama","value":21.5,"frac":0.2},{"name":"Naji Marshall","value":17.82,"frac":0.6},{"name":"Walter Clayton Jr.","value":15.7,"frac":0.9},{"name":"Morez Johnson Jr.","value":13.89,"frac":0.9},{"name":"Zaccharie Risacher","value":13.05,"frac":0.9},{"name":"Marcus Sasser","value":6.09,"frac":0.8},{"name":"Caleb Martin","value":5.83,"frac":0.6},{"name":"Max Christie","value":5.19,"frac":0.8}]},"DEN":{"name":"Denver Nuggets","rating":3.1348,"last_game":"2026-11-09","record":[5,4],"n_hist":9,"roster":[{"name":"Nikola Jokic","value":55.26,"frac":0.889},{"name":"Jamal Murray","value":43.58,"frac":0.889},{"name":"Cameron Johnson","value":24.21,"frac":0.556},{"name":"Christian Braun","value":24.06,"frac":0.889},{"name":"Aaron Gordon","value":21.97,"frac":0.889},{"name":"DeMar DeRozan","value":19.91,"frac":0.778},{"name":"Marvin Bagley III","value":14.0,"frac":0.889},{"name":"Trevon Brazile","value":12.1,"frac":0.889},{"name":"Ryan Nembhard","value":10.54,"frac":0.333},{"name":"Spencer Jones","value":9.49,"frac":0.111},{"name":"Cam Whitmore","value":8.9,"frac":0.222},{"name":"Tyus Jones","value":8.2,"frac":0.889},{"name":"Alpha Diallo","value":4.35,"frac":0.333},{"name":"Bryce Hopkins","value":3.96,"frac":0.667}]},"DET":{"name":"Detroit Pistons","rating":6.611,"last_game":"2026-11-09","record":[7,3],"n_hist":10,"roster":[{"name":"Cade Cunningham","value":41.72,"frac":0.9},{"name":"Jalen Duren","value":37.48,"frac":0.2},{"name":"Duncan Robinson","value":29.68,"frac":0.9},{"name":"Paul Reed","value":25.6,"frac":0.9},{"name":"Ausar Thompson","value":22.95,"frac":0.8},{"name":"Daniss Jenkins","value":20.55,"frac":0.9},{"name":"Kevin Huerter","value":20.11,"frac":0.9},{"name":"Isaiah Joe","value":15.79,"frac":0.3},{"name":"John Collins","value":14.81,"frac":0.9},{"name":"Taurean Prince","value":14.71,"frac":0.2},{"name":"Elijah Harkless","value":13.13,"frac":0.1},{"name":"Javonte Green","value":12.47,"frac":0.9},{"name":"Ronald Holland II","value":9.32,"frac":0.9}]},"GSW":{"name":"Golden State Warriors","rating":2.1902,"last_game":"2026-11-09","record":[8,3],"n_hist":10,"roster":[{"name":"Stephen Curry","value":54.26,"frac":0.7},{"name":"Yaxel Lendeborg","value":32.05,"frac":0.9},{"name":"Brandin Podziemski","value":31.5,"frac":0.8},{"name":"Brandon Williams","value":18.48,"frac":0.8},{"name":"Charles Bassey","value":17.75,"frac":0.8},{"name":"Georges Niang","value":15.69,"frac":0.9},{"name":"Draymond Green","value":15.67,"frac":0.7},{"name":"De'Anthony Melton","value":14.78,"frac":0.9},{"name":"Al Horford","value":12.23,"frac":0.7},{"name":"Gui Santos","value":10.31,"frac":0.6},{"name":"Will Richard","value":10.18,"frac":0.9},{"name":"Gary Payton II","value":9.73,"frac":0.9}]},"HOU":{"name":"Houston Rockets","rating":6.1868,"last_game":"2026-11-09","record":[8,3],"n_hist":10,"roster":[{"name":"Alperen Sengun","value":40.96,"frac":0.7},{"name":"Kevin Durant","value":36.94,"frac":0.9},{"name":"Jabari Smith Jr.","value":33.1,"frac":0.9},{"name":"Amen Thompson","value":30.65,"frac":0.9},{"name":"Fred VanVleet","value":23.29,"frac":0.7},{"name":"Tari Eason","value":16.03,"frac":0.9},{"name":"Steven Adams","value":15.44,"frac":0.1},{"name":"Reed Sheppard","value":15.12,"frac":0.6},{"name":"Clint Capela","value":11.99,"frac":0.5},{"name":"Marcus Smart","value":10.48,"frac":0.6}]},"IND":{"name":"Indiana Pacers","rating":-5.0662,"last_game":"2026-11-09","record":[3,8],"n_hist":10,"roster":[{"name":"Tyrese Haliburton","value":48.3,"frac":0.3},{"name":"Pascal Siakam","value":35.66,"frac":0.8},{"name":"Andrew Nembhard","value":31.51,"frac":0.7},{"name":"Obi Toppin","value":24.42,"frac":0.6},{"name":"T.J. McConnell","value":21.13,"frac":0.1},{"name":"Quenton Jackson","value":19.98,"frac":0.9},{"name":"Ivica Zubac","value":18.02,"frac":0.4},{"name":"Aaron Nesmith","value":16.23,"frac":0.8},{"name":"Jarace Walker","value":16.2,"frac":0.9},{"name":"Kobe Brown","value":13.7,"frac":0.5},{"name":"Larry Nance Jr.","value":13.59,"frac":0.8},{"name":"Kelly Oubre Jr.","value":13.01,"frac":0.7},{"name":"Ben Sheppard","value":11.73,"frac":0.0},{"name":"Jay Huff","value":11.03,"frac":0.9},{"name":"Jalen Slawson","value":10.24,"frac":0.9},{"name":"Braden Smith","value":4.69,"frac":0.6}]},"LAC":{"name":"LA Clippers","rating":-0.2047,"last_game":"2026-11-08","record":[2,7],"n_hist":9,"roster":[{"name":"Darius Garland","value":31.61,"frac":1.0},{"name":"Brook Lopez","value":23.88,"frac":1.0},{"name":"Kris Dunn","value":22.53,"frac":1.0},{"name":"Keaton Wagler","value":22.22,"frac":1.0},{"name":"Rui Hachimura","value":21.97,"frac":0.778},{"name":"Derrick Jones Jr.","value":19.13,"frac":0.889},{"name":"Isaiah Jackson","value":16.63,"frac":0.889},{"name":"Max Strus","value":14.94,"frac":0.333},{"name":"Kobe Sanders","value":14.06,"frac":1.0},{"name":"Gradey Dick","value":12.25,"frac":1.0}]},"LAL":{"name":"Los Angeles Lakers","rating":5.0433,"last_game":"2026-11-09","record":[10,2],"n_hist":10,"roster":[{"name":"Luka Doncic","value":70.82,"frac":0.7},{"name":"Austin Reaves","value":40.28,"frac":0.9},{"name":"Walker Kessler","value":34.49,"frac":0.9},{"name":"Ziaire Williams","value":21.48,"frac":0.6},{"name":"Sandro Mamukelashvili","value":15.18,"frac":0.9},{"name":"Jake LaRavia","value":14.35,"frac":0.9},{"name":"Matisse Thybulle","value":13.04,"frac":0.9},{"name":"Collin Sexton","value":12.31,"frac":0.9},{"name":"Quentin Grimes","value":11.8,"frac":0.9},{"name":"Jarred Vanderbilt","value":7.92,"frac":0.6},{"name":"Lawson Lovering","value":6.13,"frac":0.2}]},"MEM":{"name":"Memphis Grizzlies","rating":-2.4093,"last_game":"2026-11-09","record":[7,3],"n_hist":10,"roster":[{"name":"Ty Jerome","value":38.94,"frac":0.8},{"name":"Cedric Coward","value":26.7,"frac":0.8},{"name":"Cam Spencer","value":23.05,"frac":0.9},{"name":"Cameron Boozer","value":20.78,"frac":0.9},{"name":"Zach Edey","value":20.0,"frac":0.8},{"name":"Javon Small","value":19.67,"frac":0.2},{"name":"Isaiah Stewart","value":19.36,"frac":0.7},{"name":"Jerami Grant","value":16.28,"frac":0.9},{"name":"Jaylen Wells","value":13.0,"frac":0.9},{"name":"Scotty Pippen Jr.","value":12.09,"frac":0.5},{"name":"GG Jackson","value":11.35,"frac":0.8},{"name":"Jahmai Mashack","value":7.65,"frac":0.2},{"name":"Quinten Post","value":7.0,"frac":0.7},{"name":"Kris Murray","value":6.67,"frac":0.6}]},"MIA":{"name":"Miami Heat","rating":-1.1234,"last_game":"2026-11-08","record":[4,6],"n_hist":10,"roster":[{"name":"Giannis Antetokounmpo","value":52.33,"frac":1.0},{"name":"Bam Adebayo","value":42.38,"frac":1.0},{"name":"Davion Mitchell","value":32.02,"frac":1.0},{"name":"Klay Thompson","value":23.53,"frac":1.0},{"name":"Pelle Larsson","value":21.41,"frac":1.0},{"name":"Ryan Conwell","value":13.82,"frac":0.8},{"name":"Andrew Wiggins","value":11.83,"frac":1.0},{"name":"Bobby Portis","value":11.29,"frac":1.0}]},"MIL":{"name":"Milwaukee Bucks","rating":-8.3079,"last_game":"2026-11-08","record":[1,9],"n_hist":10,"roster":[{"name":"Tyler Herro","value":31.62,"frac":1.0},{"name":"Brayden Burries","value":24.53,"frac":1.0},{"name":"Jaime Jaquez Jr.","value":24.15,"frac":1.0},{"name":"Kyle Kuzma","value":22.17,"frac":1.0},{"name":"Ryan Rollins","value":17.01,"frac":1.0},{"name":"Myles Turner","value":13.27,"frac":1.0},{"name":"AJ Green","value":11.02,"frac":1.0},{"name":"Kel'el Ware","value":8.98,"frac":1.0},{"name":"Jericho Sims","value":8.36,"frac":0.6},{"name":"Kasparas Jakucionis","value":8.03,"frac":1.0},{"name":"Ousmane Dieng","value":7.29,"frac":0.7},{"name":"Gary Trent Jr.","value":7.08,"frac":0.2},{"name":"Nate Ament","value":6.42,"frac":0.8}]},"MIN":{"name":"Minnesota Timberwolves","rating":6.342,"last_game":"2026-11-08","record":[8,3],"n_hist":10,"roster":[{"name":"Anthony Edwards","value":40.28,"frac":0.3},{"name":"Ayo Dosunmu","value":34.95,"frac":1.0},{"name":"LaMelo Ball","value":32.38,"frac":1.0},{"name":"Jaden McDaniels","value":29.16,"frac":1.0},{"name":"Rudy Gobert","value":21.48,"frac":0.9},{"name":"Jonathan Kuminga","value":19.59,"frac":1.0},{"name":"Bones Hyland","value":15.9,"frac":1.0},{"name":"Terrence Shannon Jr.","value":15.36,"frac":0.7},{"name":"Trey Lyles","value":15.35,"frac":1.0},{"name":"Joan Beringer","value":13.82,"frac":1.0},{"name":"Jaylen Clark","value":10.43,"frac":0.9}]},"NOP":{"name":"New Orleans Pelicans","rating":-3.1257,"last_game":"2026-11-09","record":[4,7],"n_hist":10,"roster":[{"name":"Zion Williamson","value":40.85,"frac":0.9},{"name":"Jeremiah Fears","value":33.44,"frac":0.9},{"name":"Trey Murphy III","value":30.41,"frac":0.8},{"name":"Saddiq Bey","value":29.83,"frac":0.9},{"name":"Dejounte Murray","value":26.02,"frac":0.6},{"name":"Yves Missi","value":22.66,"frac":0.1},{"name":"Derik Queen","value":18.8,"frac":0.9},{"name":"Karlo Matkovic","value":16.8,"frac":0.9},{"name":"Julian Reese","value":15.23,"frac":0.2},{"name":"DeAndre Jordan","value":14.2,"frac":0.2},{"name":"Trendon Watford","value":12.55,"frac":0.6},{"name":"Jordan Poole","value":12.29,"frac":0.3},{"name":"Bennedict Mathurin","value":8.34,"frac":0.9},{"name":"Herbert Jones","value":6.89,"frac":0.9}]},"NYK":{"name":"New York Knicks","rating":4.5165,"last_game":"2026-11-07","record":[5,4],"n_hist":9,"roster":[{"name":"Jalen Brunson","value":44.26,"frac":1.0},{"name":"Karl-Anthony Towns","value":42.77,"frac":1.0},{"name":"OG Anunoby","value":26.53,"frac":1.0},{"name":"Josh Hart","value":19.32,"frac":0.778},{"name":"Mikal Bridges","value":13.81,"frac":1.0},{"name":"Andre Drummond","value":12.78,"frac":1.0},{"name":"Landry Shamet","value":12.15,"frac":1.0},{"name":"Jordan Clarkson","value":11.16,"frac":0.889},{"name":"Miles McBride","value":10.48,"frac":1.0},{"name":"Mohamed Diawara","value":7.4,"frac":0.444},{"name":"Jose Alvarado","value":5.78,"frac":0.444}]},"OKC":{"name":"Oklahoma City Thunder","rating":7.5251,"last_game":"2026-11-07","record":[8,2],"n_hist":10,"roster":[{"name":"Shai Gilgeous-Alexander","value":49.11,"frac":1.0},{"name":"Chet Holmgren","value":34.36,"frac":0.3},{"name":"Jalen Williams","value":29.99,"frac":0.3},{"name":"Ajay Mitchell","value":29.91,"frac":1.0},{"name":"Aday Mara","value":20.96,"frac":1.0},{"name":"Isaiah Hartenstein","value":20.71,"frac":1.0},{"name":"Jared McCain","value":18.78,"frac":1.0},{"name":"Kenrich Williams","value":16.09,"frac":1.0},{"name":"Bennett Stirtz","value":15.6,"frac":1.0},{"name":"Alex Caruso","value":15.53,"frac":0.7},{"name":"Cason Wallace","value":11.78,"frac":0.3},{"name":"Micah Peavy","value":10.18,"frac":0.6},{"name":"Jaylin Williams","value":9.31,"frac":0.7},{"name":"Josh Dix","value":5.35,"frac":0.6}]},"ORL":{"name":"Orlando Magic","rating":-2.3941,"last_game":"2026-11-07","record":[2,7],"n_hist":9,"roster":[{"name":"Paolo Banchero","value":37.43,"frac":0.222},{"name":"Franz Wagner","value":36.79,"frac":1.0},{"name":"Wendell Carter Jr.","value":29.82,"frac":1.0},{"name":"Anthony Black","value":26.21,"frac":0.667},{"name":"Desmond Bane","value":24.59,"frac":0.889},{"name":"Jalen Suggs","value":22.16,"frac":0.333},{"name":"Tristan da Silva","value":21.57,"frac":1.0},{"name":"Jamal Cain","value":12.46,"frac":1.0},{"name":"Jase Richardson","value":9.58,"frac":1.0},{"name":"Jevon Carter","value":8.86,"frac":0.556}]},"PHI":{"name":"Philadelphia 76ers","rating":1.0505,"last_game":"2026-11-08","record":[9,2],"n_hist":10,"roster":[{"name":"Tyrese Maxey","value":43.09,"frac":1.0},{"name":"Jaylen Brown","value":40.52,"frac":0.9},{"name":"LeBron James","value":32.73,"frac":0.8},{"name":"Joel Embiid","value":31.59,"frac":0.8},{"name":"VJ Edgecombe","value":28.13,"frac":0.9},{"name":"Rayan Rupert","value":17.39,"frac":0.1},{"name":"Jabari Walker","value":13.06,"frac":0.6},{"name":"Kentavious Caldwell-Pope","value":11.58,"frac":1.0},{"name":"Dean Wade","value":8.62,"frac":0.9},{"name":"Anfernee Simons","value":7.9,"frac":1.0},{"name":"Adem Bona","value":5.89,"frac":0.8}]},"PHX":{"name":"Phoenix Suns","rating":-1.2598,"last_game":"2026-11-09","record":[3,6],"n_hist":9,"roster":[{"name":"Devin Booker","value":42.22,"frac":0.889},{"name":"Miles Bridges","value":35.28,"frac":0.889},{"name":"Dillon Brooks","value":25.92,"frac":0.889},{"name":"Jalen Green","value":19.28,"frac":0.889},{"name":"Jordan Goodwin","value":17.54,"frac":0.556},{"name":"Ryan Dunn","value":16.89,"frac":0.889},{"name":"Khaman Maluach","value":16.72,"frac":0.889},{"name":"Luke Kennard","value":15.23,"frac":0.778},{"name":"Oso Ighodaro","value":15.08,"frac":0.667},{"name":"Collin Gillespie","value":12.23,"frac":0.889},{"name":"Rasheer Fleming","value":5.67,"frac":0.222}]},"POR":{"name":"Portland Trail Blazers","rating":2.4585,"last_game":"2026-11-07","record":[6,3],"n_hist":9,"roster":[{"name":"Deni Avdija","value":36.39,"frac":1.0},{"name":"Ja Morant","value":32.79,"frac":0.444},{"name":"Damian Lillard","value":31.97,"frac":1.0},{"name":"Donovan Clingan","value":27.35,"frac":1.0},{"name":"Jrue Holiday","value":24.34,"frac":1.0},{"name":"Robert Williams III","value":19.81,"frac":0.778},{"name":"Toumani Camara","value":17.69,"frac":1.0},{"name":"Branden Carlson","value":11.71,"frac":0.444},{"name":"Micah Potter","value":10.02,"frac":0.556},{"name":"Chris Youngblood","value":9.5,"frac":0.556},{"name":"Sidy Cissoko","value":9.29,"frac":1.0},{"name":"Scoot Henderson","value":9.18,"frac":1.0}]},"SAC":{"name":"Sacramento Kings","rating":-8.4003,"last_game":"2026-11-08","record":[1,9],"n_hist":10,"roster":[{"name":"Domantas Sabonis","value":36.17,"frac":0.9},{"name":"Darius Acuff Jr.","value":30.38,"frac":1.0},{"name":"Zach LaVine","value":27.24,"frac":1.0},{"name":"Precious Achiuwa","value":19.49,"frac":1.0},{"name":"De'Andre Hunter","value":16.55,"frac":0.9},{"name":"Dylan Cardwell","value":15.99,"frac":0.3},{"name":"Leaky Black","value":14.66,"frac":0.5},{"name":"Malik Monk","value":14.42,"frac":0.9},{"name":"Keegan Murray","value":14.15,"frac":0.3},{"name":"Emanuel Sharp","value":7.47,"frac":1.0},{"name":"Daeqwon Plowden","value":6.96,"frac":0.7}]},"SAS":{"name":"San Antonio Spurs","rating":8.2127,"last_game":"2026-11-09","record":[9,2],"n_hist":10,"roster":[{"name":"Victor Wembanyama","value":56.7,"frac":0.9},{"name":"Dylan Harper","value":30.69,"frac":0.9},{"name":"Stephon Castle","value":26.49,"frac":0.9},{"name":"De'Aaron Fox","value":26.12,"frac":0.9},{"name":"Devin Vassell","value":25.62,"frac":0.9},{"name":"Julian Champagnie","value":17.42,"frac":0.9},{"name":"Keldon Johnson","value":16.29,"frac":0.9},{"name":"Harrison Barnes","value":11.49,"frac":0.7},{"name":"Luke Kornet","value":10.82,"frac":0.9}]},"TOR":{"name":"Toronto Raptors","rating":1.6502,"last_game":"2026-11-09","record":[5,5],"n_hist":10,"roster":[{"name":"Kawhi Leonard","value":41.1,"frac":0.2},{"name":"Scottie Barnes","value":39.0,"frac":0.8},{"name":"RJ Barrett","value":34.5,"frac":0.9},{"name":"Immanuel Quickley","value":30.92,"frac":0.8},{"name":"Collin Murray-Boyles","value":22.37,"frac":0.9},{"name":"Ja'Kobe Walter","value":17.73,"frac":0.9},{"name":"Jakob Poeltl","value":17.64,"frac":0.7},{"name":"Jamal Shead","value":16.2,"frac":0.9},{"name":"Jamison Battle","value":11.89,"frac":0.9},{"name":"Alijah Martin","value":10.73,"frac":0.8},{"name":"Allen Graves","value":9.51,"frac":0.9}]},"UTA":{"name":"Utah Jazz","rating":-8.136,"last_game":"2026-11-08","record":[1,9],"n_hist":10,"roster":[{"name":"Lauri Markkanen","value":33.86,"frac":0.8},{"name":"Keyonte George","value":31.69,"frac":1.0},{"name":"Jaren Jackson Jr.","value":27.01,"frac":0.4},{"name":"Darryn Peterson","value":25.33,"frac":1.0},{"name":"Jaxson Hayes","value":22.29,"frac":0.9},{"name":"Ace Bailey","value":17.97,"frac":1.0},{"name":"Mo Bamba","value":16.77,"frac":0.6},{"name":"Isaiah Collier","value":11.25,"frac":1.0},{"name":"Brice Sensabaugh","value":7.62,"frac":1.0},{"name":"Josh Green","value":6.85,"frac":0.8},{"name":"Josh Okogie","value":6.34,"frac":0.9},{"name":"Svi Mykhailiuk","value":4.57,"frac":1.0}]},"WAS":{"name":"Washington Wizards","rating":-6.7553,"last_game":"2026-11-09","record":[4,7],"n_hist":10,"roster":[{"name":"Anthony Davis","value":41.24,"frac":0.7},{"name":"Kyshawn George","value":32.49,"frac":0.9},{"name":"Trae Young","value":31.7,"frac":0.9},{"name":"AJ Dybantsa","value":27.4,"frac":0.6},{"name":"Alex Sarr","value":23.59,"frac":0.8},{"name":"Justin Champagnie","value":19.39,"frac":0.3},{"name":"Deandre Ayton","value":15.9,"frac":0.9},{"name":"Bub Carrington","value":13.22,"frac":0.9},{"name":"Anthony Gill","value":12.59,"frac":0.2},{"name":"Bilal Coulibaly","value":12.34,"frac":0.9},{"name":"Will Riley","value":8.13,"frac":0.8},{"name":"Reece Beekman","value":7.44,"frac":0.1},{"name":"Tre Johnson","value":6.87,"frac":0.8},{"name":"Khris Middleton","value":4.18,"frac":0.4}]}},"slate":[{"home":"NYK","away":"MIL","tip_utc":"2026-11-11T00:30:00Z","provider_home_prob":0.901,"spread_home_margin":15.5,"odds":{"home":null,"away":null},"injuries":{"home":[{"player":"Josh Hart","status":"questionable","detail":"ankle"}],"away":[{"player":"Tyler Herro","status":"questionable","detail":"knee"}]}},{"home":"PHI","away":"BOS","tip_utc":"2026-11-11T01:00:00Z","provider_home_prob":0.471,"spread_home_margin":null,"odds":{"home":null,"away":null},"injuries":{"home":[{"player":"Ariel Hukporti","status":"out","detail":"achilles, season"},{"player":"Adem Bona","status":"out","detail":"spine"},{"player":"Dominick Barlow","status":"out","detail":"back"}],"away":[{"player":"Devin Carter","status":"out","detail":"illness"}]}},{"home":"PHX","away":"LAC","tip_utc":"2026-11-11T02:00:00Z","provider_home_prob":0.605,"spread_home_margin":null,"odds":{"home":null,"away":null},"injuries":{"home":[],"away":[{"player":"Bradley Beal","status":"listed","detail":"knee management"},{"player":"Cam Christie","status":"questionable","detail":"ankle"}]}},{"home":"UTA","away":"MIA","tip_utc":"2026-11-11T02:00:00Z","provider_home_prob":0.218,"spread_home_margin":-9.5,"odds":{"home":324,"away":-432},"injuries":{"home":[{"player":"Keyonte George","status":"out","detail":"ankle"},{"player":"Jusuf Nurkic","status":"out","detail":"foot"},{"player":"Jaren Jackson Jr.","status":"out","detail":"knee"},{"player":"Lauri Markkanen","status":"questionable","detail":"wrist"}],"away":[{"player":"Giannis Antetokounmpo","status":"questionable","detail":"wrist"}]}},{"home":"SAC","away":"ORL","tip_utc":"2026-11-11T03:00:00Z","provider_home_prob":0.33,"spread_home_margin":-5.5,"odds":{"home":186,"away":-228},"injuries":{"home":[{"player":"Domantas Sabonis","status":"questionable","detail":"knee"},{"player":"Keegan Murray","status":"questionable","detail":"wrist"}],"away":[{"player":"Paolo Banchero","status":"out","detail":"high ankle sprain"},{"player":"Jonathan Isaac","status":"out","detail":"knee management"},{"player":"Jalen Suggs","status":"out","detail":"knee contusion"},{"player":"Noah Penda","status":"out","detail":"partial hamstring tear"},{"player":"Izaiyah Nelson","status":"out","detail":"ankle"}]}},{"home":"POR","away":"OKC","tip_utc":"2026-11-11T04:00:00Z","provider_home_prob":0.445,"spread_home_margin":-2.5,"odds":{"home":null,"away":-122},"injuries":{"home":[{"player":"Ja Morant","status":"out","detail":"hamstring"},{"player":"Shaedon Sharpe","status":"out","detail":"meniscus"},{"player":"Vit Krejci","status":"out","detail":"ankle fracture"},{"player":"Robert Williams III","status":"available","detail":"rests tomorrow (back-to-back)"}],"away":[{"player":"Jalen Williams","status":"out","detail":"ankle"},{"player":"Cason Wallace","status":"out","detail":"shoulder"},{"player":"Chet Holmgren","status":"out","detail":"knee"},{"player":"Nikola Topic","status":"questionable","detail":"back"},{"player":"Thomas Sorber","status":"questionable","detail":"knee"},{"player":"Jaylin Williams","status":"questionable","detail":"back"}]}}],"evidence":{"blend":{"a":0.0035164098065749464,"b_mercado":0.9549874492897059,"b_modelo":0.022863342809123333},"sigma_market":11.25,"gap_sd":3.0630588424709817,"gap_c2":-0.0664670134068455,"gap_c2_ci":0.1241804227887599,"roi_test":{"1":{"roi":-0.06074122131214014,"n":4484,"lo":-0.08846814635838846,"hi":-0.03301429626589182},"2":{"roi":-0.06449208384269059,"n":3049,"lo":-0.09811170054620419,"hi":-0.030872467139176983},"3":{"roi":-0.07037018925130813,"n":1859,"lo":-0.11338512111480592,"hi":-0.027355257387810326},"4":{"roi":-0.0884904086738949,"n":1090,"lo":-0.14463172606161206,"hi":-0.03234909128617774},"5":{"roi":-0.10374331550802139,"n":595,"lo":-0.17939261047595978,"hi":-0.02809402054008299}},"test_ll":{"v0_ridge":0.6328815725704411,"v2_elo":0.611680390412634,"mercado":0.5921618944827941},"test_acc":{"v0_ridge":0.6496018202502845,"v2_elo":0.6627661303429222,"mercado":0.6855795805560072}}};
+
+/*MODEL-START*/
+const M = STATE.model, E = STATE.evidence;
+function erf(x) {
+  const s = x < 0 ? -1 : 1; x = Math.abs(x);
+  const t = 1 / (1 + 0.3275911 * x);
+  const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+  return s * y;
+}
+function cdf(x) { return 0.5 * (1 + erf(x / Math.SQRT2)); }
+function ppf(p) { p = Math.min(0.999, Math.max(0.001, p)); let lo = -7, hi = 7; for (let i = 0; i < 70; i++) { const m = (lo + hi) / 2; if (cdf(m) < p) lo = m; else hi = m; } return (lo + hi) / 2; }
+function logit(p) { p = Math.min(1 - 1e-6, Math.max(1e-6, p)); return Math.log(p / (1 - p)); }
+function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
+function validOdds(o) { return typeof o === "number" && isFinite(o) && Math.abs(o) >= 100; }
+function impl(o) { return o < 0 ? -o / (-o + 100) : 100 / (o + 100); }
+function dec(o) { return o > 0 ? 1 + o / 100 : 1 + 100 / -o; }
+function american(p) { p = Math.min(0.99, Math.max(0.01, p)); return p >= 0.5 ? Math.round(-100 * p / (1 - p)) : Math.round(100 * (1 - p) / p); }
+const PLAY = { out: 0, doubtful: 0.2, questionable: 0.5, probable: 0.85, available: 1 };
+function clip(x) { return Math.max(-M.avail_clip, Math.min(M.avail_clip, x)); }
+function restEffect(r) { return r <= 1 ? M.rest_b2b : (r >= 3 ? M.rest_long : 0); }
+function teamDelta(team, status) {
+  const t = STATE.teams[team];
+  if (t.n_hist < M.warmup) return 0;
+  let T = 0, B = 0;
+  for (const p of t.roster) { T += p.value * PLAY[status[p.name] || "available"]; B += p.value * p.frac; }
+  return T - B;
+}
+function predict(o) {
+  const th = STATE.teams[o.home], ta = STATE.teams[o.away];
+  const dh = teamDelta(o.home, o.statusH), da = teamDelta(o.away, o.statusA);
+  const comp = { rating: th.rating - ta.rating, hca: o.neutral ? 0 : M.hca, rest: restEffect(o.restH) - restEffect(o.restA), avail: M.avail * (clip(dh) - clip(da)) };
+  const margin = comp.rating + comp.hca + comp.rest + comp.avail;
+  return { margin, sigma: M.sigma, p: cdf(margin / M.sigma), comp, dh, da };
+}
+function restFrom(team, dateStr) {
+  const last = Date.parse(STATE.teams[team].last_game + "T00:00:00Z"), d = Date.parse(dateStr + "T00:00:00Z");
+  if (!isFinite(last) || !isFinite(d) || d <= last) return 7;
+  return Math.min(7, Math.round((d - last) / 86400000));
+}
+function marketRef(spread, books) {
+  const both = books.filter(b => validOdds(b.h) && validOdds(b.a));
+  if (both.length) {
+    const ps = both.map(b => { const ph = impl(b.h), pa = impl(b.a); return { p: ph / (ph + pa), vig: ph + pa - 1 }; });
+    return { p: ps.reduce((s, x) => s + x.p, 0) / ps.length, kind: "ml", label: both.length > 1 ? "consenso de " + both.length + " casas, sin margen" : "cuotas sin margen", vig: ps.reduce((s, x) => s + x.vig, 0) / ps.length };
+  }
+  const one = books.find(b => validOdds(b.h) || validOdds(b.a));
+  if (one) return validOdds(one.h) ? { p: impl(one.h), kind: "ml1", label: "cuota del local, con margen" } : { p: 1 - impl(one.a), kind: "ml1", label: "cuota del visitante, con margen" };
+  if (spread != null) return { p: cdf(-spread / E.sigma_market), kind: "spread", label: "spread convertido a probabilidad" };
+  return null;
+}
+function finalProb(pk, pm) { return pk == null ? pm : sigmoid(E.blend.a + E.blend.b_mercado * logit(pk) + E.blend.b_modelo * logit(pm)); }
+/*MODEL-END*/
+
+/* ---------- Estado de la interfaz ---------- */
+const $ = id => document.getElementById(id);
+const fmt = (n, d = 1) => n.toFixed(d).replace(".", ",");
+const sgn = (n, d = 1) => (n > 0.0001 ? "+" : n < -0.0001 ? "−" : "") + fmt(Math.abs(n), d);
+const pct = (p, d = 1) => fmt(p * 100, d) + " %";
+const odd = o => (o > 0 ? "+" : "−") + Math.abs(o);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const STATUS_LABEL = { available: "Disponible", probable: "Probable", questionable: "Duda", doubtful: "Poco probable", out: "Fuera" };
+const S = { home: null, away: null, statusH: {}, statusA: {}, books: [{ n: "Casa 1", h: null, a: null }, { n: "Casa 2", h: null, a: null }, { n: "Casa 3", h: null, a: null }], spread: null, slateIdx: -1 };
+const codes = Object.keys(STATE.teams).sort((a, b) => STATE.teams[a].name.localeCompare(STATE.teams[b].name));
+const etDate = iso => new Date(Date.parse(iso) - 5 * 3600 * 1000).toISOString().slice(0, 10);
+
+function fillSelect(sel) { for (const c of codes) { const o = el("option", null, STATE.teams[c].name + " (" + c + ")"); o.value = c; sel.appendChild(o); } }
+function rest(side) {
+  const sel = $(side === "h" ? "restH" : "restA").value;
+  return sel === "auto" ? restFrom(side === "h" ? S.home : S.away, $("date").value) : parseInt(sel, 10);
+}
+function restText(r) { return r <= 1 ? "juega en back-to-back" : r === 2 ? "1 día libre" : r >= 7 ? "descanso largo" : (r - 1) + " días libres"; }
+
+/* ---------- Renderizado de entradas ---------- */
+function renderChips() {
+  const box = $("chips"); box.textContent = "";
+  STATE.slate.forEach((g, i) => {
+    const b = el("button", "chip" + (i === S.slateIdx ? " active" : ""), g.away + " en " + g.home);
+    b.type = "button"; b.addEventListener("click", () => loadSlate(i)); box.appendChild(b);
+  });
+}
+function renderCtx() {
+  const box = $("ctx"); box.textContent = "";
+  for (const [side, code] of [["a", S.away], ["h", S.home]]) {
+    const t = STATE.teams[code], r = rest(side), d = el("div"), hd = el("div", "teamhead");
+    hd.append(el("h3", null, t.name), el("span", "sub", t.record[0] + "-" + t.record[1]));
+    d.append(hd, el("p", "note", "Último partido: " + t.last_game + ". Hoy " + restText(r) + "."));
+    box.appendChild(d);
+  }
+}
+function renderInjuries() {
+  const box = $("inj"); box.textContent = "";
+  for (const [code, status] of [[S.away, S.statusA], [S.home, S.statusH]]) {
+    const t = STATE.teams[code], d = el("div"), hd = el("div", "teamhead");
+    hd.append(el("h3", null, t.name), el("span", "sub", "número = peso"));
+    d.appendChild(hd);
+    if (t.n_hist < M.warmup) d.appendChild(el("p", "note", "Pocos partidos esta temporada: las bajas no se ajustan."));
+    for (const p of t.roster.slice(0, 11)) {
+      const st = status[p.name] || "available";
+      const row = el("div", "pl" + (st === "out" ? " out" : (st === "available" || st === "probable" ? "" : " dtd")));
+      const nm = el("span", null, p.name); nm.appendChild(el("span", "v", "  " + fmt(p.value, 0)));
+      const sel = el("select"); sel.setAttribute("aria-label", "Estado de " + p.name);
+      for (const k of Object.keys(STATUS_LABEL)) { const o = el("option", null, STATUS_LABEL[k]); o.value = k; if (k === st) o.selected = true; sel.appendChild(o); }
+      sel.addEventListener("change", () => { if (sel.value === "available") delete status[p.name]; else status[p.name] = sel.value; renderInjuries(); update(); });
+      row.append(nm, sel); d.appendChild(row);
+    }
+    box.appendChild(d);
+  }
+}
+function renderBooks() {
+  const tb = $("books"); tb.textContent = "";
+  S.books.forEach(b => {
+    const tr = el("tr"), n = el("td");
+    const ni = el("input"); ni.type = "text"; ni.value = b.n; ni.style.width = "100px"; ni.setAttribute("aria-label", "Nombre de la casa"); ni.addEventListener("input", () => { b.n = ni.value; update(); }); n.appendChild(ni);
+    const mk = key => { const td = el("td", "num"), i = el("input"); i.type = "number"; i.step = "1"; i.placeholder = "—"; i.value = b[key] == null ? "" : b[key]; i.setAttribute("aria-label", "Cuota " + (key === "h" ? "local" : "visitante") + " de " + b.n);
+      i.addEventListener("input", () => { b[key] = i.value === "" ? null : parseFloat(i.value); update(); }); td.appendChild(i); return td; };
+    tr.append(n, mk("h"), mk("a")); tb.appendChild(tr);
+  });
+}
+
+/* ---------- Carga de partidos ---------- */
+function setTeams(away, home) { S.away = away; S.home = home; S.statusH = {}; S.statusA = {}; $("away").value = away; $("home").value = home; $("restH").value = "auto"; $("restA").value = "auto"; }
+function loadSlate(i) {
+  const g = STATE.slate[i]; S.slateIdx = i;
+  setTeams(g.away, g.home); $("date").value = etDate(g.tip_utc);
+  S.spread = g.spread_home_margin == null ? null : -g.spread_home_margin; $("spread").value = S.spread == null ? "" : S.spread;
+  S.books.forEach(b => { b.h = null; b.a = null; });
+  S.books[0].h = g.odds.home == null ? null : g.odds.home; S.books[0].a = g.odds.away == null ? null : g.odds.away;
+  let miss = 0;
+  for (const [side, status, team] of [["home", S.statusH, g.home], ["away", S.statusA, g.away]]) {
+    for (const it of g.injuries[side]) {
+      const pl = STATE.teams[team].roster.find(p => p.name === it.player);
+      const key = it.status === "listed" ? "questionable" : it.status;
+      if (pl && PLAY[key] != null && key !== "available") status[pl.name] = key; else if (!pl && key !== "available") miss++;
+    }
+  }
+  $("found").textContent = miss ? miss + " jugador(es) del parte no están en la rotación del modelo y no cuentan." : "";
+  checkStale(); renderAll();
+}
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 @.]/g, " ");
+const ALIAS = { PHI: ["sixers", "76ers", "philly"], POR: ["blazers", "trail blazers"], MIN: ["wolves", "twolves"], CLE: ["cavs"], DAL: ["mavs"], NOP: ["pels"], GSW: ["dubs", "gs"], NYK: ["ny", "knickerbockers"], SAS: ["sa"], LAL: ["la lakers"], LAC: ["la clippers"], OKC: ["okc thunder"], UTA: ["utah"], BKN: ["brooklyn"], CHA: ["charlotte"], WAS: ["wiz", "washington"] };
+function findTeams(text) {
+  const t = " " + norm(text) + " ", hits = [];
+  for (const c of codes) {
+    const full = norm(STATE.teams[c].name), nick = full.split(" ").slice(-1)[0], city = full.split(" ").slice(0, -1).join(" ");
+    let pos = -1;
+    for (const key of [" " + c.toLowerCase() + " ", " " + full + " ", " " + nick + " ", " " + city + " ", ...(ALIAS[c] || []).map(a => " " + a + " ")]) { const i = t.indexOf(key); if (i >= 0 && (pos < 0 || i < pos)) pos = i; }
+    if (c === "LAC" && t.includes(" clippers ")) pos = t.indexOf(" clippers ");
+    if (pos >= 0) hits.push({ c, pos });
+  }
+  return hits.sort((a, b) => a.pos - b.pos).slice(0, 2);
+}
+function onSearch() {
+  const q = $("q").value;
+  if (!q.trim()) { $("found").textContent = ""; return; }
+  const hits = findTeams(q);
+  if (hits.length < 2) { $("found").textContent = hits.length ? "Falta el segundo equipo." : "No encuentro equipos. Prueba con las siglas, por ejemplo MIA @ UTA."; return; }
+  const n = norm(q), local = /\bvs\b|\bcontra\b|\bv\b/.test(n) && !/@|\ben\b| at /.test(n);
+  const [a, b] = hits, away = local ? b.c : a.c, home = local ? a.c : b.c;
+  S.slateIdx = -1; setTeams(away, home); $("found").textContent = "Detectado: " + STATE.teams[away].name + " en " + STATE.teams[home].name + ". Usa «Intercambiar» si es al revés.";
+  renderAll();
+}
+function applyPaste() {
+  const lines = $("paste").value.split(/\n|;/), map = [[/out|fuera|baja/i, "out"], [/doubtful|poco probable/i, "doubtful"], [/questionable|day[- ]to[- ]day|dtd|duda/i, "questionable"], [/probable/i, "probable"], [/available|disponible/i, "available"]];
+  const lastOf = nm => norm(nm).trim().split(" ").filter(w => w.length > 2 && !["jr.", "jr", "iii", "ii"].includes(w)).slice(-1)[0] || "";
+  const pool = [...STATE.teams[S.home].roster, ...STATE.teams[S.away].roster], lastCount = {};
+  for (const p of pool) lastCount[lastOf(p.name)] = (lastCount[lastOf(p.name)] || 0) + 1;
+  let n = 0; const seen = [];
+  for (const [team, status] of [[S.home, S.statusH], [S.away, S.statusA]]) {
+    for (const p of STATE.teams[team].roster) {
+      const full = norm(p.name).trim().replace(/\./g, ""), last = lastOf(p.name), uniq = lastCount[last] === 1 && last.length > 3;
+      for (const ln of lines) {
+        const nl = norm(ln).replace(/\./g, "");
+        if (nl.includes(full) || (uniq && new RegExp("\\b" + last.replace(/[^a-z0-9]/g, "") + "\\b").test(nl))) {
+          const hit = map.find(([re]) => re.test(ln));
+          if (hit) { if (hit[1] === "available") delete status[p.name]; else status[p.name] = hit[1]; n++; seen.push(p.name); break; }
+        }
+      }
+    }
+  }
+  $("applied").textContent = n ? "Aplicado a " + n + " jugador(es): " + seen.join(", ") + "." : "No he encontrado jugadores de la rotación de estos equipos en el texto (si el apellido se repite, escribe el nombre completo).";
+  renderInjuries(); update();
+}
+
+/* ---------- Análisis ---------- */
+function analyze() {
+  if (!S.home || !S.away || S.home === S.away) return null;
+  const base = { home: S.home, away: S.away, neutral: $("neutral").checked, restH: rest("h"), restA: rest("a"), statusH: S.statusH, statusA: S.statusA };
+  const pr = predict(base);
+  const spread = $("spread").value === "" ? null : parseFloat($("spread").value);
+  const books = S.books.map(b => ({ n: b.n || "Casa", h: b.h, a: b.a }));
+  const mk = marketRef(spread, books);
+  const pf = finalProb(mk ? mk.p : null, pr.p);
+  const mktMargin = spread != null ? -spread : (mk ? E.sigma_market * ppf(mk.p) : null);
+  const gap = mktMargin == null ? null : pr.margin - mktMargin;
+  const sens = [];
+  for (const [side, team, status] of [["h", S.home, S.statusH], ["a", S.away, S.statusA]]) {
+    for (const p of STATE.teams[team].roster) {
+      const st = status[p.name] || "available";
+      if (st === "available" || st === "out") continue;
+      const key = side === "h" ? "statusH" : "statusA";
+      const play = predict({ ...base, [key]: { ...status, [p.name]: "available" } });
+      const out = predict({ ...base, [key]: { ...status, [p.name]: "out" } });
+      sens.push({ name: p.name, team, status: st, d: out.margin - play.margin, dp: out.p - play.p });
+    }
+  }
+  sens.sort((a, b) => Math.abs(b.d) - Math.abs(a.d));
+  return { base, pr, spread, books, mk, pf, mktMargin, gap, sens };
+}
+function buildTakes(A) {
+  const T = [], H = STATE.teams[A.base.home].name, V = STATE.teams[A.base.away].name, hc = A.base.home, ac = A.base.away;
+  const z = A.gap == null ? null : A.gap / E.gap_sd, nb = A.books.filter(b => validOdds(b.h) || validOdds(b.a)).length;
+  const evs = [];
+  for (const b of A.books) for (const [side, o] of [["h", b.h], ["a", b.a]]) {
+    if (!validOdds(o)) continue;
+    const p = side === "h" ? A.pf : 1 - A.pf;
+    evs.push({ book: b.n, side, o, p, ev: p * dec(o) - 1 });
+  }
+  if (evs.length) {
+    const top = evs.reduce((a, b) => (b.ev > a.ev ? b : a));
+    if (top.ev >= 0.01 && nb >= 2) {
+      T.push({ kind: "Precio", cls: "price", conf: "Confianza: media", title: "Mejor precio: " + (top.side === "h" ? hc : ac) + " " + odd(top.o) + " en " + top.book,
+        text: "Esa cuota paga más que el precio justo de consenso (" + odd(american(top.p)) + "). Valor esperado +" + fmt(top.ev * 100, 1) + " % por euro. Es una diferencia entre casas, no una predicción del modelo.",
+        ev: "Es la única ventaja que no depende de que mi modelo acierte. Comprueba que la cuota sigue disponible." });
+    } else {
+      T.push({ kind: "Precio", cls: "price", conf: "Sin valor", title: "Ninguna cuota supera el precio justo",
+        text: "La mejor es " + (top.side === "h" ? hc : ac) + " " + odd(top.o) + " en " + top.book + ", con valor esperado " + sgn(top.ev * 100, 1) + " % por euro. " + (nb < 2 ? "Mete cuotas de otra casa para comparar precios." : "El margen de la casa se come cualquier ventaja."),
+        ev: "Con una sola casa el valor esperado es negativo por construcción (margen de la casa)." });
+    }
+  }
+  const keyS = A.sens.filter(s => Math.abs(s.d) >= 0.8);
+  if (keyS.length) {
+    const s = keyS[0], home = s.team === A.base.home, d = home ? -Math.abs(s.d) : Math.abs(s.d), dp = home ? -Math.abs(s.dp) : Math.abs(s.dp);
+    T.push({ kind: "Alerta", cls: "alert", conf: "Espera la confirmación", title: s.name + " mueve el margen " + fmt(Math.abs(s.d), 1) + " pts según juegue o no",
+      text: "Si " + s.name + " (" + STATE.teams[s.team].name + ", " + STATUS_LABEL[s.status].toLowerCase() + ") no juega, el modelo cambia el margen del local " + sgn(d, 1) + " pts (" + sgn(dp * 100, 1) + " pp de probabilidad). " + (keyS.length > 1 ? "Hay " + (keyS.length - 1) + " jugador(es) más con efecto relevante. " : "") + "Las líneas se mueven con estas noticias: no tomes posición antes de que se confirme.",
+      ev: "El mercado suele reaccionar rápido a las confirmaciones de última hora." });
+  }
+  const favHome = A.pf >= 0.5, pfav = favHome ? A.pf : 1 - A.pf, maxImp = A.sens.length ? Math.abs(A.sens[0].d) : 0;
+  let conf = "Fiabilidad: baja";
+  if (A.mk && z != null) conf = (Math.abs(z) < 1 && maxImp < 1.5) ? "Fiabilidad: alta" : "Fiabilidad: media";
+  else if (A.mk) conf = "Fiabilidad: media";
+  T.push({ kind: "Probabilidad", cls: "", conf, title: "Ganador más probable: " + (favHome ? H : V) + ", " + pct(pfav, 0),
+    text: "Estimación final " + pct(pfav) + " (precio justo " + odd(american(pfav)) + ")." + (A.mk ? " Se apoya sobre todo en el mercado (" + A.mk.label + ") porque en 2022-26 mi modelo no añadió información a esa cifra." : " No hay mercado: es solo la opinión de mi modelo, que en 2022-26 fue peor que el mercado."),
+    ev: "Probable no significa rentable: la cuota ya descuenta esa probabilidad." });
+  if (A.gap != null) {
+    const T0 = Math.min(5, Math.floor(Math.abs(A.gap))), r = T0 >= 1 ? E.roi_test[String(T0)] : null;
+    T.push({ kind: "Discrepancia", cls: "disc", conf: "Fiabilidad: baja", title: "El modelo ve el margen " + sgn(A.pr.margin, 1) + " y el mercado " + sgn(A.mktMargin, 1) + " (" + sgn(A.gap, 1) + " pts)",
+      text: (Math.abs(z) >= 1 ? "Es una discrepancia notable (z = " + fmt(Math.abs(z), 1) + "). Lo habitual es que falte información en mi modelo: revisa alineaciones y lesiones." : "Es una discrepancia normal (z = " + fmt(Math.abs(z), 1) + "), dentro del ruido habitual.") + " Con el mercado como referencia, cubrir el spread ronda el 50 %.",
+      ev: r ? "En 2022-26, apostar a favor del modelo cuando difería ≥ " + T0 + " pts dio un ROI simulado de " + sgn(r.roi * 100, 1) + " % (n = " + r.n + "), peor que el −4,5 % de apostar al azar." : "En 2022-26 la discrepancia modelo-mercado no contenía información real (parte real " + sgn(E.gap_c2, 2) + " ± " + fmt(E.gap_c2_ci, 2) + ")." });
+  }
+  return T;
+}
+
+/* ---------- Gráficos y salida ---------- */
+function drawChart(A) {
+  const host = $("chart"); if (!host) return;
+  const W = Math.max(300, host.clientWidth || 560), H = 190, pad = 14, lo = -35, hi = 35;
+  const ns = (t, a) => { const e = document.createElementNS("http://www.w3.org/2000/svg", t); for (const k in a) e.setAttribute(k, a[k]); return e; };
+  const svg = ns("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Distribución del margen del local según el modelo" });
+  const x = v => pad + (W - 2 * pad) * (v - lo) / (hi - lo), mu = A.pr.margin, sd = A.pr.sigma;
+  const pdf = v => Math.exp(-0.5 * ((v - mu) / sd) ** 2) / (sd * Math.sqrt(2 * Math.PI)), top = pdf(mu), yb = H - 28, yt = 28;
+  const y = v => yb - (yb - yt) * pdf(v) / top;
+  let line = "", area = "";
+  for (let v = lo; v <= hi; v += 0.5) { const p = x(v).toFixed(1) + "," + y(v).toFixed(1); line += (line ? " L" : "M") + p; if (v >= 0) area += (area ? " L" : "M" + x(0).toFixed(1) + "," + yb + " L") + p; }
+  area += " L" + x(hi).toFixed(1) + "," + yb + " Z";
+  svg.appendChild(ns("path", { d: area, fill: "var(--model)", opacity: 0.18 }));
+  svg.appendChild(ns("path", { d: line, fill: "none", stroke: "var(--model)", "stroke-width": 2 }));
+  svg.appendChild(ns("line", { x1: pad, x2: W - pad, y1: yb, y2: yb, stroke: "var(--line)" }));
+  for (const t of [-30, -20, -10, 0, 10, 20, 30]) { const tx = ns("text", { x: x(t), y: H - 8, "text-anchor": "middle", fill: "var(--muted)", "font-size": 11 }); tx.textContent = t > 0 ? "+" + t : String(t); svg.appendChild(tx); }
+  svg.appendChild(ns("line", { x1: x(0), x2: x(0), y1: yt - 6, y2: yb, stroke: "var(--muted)", "stroke-dasharray": "3 3" }));
+  const mark = (v, col, label, dy) => { const xv = x(Math.max(lo, Math.min(hi, v))); svg.appendChild(ns("line", { x1: xv, x2: xv, y1: yt - 6, y2: yb, stroke: col, "stroke-width": 2.5 })); const t = ns("text", { x: xv, y: 12 + dy, "text-anchor": xv > W - 90 ? "end" : (xv < 90 ? "start" : "middle"), fill: col, "font-size": 12, "font-weight": 650 }); t.textContent = label; svg.appendChild(t); };
+  mark(mu, "var(--model)", "Modelo " + sgn(mu, 1), 0);
+  if (A.mktMargin != null) mark(A.mktMargin, "var(--market)", "Mercado " + sgn(A.mktMargin, 1), Math.abs(A.mktMargin - mu) < 6 ? 14 : 0);
+  host.textContent = ""; host.appendChild(svg);
+}
+function renderResult() {
+  const A = analyze(), box = $("result"); box.textContent = "";
+  if (!A) { box.appendChild(el("p", "empty", "Elige dos equipos distintos.")); return; }
+  const V = STATE.teams[A.base.away].name;
+  const big = el("div", "big");
+  const stat = (cls, k, v, s) => { const d = el("div", "stat " + cls); d.append(el("div", "k", k), el("div", "v", v), el("div", "s", s)); return d; };
+  big.append(
+    stat("final", "Estimación final", pct(A.pf, 0) + " " + A.base.home, V + " " + pct(1 - A.pf, 0) + ". Precio justo " + odd(american(A.pf)) + " / " + odd(american(1 - A.pf))),
+    stat("mod", "Modelo v2", sgn(A.pr.margin, 1) + " pts", A.base.home + " " + pct(A.pr.p, 0) + ", dispersión " + fmt(A.pr.sigma, 1)),
+    stat("mkt", "Mercado", A.mk ? pct(A.mk.p, 0) + " " + A.base.home : "—", A.mk ? A.mk.label : "Sin spread ni cuotas"));
+  box.appendChild(big);
+  const ch = el("div"); ch.id = "chart"; box.appendChild(ch);
+  box.appendChild(el("p", "note", "Margen esperado del local. El área sombreada es la probabilidad de que gane el local."));
+
+  const comp = el("div", "panel"); comp.style.marginTop = "14px"; comp.appendChild(el("h3", null, "De dónde sale el margen"));
+  const g = el("div", "comp"), mx = Math.max(8, ...Object.values(A.pr.comp).map(Math.abs));
+  for (const [k, lab] of [["rating", "Diferencia de ratings"], ["hca", "Ventaja de campo"], ["rest", "Descanso"], ["avail", "Bajas y regresos"]]) {
+    const v = A.pr.comp[k], w = Math.abs(v) / mx * 50, bar = el("div", "bar"), i = el("i");
+    i.style.background = v >= 0 ? "var(--model)" : "var(--market)"; i.style.width = w + "%"; i.style.left = v >= 0 ? "50%" : (50 - w) + "%";
+    bar.append(i, el("b")); g.append(el("span", null, lab), bar, el("span", "n", sgn(v, 1)));
+  }
+  comp.appendChild(g); comp.appendChild(el("p", "note", "Puntos a favor del local (azul) o del visitante (naranja).")); box.appendChild(comp);
+
+  const tk = el("div"); tk.style.marginTop = "18px"; tk.appendChild(el("h2", null, "Takes, de más a menos robustos"));
+  const ol = el("ol", "takes");
+  for (const t of buildTakes(A)) {
+    const li = el("li"), top = el("div", "top"); top.append(el("span", "kind " + t.cls, t.kind), el("h3", null, t.title), el("span", "conf", t.conf));
+    li.append(top, el("p", null, t.text), el("p", "ev", t.ev)); ol.appendChild(li);
+  }
+  tk.appendChild(ol); box.appendChild(tk);
+
+  if (A.sens.length) {
+    const s = el("div", "panel"); s.style.marginTop = "18px"; s.appendChild(el("h3", null, "Qué cambia si se confirma una baja"));
+    const tb = el("table"), th = el("thead"), hr = el("tr");
+    [["Jugador", 0], ["Estado", 0], ["Si no juega (margen local)", 1], ["Prob. local", 1]].forEach(([h, n]) => hr.appendChild(el("th", n ? "num" : null, h)));
+    th.appendChild(hr); tb.appendChild(th); const body = el("tbody");
+    for (const r of A.sens.slice(0, 6)) {
+      const home = r.team === A.base.home, d = home ? -Math.abs(r.d) : Math.abs(r.d), dp = home ? -Math.abs(r.dp) : Math.abs(r.dp), tr = el("tr");
+      tr.append(el("td", null, r.name + " (" + r.team + ")"), el("td", null, STATUS_LABEL[r.status]), el("td", "num " + (d < 0 ? "neg" : "pos"), sgn(d, 1) + " pts"), el("td", "num", sgn(dp * 100, 1) + " pp")); body.appendChild(tr);
+    }
+    tb.appendChild(body); s.appendChild(tb); box.appendChild(s);
+  }
+  drawChart(A);
+}
+function update() { renderResult(); }
+function renderAll() { renderChips(); renderCtx(); renderInjuries(); renderBooks(); renderResult(); }
+function checkStale() {
+  const b = $("stale"), d = Date.parse($("date").value + "T00:00:00Z"), a = Date.parse(STATE.asof + "T00:00:00Z"), days = Math.round((d - a) / 86400000);
+  if (isFinite(days) && days > 1) { b.textContent = "Los datos llegan al " + STATE.asof + " y has elegido una fecha " + days + " días posterior. Los ratings, el descanso automático y las plantillas pueden estar desactualizados: regenera el análisis con scripts/export_web.py."; b.classList.add("show"); }
+  else b.classList.remove("show");
+}
+
+/* ---------- Arranque ---------- */
+(function init() {
+  $("asof").textContent = "Modelo v2 con datos hasta el " + STATE.asof + " (temporada " + (STATE.season - 1) + "-" + String(STATE.season).slice(2) + "). Ventaja de campo actual " + fmt(M.hca, 1) + " pts, dispersión del margen " + fmt(M.sigma, 1) + " pts.";
+  $("evidence").textContent = "En 2022-26 el modelo tuvo un log loss de " + fmt(E.test_ll.v2_elo, 3) + " y el mercado de " + fmt(E.test_ll.mercado, 3) + " (el modelo anterior, " + fmt(E.test_ll.v0_ridge, 3) + "). Al mezclar el modelo con el mercado, el peso del modelo fue " + fmt(E.blend.b_modelo, 2) + ": por eso la estimación final se apoya casi por completo en el mercado cuando lo hay.";
+  fillSelect($("away")); fillSelect($("home"));
+  $("away").addEventListener("change", () => { S.away = $("away").value; S.statusA = {}; S.slateIdx = -1; renderAll(); });
+  $("home").addEventListener("change", () => { S.home = $("home").value; S.statusH = {}; S.slateIdx = -1; renderAll(); });
+  $("swap").addEventListener("click", () => { const a = S.away, h = S.home; setTeams(h, a); S.slateIdx = -1; renderAll(); });
+  $("q").addEventListener("input", onSearch);
+  $("date").addEventListener("change", () => { checkStale(); renderAll(); });
+  for (const id of ["restH", "restA", "neutral", "spread"]) $(id).addEventListener("input", () => { renderCtx(); update(); });
+  $("apply").addEventListener("click", applyPaste);
+  window.addEventListener("resize", () => { const A = analyze(); if (A) drawChart(A); });
+  loadSlate(Math.max(0, STATE.slate.findIndex(g => g.home === "UTA")));
+})();
+</script>
+</body>
+</html>
