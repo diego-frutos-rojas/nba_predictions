@@ -69,7 +69,11 @@ def offline_root(tmp_path_factory):
     root = tmp_path_factory.mktemp("portal")
     (root / "data").mkdir()
     for rel in ("data/raw", "models", "docs", "web"):
-        (root / rel).symlink_to(ROOT / rel, target_is_directory=True)
+        try:
+            (root / rel).symlink_to(ROOT / rel, target_is_directory=True)
+        except OSError:
+            # Windows sin modo desarrollador no permite enlaces simbólicos: se copia la carpeta.
+            shutil.copytree(ROOT / rel, root / rel)
     return root
 
 

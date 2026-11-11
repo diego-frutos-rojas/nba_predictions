@@ -6,3 +6,8 @@ node_modules/
 # entornos virtuales: no se versionan, cada uno crea el suyo (python -m venv .venv)
 .venv/
 venv/
+
+# generados: cada ejecución del portal los reescribe (evita conflictos entre los dos)
+viz/portal-nba.html
+.ruff_cache/
+.coverage
