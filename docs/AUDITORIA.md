@@ -53,6 +53,17 @@ Son 10 parámetros para 7.380 partidos de desarrollo.
 * **Contrastes pre-especificados** (2 sobre el residuo del mercado, 3 segmentos) con umbral corregido por comparaciones múltiples.
 * **Descartado: modelo de impacto de jugador** (tipo plus-minus ajustado con solo marcadores de partido). Mejoraba dentro de muestra (0,5932 → 0,5884) y no fuera (0,6178 → 0,6172): sobreajuste clásico. Queda en `nba_model/player_model.py` como experimento documentado; con datos de quintetos (stints) podría funcionar.
 * **Corregido: primera versión de la disponibilidad.** El "talento habitual" se calculaba con una plantilla que crecía durante las primeras jornadas, así que salía sesgado (+41 minutos en NYK, +63 en PHX). Se detectó al revisar el informe de esta noche, se arregló (misma plantilla en el numerador y el denominador) y se validó **solo con DEV** antes de reevaluar. El efecto pasó de −0,0009 a −0,0026 de log loss y se volvió más estable.
+* **Corregido (11-nov-2026): recorte de la disponibilidad en `elo.run_elo`.** El recorte a ±60 estaba escrito con un condicional en línea
+  que, si `avail_home` > 60, devolvía 60 y **descartaba el término del visitante** (precedencia de `a if c else b - x`). Afectaba a 81
+  partidos (6 DEV, 12 VAL, 63 TEST); el portal, el analizador web y `run_report` ya recortaban bien. Con los parámetros congelados el
+  efecto es despreciable (TEST 0,61168 → 0,61168; DEV 0,60294 → 0,60292). Test de regresión: `test_elo_avail_clips_each_side_independently`.
+* **Descartado (11-nov-2026): ajuste de plantilla en verano.** Al primer partido de cada equipo, rating += w·D, con D = valor
+  (`AvailabilityTracker.value`) de quienes juegan ese partido − valor de la rotación final de la temporada anterior. Rejilla w ∈ {0…0,08} ×
+  carry ∈ {0,60…0,90}, resto congelado. Validación cruzada en DEV: afinando en 2014-16 elige w=0,04/carry=0,90 y **empeora** 2017-19
+  (+0,0015; en los 20 primeros partidos +0,0078); afinando en 2017-19 elige w=0. Inestable: no se adopta. El *prior* con proyecciones de
+  victorias de las casas (hoja de ruta, punto 3) sigue pendiente porque necesita datos externos.
+* **Descartado (11-nov-2026): recalibración de Platt** (a + b·logit p) ajustada en una mitad de DEV: empeora la otra en los dos sentidos
+  (+0,0010 y +0,0003; b = 1,13 y 0,98). La pendiente de calibración no es estable entre periodos; se mantiene sin recalibrar.
 
 ## 6. ¿Bate al mercado? No
 
