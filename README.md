@@ -62,7 +62,7 @@ Para reafinar parámetros (solo con DEV 2014-2019): `python scripts/run_pipeline
 - `models/params_v2.json`, `models/props_v1.json`: parámetros congelados (afinados solo con DEV).
 - `docs/`: `AUDITORIA.md` (hallazgos y decisiones), `RESULTADOS.md/.json` (generados), `INFORME_2026-11-10.txt`.
 - `data/snapshot_2026-11-10/`: mercado, lesiones y descanso de los 6 partidos analizados, y resultados del 7 al 9 de noviembre.
-- `viz/mesa-cuotas-nba.html`: visualización interactiva **basada en el modelo v0** (no se ha actualizado a v2).
+- `archive/mesa-cuotas-nba.html`: visualización antigua **basada en el modelo v0** (archivada, no se mantiene).
 
 ## Usar el modelo con otro día
 1. `python scripts/run_pipeline.py --fetch` para traer los últimos resultados.

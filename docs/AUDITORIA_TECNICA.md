@@ -115,7 +115,7 @@ Así, el "mercado" del portal no es el mismo que el del backtest. Hay que unific
 ### 3.5 Menores
 - `daily.py:309` hace `json.dump(out, open(path, "w"))` sin `with`. En Windows el archivo puede quedar bloqueado. Mejor `Path(path).write_text(json.dumps(...))`.
 - `daily.py:167` y `:201` capturan `except Exception` y lo convierten en un aviso. Es razonable para el portal, pero en la automatización esos avisos deben hacer **fallar el job o notificar**. Si no, el historial se llena de días con datos incompletos sin que nadie lo sepa.
-- `viz/mesa-cuotas-nba.html` está basado en v0 (lo dice el README). O se borra o se mueve a `archive/`.
+- `viz/mesa-cuotas-nba.html` está basado en v0 (lo dice el README). **Hecho:** movido a `archive/`.
 
 ### 3.6 Matemática duplicada Python ↔ JS
 Hoy está controlada con tests de paridad, pero es la deuda técnica más cara a medio plazo: cada cambio del modelo se hace dos veces. Opciones, de menos a más trabajo:
