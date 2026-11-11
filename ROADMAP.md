@@ -36,25 +36,26 @@
 ## FASE 1: Base de equipo y herramientas · semana 1-2 · ⏱ ½-1 día
 *Objetivo: no romper nada sin enterarse y trabajar igual los dos.*
 
-- [ ] **1.1** 🔒 `pyproject.toml` + lockfile `[resp: ]`
+- [x] **1.1** 🔒 `pyproject.toml` + lockfile `[resp: Diego]`
   - Pasar `requirements.txt` a `pyproject.toml`, usar `uv lock` y documentar `uv sync` en el README.
-  - ✅ En una carpeta limpia, `uv sync && pytest -q` da 39 passed.
-- [ ] **1.2** 🔒 CI con GitHub Actions (`.github/workflows/ci.yml`) `[resp: ]`
+  - ✅ En una carpeta limpia, `uv sync && uv run pytest -q` da 41 passed (en CI menos: los que necesitan `data/raw` y no está en git se saltan).
+- [ ] **1.2** 🔒 CI con GitHub Actions (`.github/workflows/ci.yml`) `[resp: Diego]`
   - En cada PR: `ruff check`, `pytest -q` y los tests de paridad JS (node + `npm ci` en `web/tests`).
+  - Workflow escrito. **Marcar `[x]` cuando el primer PR salga en verde** (no se puede comprobar en local).
   - ✅ El PR muestra el check verde, y un test roto lo pone rojo.
 - [ ] **1.3** 🔒 Proteger `main` en GitHub `[resp: ]`
   - Settings → Branches: exigir PR, 1 aprobación y CI en verde. Nadie hace push directo a `main`.
-- [ ] **1.4** Plantilla de PR (`.github/pull_request_template.md`) `[resp: ]`
+- [x] **1.4** Plantilla de PR (`.github/pull_request_template.md`) `[resp: Diego]`
   - Checklist: ¿test nuevo?, ¿miraste VAL o TEST? (no), ¿paridad JS?, ¿actualizaste `AUDITORIA.md` si hubo negativos?
-- [ ] **1.5** Lint y formato: `ruff` + `pre-commit` `[resp: ]`
-  - Configuración en `pyproject.toml` y `pre-commit install`. Arreglar los 3 imports y la variable sin usar.
-- [ ] **1.6** Unificar la σ del mercado (11,25 en `baselines.py` y 12,0 en `market.py`) `[resp: ]`
-  - Una sola constante importada desde un único módulo, con su test.
+- [x] **1.5** Lint y formato: `ruff` + `pre-commit` `[resp: Diego]`
+  - Configuración en `pyproject.toml` (reglas E, W, F, I). Cada uno ejecuta una vez `uv run pre-commit install`.
+- [x] **1.6** Unificar la σ del mercado (11,25 en `baselines.py` y 12,0 en `market.py`) `[resp: Diego]`
+  - `baselines.SIGMA_MARKET` es la única. Los 12,0 eran la σ del modelo v0: ahora `ratings.SIGMA_V0`. `market.py` ya no tiene σ por defecto. Test: `test_single_market_sigma`.
 - [ ] **1.7** Claude para los dos `[resp: ambos]`
   - Instalar la extensión Claude Code en VS Code.
   - Plugins: `github`, `Data`, `Cairn Memory`.
-  - Revisar `CLAUDE.md` (corto, que apunte a `AGENTS.md` y a este `ROADMAP.md`).
-- [ ] **1.8** Skills propias del proyecto (`.claude/skills/`) `[resp: ]`
+  - Revisar `CLAUDE.md` (corto, que apunte a `AGENTS.md` y a este `ROADMAP.md`). **Hecho.** Falta lo manual: extensión y plugins, cada uno en su PC.
+- [x] **1.8** Skills propias del proyecto (`.claude/skills/`) `[resp: Diego]`
   - `/nueva-variable`: protocolo completo (validación cruzada en DEV → test de fuga → paridad → TEST una vez → documentar).
   - `/portal-diario`: generar el portal y revisar los avisos.
   - `/traspaso`: nota de fin de sesión para que el otro (o su Claude) retome.
@@ -194,3 +195,4 @@
 
 - 2026-11-11 · Diego (+Claude) · Auditoría técnica (`docs/AUDITORIA_TECNICA.md`), roadmap y `.gitignore` con `.venv/` · Pendiente: 0.1 (`git rm --cached .venv` + PR)
 - 2026-11-11 · Diego (+Claude) · Fase 0 cerrada (0.1-0.5): `.python-version` 3.13, `mesa-cuotas` a `archive/` · Pendiente: 0.6 (opcional, requiere acuerdo de los dos) y que el socio confirme la versión de Python
+- 2026-11-11 · Diego (+Claude) · Fase 1: `pyproject.toml` + `uv.lock` (adiós `requirements.txt`), `ci.yml`, plantilla de PR, ruff + pre-commit, σ unificada, `CLAUDE.md`, 3 skills · Pendiente (manual, GitHub): 1.2 verificar CI en el primer PR, 1.3 proteger `main`, 1.7 plugins

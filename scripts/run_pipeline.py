@@ -15,7 +15,7 @@ sys.path.insert(0, str(ROOT))
 
 from nba_model.data import fetch_history
 from nba_model.evaluate import load_params, prepare_dataset, results_markdown, run_full_evaluation
-from nba_model.tune import BOUNDS, average_top, random_search
+from nba_model.tune import average_top, random_search
 
 
 def main():

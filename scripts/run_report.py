@@ -4,7 +4,6 @@ Uso:  python scripts/run_report.py [--market data/snapshot_2026-11-10/market_202
 """
 import argparse
 import difflib
-import json
 import math
 import sys
 from pathlib import Path
@@ -20,7 +19,7 @@ from nba_model.elo import AVAIL_CLIP, predict_game, run_elo
 from nba_model.evaluate import load_params, prepare_dataset
 from nba_model.injuries import PLAY_PROB
 from nba_model.market import load_market, reference_prob
-from nba_model.odds import expected_value, normal_cdf
+from nba_model.odds import expected_value
 
 SD_GAP = 3.3   # desviación típica histórica (TEST 2022-26) de margen_modelo - margen_mercado
 

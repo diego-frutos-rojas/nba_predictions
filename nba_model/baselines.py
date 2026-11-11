@@ -1,15 +1,18 @@
 """Baselines con los que comparar: (1) mercado, (2) mi modelo v0 en walk-forward, (3) siempre-local."""
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
 from statistics import NormalDist
 
-from .ratings import fit_ratings, prior_from_record, record_from_games
+import numpy as np
+import pandas as pd
+
+from .ratings import SIGMA_V0, fit_ratings, prior_from_record, record_from_games
 
 _N = NormalDist()
 
-SIGMA_MARKET = 11.25   # sigma spread->prob estimada por máxima verosimilitud en DEV (SBR 2012-2019)
+# Única definición de la sigma del mercado (spread -> probabilidad). Todo el proyecto la importa de aquí;
+# tests/test_core.py::test_single_market_sigma lo comprueba. Estimada por máxima verosimilitud en DEV (SBR 2012-2019).
+SIGMA_MARKET = 11.25
 
 
 def market_prob(spread_home, sigma: float = SIGMA_MARKET):
@@ -18,7 +21,7 @@ def market_prob(spread_home, sigma: float = SIGMA_MARKET):
     return np.array([_N.cdf(-x / sigma) if np.isfinite(x) else np.nan for x in s])
 
 
-def ridge_v0_walk_forward(df: pd.DataFrame, lam: float = 6.0, hca: float = 3.0, sigma: float = 12.0) -> np.ndarray:
+def ridge_v0_walk_forward(df: pd.DataFrame, lam: float = 6.0, hca: float = 3.0, sigma: float = SIGMA_V0) -> np.ndarray:
     """Mi modelo v0 escalado a historia: ridge con prior de récord, SOLO con partidos previos de la
     misma temporada, HCA fijo 3,0 y sigma fija 12. Devuelve la probabilidad local de cada partido."""
     out = np.full(len(df), np.nan)

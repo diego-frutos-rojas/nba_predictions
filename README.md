@@ -38,11 +38,11 @@ entre −1,5 % y +2,4 % según el filtro, con intervalos que incluyen pérdidas:
 
 ## Inicio rápido
 ```
-python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-pytest -q                                              # 39 tests
-python scripts/run_pipeline.py                         # evaluación completa -> docs/RESULTADOS.json y .md
-python scripts/run_report.py                           # informe de los partidos del snapshot (10-nov-2026)
+uv sync                                                # crea .venv con Python 3.13 y las versiones exactas de uv.lock (https://docs.astral.sh/uv/)
+uv run pre-commit install                              # una vez: lint automático antes de cada commit
+uv run pytest -q                                       # 41 tests
+uv run python scripts/run_pipeline.py                  # evaluación completa -> docs/RESULTADOS.json y .md
+uv run python scripts/run_report.py                    # informe de los partidos del snapshot (10-nov-2026)
 ```
 Los datos crudos ya vienen en `data/raw/` (19 MB). Para refrescarlos: `python scripts/run_pipeline.py --fetch`.
 Para reafinar parámetros (solo con DEV 2014-2019): `python scripts/run_pipeline.py --tune`.

@@ -50,7 +50,22 @@ def test_market_helpers():
     need = needed_adjustment_pts(-2.2, 0.225, 12.0)
     from nba_model.odds import normal_cdf
     assert math.isclose(normal_cdf((-2.2 + need) / 12.0), 0.225, abs_tol=1e-6)
-    assert math.isclose(cover_prob_home(-5.5, -5.5), 0.5)
+    assert math.isclose(cover_prob_home(-5.5, -5.5, 14.0), 0.5)
+
+
+def test_single_market_sigma():
+    """La sigma del mercado se define una sola vez (baselines.SIGMA_MARKET) y las dos rutas spread->prob coinciden."""
+    import re
+
+    from nba_model import baselines, daily, market, webstate
+    from nba_model.baselines import market_prob
+    assert market.SIGMA_MARKET is daily.SIGMA_MARKET is webstate.SIGMA_MARKET is baselines.SIGMA_MARKET
+    defs = [f.name for f in (ROOT / "nba_model").glob("*.py") if re.search(r"^SIGMA_MARKET\s*=", f.read_text(encoding="utf-8"), re.M)]
+    assert defs == ["baselines.py"]
+    # market_prob recibe el spread (negativo = local favorito); reference_prob, el margen esperado del local (signo contrario)
+    for spread in (-9.5, -1.0, 0.0, 4.5):
+        ref = reference_prob({"odds": {}, "spread_home_margin": -spread, "provider_home_prob": 0.5})
+        assert math.isclose(ref["p"], float(market_prob([spread])[0]))
 
 
 def test_sbr_swap_repair():

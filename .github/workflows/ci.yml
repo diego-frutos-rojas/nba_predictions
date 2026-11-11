@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Instalar dependencias (versiones exactas de uv.lock)
+        run: uv sync --locked
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/tests/package-lock.json
+
+      - name: Dependencias de los tests de paridad JS
+        run: npm ci
+        working-directory: web/tests
+
+      # Incluye la paridad del portal (tests/test_daily.py usa node). Los tests que necesitan data/raw se saltan:
+      # esos datos no están en git.
+      - name: Tests
+        run: uv run pytest -q
+
+      - name: Paridad JS del analizador
+        run: node web/tests/web_parity.js

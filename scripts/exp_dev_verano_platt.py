@@ -4,20 +4,22 @@ No mira VAL ni TEST.
 E1: cambio de plantilla en verano (rating inicial += w * D, D = talento que juega el 1er partido - talento de la rotación final previa).
 E2: recalibración de Platt sobre logit(p) del modelo.
 """
-import math, sys, time
+import math
+import sys
+import time
 from collections import defaultdict
 from dataclasses import replace
 from pathlib import Path
-import numpy as np
 from statistics import NormalDist
+
+import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from nba_model.evaluate import prepare_dataset, load_params, _logit_fit
-from nba_model.availability import AvailabilityTracker, MIN_ROT
-from nba_model.elo import run_elo, _rest_effect, AVAIL_CLIP, SIGMA_MEMORY, SIGMA_INIT
+from nba_model.availability import MIN_ROT, AvailabilityTracker, load_boxes
+from nba_model.elo import AVAIL_CLIP, SIGMA_INIT, SIGMA_MEMORY, _rest_effect, run_elo
+from nba_model.evaluate import _logit_fit, load_params, prepare_dataset
 from nba_model.metrics import log_loss, logit, sigmoid
-from nba_model.availability import load_boxes
 
 _N = NormalDist()
 t0 = time.time()

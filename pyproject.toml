@@ -1,0 +1,50 @@
+[project]
+name = "nba-predictions"
+version = "2.0.0"
+description = "Probabilidades calibradas de partidos NBA y comparación con el mercado"
+readme = "README.md"
+requires-python = ">=3.12"
+# Versiones exactas: los dos instalamos lo mismo y los resultados del modelo no cambian por una actualización.
+# Para actualizar una: cambiarla aquí, `uv lock`, `uv run pytest -q` y PR propio.
+dependencies = [
+    "numpy==2.5.4",
+    "pandas==3.1.1",
+    "pyarrow==26.0.1",
+    "tzdata==2026.6; platform_system == 'Windows'",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.2.0",
+    "pytest-cov",
+    "ruff",
+    "pre-commit",
+]
+
+[tool.uv]
+package = false   # no es una librería instalable: los scripts y tests importan `nba_model` desde la raíz
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 140
+target-version = "py312"
+extend-exclude = ["archive", "viz", "web", "data"]
+
+[tool.ruff.lint]
+# E/W: estilo básico · F: errores reales (imports y variables sin usar) · I: orden de imports
+select = ["E", "W", "F", "I"]
+ignore = [
+    "E501",  # líneas largas: las hay en tablas y mensajes, no merece la pena partirlas
+    "E701",  # varias sentencias en una línea: estilo compacto ya usado en el modelo
+    "E702",
+    "E731",  # lambdas con nombre: se usan para fórmulas cortas
+    "E741",  # nombres cortos (l, I) habituales en la matemática
+]
+
+[tool.ruff.lint.per-file-ignores]
+# scripts y tests añaden la raíz a sys.path antes de importar `nba_model`
+"scripts/*" = ["E402"]
+"tests/*" = ["E402"]
+"conftest.py" = ["E402"]

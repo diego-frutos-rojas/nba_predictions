@@ -13,11 +13,11 @@ Ningún valor usa información posterior al partido que se predice.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
+from statistics import NormalDist
 
 import numpy as np
 import pandas as pd
-from statistics import NormalDist
 
 _N = NormalDist()
 
