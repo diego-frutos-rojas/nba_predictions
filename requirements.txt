@@ -1,5 +1,7 @@
-numpy>=1.24
-pandas>=2.0
-pyarrow>=14.0
-pytest>=7.0
-tzdata>=2023.3; platform_system == "Windows"
+# Versiones exactas: los dos instalamos lo mismo y los resultados del modelo no cambian por una actualización.
+# Probadas con Python 3.12, 3.13 y 3.15 (Windows). Para actualizar una: cambiarla aquí, pytest -q y PR propio.
+numpy==2.5.4
+pandas==3.1.1
+pyarrow==26.0.1
+pytest==9.2.0
+tzdata==2026.6; platform_system == "Windows"
