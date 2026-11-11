@@ -54,6 +54,12 @@ class EloState:
     season: int | None
 
 
+def _clip_avail(x: float) -> float:
+    """Recorta el delta de disponibilidad a ±AVAIL_CLIP. (Antes estaba escrito en línea con un condicional
+    que, si el local superaba +AVAIL_CLIP, descartaba el término del visitante: 81 partidos de 2012-2026.)"""
+    return AVAIL_CLIP if x > AVAIL_CLIP else (-AVAIL_CLIP if x < -AVAIL_CLIP else x)
+
+
 def _rest_effect(rest: int, p: Params) -> float:
     if rest <= 1:
         return p.rest_b2b
@@ -96,8 +102,7 @@ def run_elo(df: pd.DataFrame, p: Params, state: EloState | None = None):
             season = s
         h, a = H[i], A[i]
         pred = (r[h] - r[a] + (0.0 if NEU[i] else hca) + _rest_effect(RH[i], p) - _rest_effect(RA[i], p)
-                + p.avail * (AVAIL_CLIP if AH[i] > AVAIL_CLIP else (-AVAIL_CLIP if AH[i] < -AVAIL_CLIP else AH[i])
-                             - (AVAIL_CLIP if AA[i] > AVAIL_CLIP else (-AVAIL_CLIP if AA[i] < -AVAIL_CLIP else AA[i]))))
+                + p.avail * (_clip_avail(AH[i]) - _clip_avail(AA[i])))
         pred += p.w_s * SD[i]
         mp[i] = pred
         sg[i] = math.sqrt(var) * p.sig_scale

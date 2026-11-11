@@ -89,6 +89,18 @@ def test_elo_hca_adapts_and_probs_valid():
     assert out["state"].var > 0
 
 
+def test_elo_avail_clips_each_side_independently():
+    """Regresión: con avail_home > AVAIL_CLIP el término del visitante se descartaba (precedencia del condicional)."""
+    from nba_model.elo import AVAIL_CLIP
+    g = _games(1)
+    p = Params(avail=0.05)
+    base = run_elo(g.assign(avail_home=0.0, avail_away=0.0), p)["margin_pred"][0]
+    for ah, aa in ((AVAIL_CLIP + 15, -30.0), (-AVAIL_CLIP - 15, 20.0), (25.0, AVAIL_CLIP + 15), (10.0, -5.0)):
+        m = run_elo(g.assign(avail_home=ah, avail_away=aa), p)["margin_pred"][0]
+        want = p.avail * (max(-AVAIL_CLIP, min(AVAIL_CLIP, ah)) - max(-AVAIL_CLIP, min(AVAIL_CLIP, aa)))
+        assert math.isclose(m - base, want), (ah, aa)
+
+
 def test_availability_signs():
     tr = AvailabilityTracker()
     season = 2021

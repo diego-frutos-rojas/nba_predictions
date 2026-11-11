@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from .baselines import SIGMA_MARKET
 from .odds import american_to_implied, normal_cdf, normal_ppf, remove_vig
 
 
@@ -12,7 +13,7 @@ def load_market(path: str | Path) -> dict:
         return json.load(f)
 
 
-def reference_prob(game: dict, sigma: float = 12.0) -> dict:
+def reference_prob(game: dict, sigma: float = SIGMA_MARKET) -> dict:
     """Probabilidad de victoria del local según la mejor referencia disponible.
 
     Prioridad: cuotas de ambos lados sin margen > cuota de un lado (con margen)
