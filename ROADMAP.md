@@ -38,7 +38,7 @@
 
 - [x] **1.1** 🔒 `pyproject.toml` + lockfile `[resp: Diego]`
   - Pasar `requirements.txt` a `pyproject.toml`, usar `uv lock` y documentar `uv sync` en el README.
-  - ✅ En una carpeta limpia, `uv sync && uv run pytest -q` da 41 passed (en CI menos: los que necesitan `data/raw` y no está en git se saltan).
+  - ✅ En una carpeta limpia, `uv sync && uv run pytest -q` da 67 passed (en CI menos: los que necesitan `data/raw` y no está en git se saltan).
 - [ ] **1.2** 🔒 CI con GitHub Actions (`.github/workflows/ci.yml`) `[resp: Diego]`
   - En cada PR: `ruff check`, `pytest -q` y los tests de paridad JS (node + `npm ci` en `web/tests`).
   - Workflow escrito. **Marcar `[x]` cuando el primer PR salga en verde** (no se puede comprobar en local).
@@ -65,14 +65,16 @@
 ## FASE 2: Blindar la evaluación · semana 2 · ⏱ 1 día
 *Objetivo: que las conclusiones del README estén protegidas por tests.*
 
-- [ ] **2.1** 🔒 Tests de `metrics.py` con valores conocidos `[resp: ]`
+- [x] **2.1** 🔒 Tests de `metrics.py` con valores conocidos `[resp: Diego]`
   - Log loss de p = 0,5 → ln 2; ECE de un predictor perfecto → 0; Brier de casos triviales.
-- [ ] **2.2** 🔒 Tests de `baselines.py` `[resp: ]`
+- [x] **2.2** 🔒 Tests de `baselines.py` `[resp: Diego]`
   - `market_prob(0) = 0,5`, simetría y `NaN` cuando no hay línea.
-- [ ] **2.3** Tests de `evaluate.py` con un mini-dataset sintético `[resp: ]`
-- [ ] **2.4** Tests de `props_eval.py`: ROI a −110 con un 50 % de acierto → −4,55 % `[resp: ]`
-- [ ] **2.5** Test de `tune.py`: el promedio del 5 % mejor es determinista con semilla `[resp: ]`
+- [x] **2.3** Tests de `evaluate.py` con un mini-dataset sintético `[resp: Diego]`
+- [x] **2.4** Tests de `props_eval.py`: ROI a −110 con un 50 % de acierto → −4,55 % `[resp: Diego]`
+- [x] **2.5** Test de `tune.py`: el promedio del 5 % mejor es determinista con semilla `[resp: Diego]`
 - ✅ **Fin de fase:** cobertura ≥ 85 % en `metrics`, `baselines`, `evaluate` y `props_eval`.
+  - **Cumplido** (`tests/test_evaluation.py`, 26 tests sintéticos que también corren en CI): `metrics` 100 %, `baselines` 100 %, `tune` 100 %, `props_eval` 97 %, `evaluate` 95 % (85 % en CI, sin `data/raw`).
+  - Medir: `uv run pytest -q --cov=nba_model --cov-report=term-missing`.
 
 ---
 
@@ -196,3 +198,4 @@
 - 2026-11-11 · Diego (+Claude) · Auditoría técnica (`docs/AUDITORIA_TECNICA.md`), roadmap y `.gitignore` con `.venv/` · Pendiente: 0.1 (`git rm --cached .venv` + PR)
 - 2026-11-11 · Diego (+Claude) · Fase 0 cerrada (0.1-0.5): `.python-version` 3.13, `mesa-cuotas` a `archive/` · Pendiente: 0.6 (opcional, requiere acuerdo de los dos) y que el socio confirme la versión de Python
 - 2026-11-11 · Diego (+Claude) · Fase 1: `pyproject.toml` + `uv.lock` (adiós `requirements.txt`), `ci.yml`, plantilla de PR, ruff + pre-commit, σ unificada, `CLAUDE.md`, 3 skills · Pendiente (manual, GitHub): 1.2 verificar CI en el primer PR, 1.3 proteger `main`, 1.7 plugins
+- 2026-11-11 · Diego (+Claude) · Fase 2: `tests/test_evaluation.py` (26 tests; cobertura ≥ 85 % en los 5 módulos de evaluación). Incluye un test de que DEV no depende de VAL/TEST · Pendiente: nada de esta fase

@@ -40,7 +40,7 @@ entre −1,5 % y +2,4 % según el filtro, con intervalos que incluyen pérdidas:
 ```
 uv sync                                                # crea .venv con Python 3.13 y las versiones exactas de uv.lock (https://docs.astral.sh/uv/)
 uv run pre-commit install                              # una vez: lint automático antes de cada commit
-uv run pytest -q                                       # 41 tests
+uv run pytest -q                                       # 67 tests
 uv run python scripts/run_pipeline.py                  # evaluación completa -> docs/RESULTADOS.json y .md
 uv run python scripts/run_report.py                    # informe de los partidos del snapshot (10-nov-2026)
 ```
