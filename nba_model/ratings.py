@@ -92,6 +92,9 @@ def predict_margin(r: Ratings, home: str, away: str, hca: float = 3.0, adj: floa
     return r.team.get(home, 0.0) - r.team.get(away, 0.0) + hca + adj
 
 
-def win_prob(margin: float, sigma: float = 12.0) -> float:
+SIGMA_V0 = 12.0   # sigma fija del modelo v0 (baseline histórico). NO es la del mercado: esa es baselines.SIGMA_MARKET
+
+
+def win_prob(margin: float, sigma: float = SIGMA_V0) -> float:
     """Probabilidad de victoria del local con margen ~ Normal(margen, sigma)."""
     return normal_cdf(margin / sigma)

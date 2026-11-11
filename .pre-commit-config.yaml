@@ -1,0 +1,10 @@
+# Instalar una vez: uv run pre-commit install
+# Usa el ruff del entorno (uv.lock), así el hook y la CI ejecutan exactamente la misma versión.
+repos:
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]

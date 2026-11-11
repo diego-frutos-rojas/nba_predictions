@@ -38,11 +38,11 @@ entre −1,5 % y +2,4 % según el filtro, con intervalos que incluyen pérdidas:
 
 ## Inicio rápido
 ```
-python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-pytest -q                                              # 39 tests
-python scripts/run_pipeline.py                         # evaluación completa -> docs/RESULTADOS.json y .md
-python scripts/run_report.py                           # informe de los partidos del snapshot (10-nov-2026)
+uv sync                                                # crea .venv con Python 3.13 y las versiones exactas de uv.lock (https://docs.astral.sh/uv/)
+uv run pre-commit install                              # una vez: lint automático antes de cada commit
+uv run pytest -q                                       # 67 tests
+uv run python scripts/run_pipeline.py                  # evaluación completa -> docs/RESULTADOS.json y .md
+uv run python scripts/run_report.py                    # informe de los partidos del snapshot (10-nov-2026)
 ```
 Los datos crudos ya vienen en `data/raw/` (19 MB). Para refrescarlos: `python scripts/run_pipeline.py --fetch`.
 Para reafinar parámetros (solo con DEV 2014-2019): `python scripts/run_pipeline.py --tune`.
@@ -62,7 +62,7 @@ Para reafinar parámetros (solo con DEV 2014-2019): `python scripts/run_pipeline
 - `models/params_v2.json`, `models/props_v1.json`: parámetros congelados (afinados solo con DEV).
 - `docs/`: `AUDITORIA.md` (hallazgos y decisiones), `RESULTADOS.md/.json` (generados), `INFORME_2026-11-10.txt`.
 - `data/snapshot_2026-11-10/`: mercado, lesiones y descanso de los 6 partidos analizados, y resultados del 7 al 9 de noviembre.
-- `viz/mesa-cuotas-nba.html`: visualización interactiva **basada en el modelo v0** (no se ha actualizado a v2).
+- `archive/mesa-cuotas-nba.html`: visualización antigua **basada en el modelo v0** (archivada, no se mantiene).
 
 ## Usar el modelo con otro día
 1. `python scripts/run_pipeline.py --fetch` para traer los últimos resultados.

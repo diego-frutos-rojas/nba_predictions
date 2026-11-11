@@ -7,8 +7,9 @@ real. Después se ampliará a fútbol (Poisson / Dixon-Coles). El objetivo NO es
 
 ## Comandos
 ```
-pip install -r requirements.txt
-pytest -q                                   # deben pasar siempre (39 tests, incluye detección de fuga temporal)
+uv sync                                     # entorno exacto (uv.lock). uv: https://docs.astral.sh/uv/ · anteponer `uv run` a los comandos
+ruff check .                                # lint (también en CI y en pre-commit)
+pytest -q                                   # deben pasar siempre (67 tests, incluye detección de fuga temporal)
 python scripts/portal.py --open             # portal del día -> viz/portal-nba.html (necesita ESPN y GitHub)
 python scripts/run_props.py                 # evaluación del modelo de jugadores (--fit reajusta SOLO con DEV)
 python scripts/fetch_market_history.py      # líneas de cierre de props de la temporada en curso (ESPN)

@@ -33,11 +33,11 @@ def reference_prob(game: dict, sigma: float = SIGMA_MARKET) -> dict:
     return {"p": game["provider_home_prob"], "kind": "provider", "is_market": False}
 
 
-def needed_adjustment_pts(base_margin: float, target_p: float, sigma: float = 12.0) -> float:
-    """Puntos de margen que habría que añadir al modelo para igualar `target_p`."""
+def needed_adjustment_pts(base_margin: float, target_p: float, sigma: float) -> float:
+    """Puntos de margen que habría que añadir al modelo para igualar `target_p`. `sigma` = la del modelo (sin valor por defecto a propósito)."""
     return sigma * normal_ppf(target_p) - base_margin
 
 
-def cover_prob_home(model_margin: float, spread_home_margin: float, sigma: float = 12.0) -> float:
-    """P(el local cubre) si el mercado espera `spread_home_margin` para el local."""
+def cover_prob_home(model_margin: float, spread_home_margin: float, sigma: float) -> float:
+    """P(el local cubre) si el mercado espera `spread_home_margin` para el local. `sigma` = la del modelo."""
     return normal_cdf((model_margin - spread_home_margin) / sigma)

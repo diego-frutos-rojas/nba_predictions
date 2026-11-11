@@ -10,8 +10,8 @@ import pandas as pd
 from .baselines import SIGMA_MARKET
 from .data import rest_days_before
 from .elo import AVAIL_CLIP, predict_game, run_elo
-from .injuries import PLAY_PROB
 from .evaluate import load_params, prepare_dataset
+from .injuries import PLAY_PROB
 from .market import load_market
 
 TEAM_NAMES = {
@@ -55,7 +55,7 @@ def build_web_state(root: str | Path, market_path: str | Path, recent_csv: str |
     parity = []
     clip = lambda x: max(-AVAIL_CLIP, min(AVAIL_CLIP, x))                 # noqa: E731
     for x in mk["games"]:
-        probs, deltas = {}, {}
+        deltas = {}
         for side, team in (("home", x["home"]), ("away", x["away"])):
             by_name = {names.get(int(p), ""): int(p) for p in tr.roster(team)}
             pr = {by_name[i["player"]]: (0.5 if i["status"] == "listed" else PLAY_PROB.get(i["status"], 0.5))

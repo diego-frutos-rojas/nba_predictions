@@ -12,8 +12,17 @@ from .availability import compute_availability, load_boxes
 from .baselines import market_prob, ridge_v0_walk_forward
 from .data import add_rest, build_games
 from .elo import Params, run_elo
-from .metrics import (accuracy, brier, calibration_error, calibration_table, log_loss, logit,
-                      paired_bootstrap_diff, per_game_logloss, sigmoid)
+from .metrics import (
+    accuracy,
+    brier,
+    calibration_error,
+    calibration_table,
+    log_loss,
+    logit,
+    paired_bootstrap_diff,
+    per_game_logloss,
+    sigmoid,
+)
 
 BLOCKS = {"DEV": (2014, 2019), "VAL": (2020, 2021), "TEST": (2022, 2026)}
 
