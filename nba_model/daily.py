@@ -140,7 +140,7 @@ def _evidence(root: Path) -> dict:
         t = r["blocks"]["TEST"]
         ev["games"] = {"log_loss": {k: t[k]["log_loss"] for k in ("v2_elo", "mercado")},
                        "accuracy": {k: t[k]["accuracy"] for k in ("v2_elo", "mercado")},
-                       "gap_sd": r["gap_info"]["TEST"]["sd_gap_pts"],
+                       "gap_sd": r["gap_info"]["TEST"]["sd_gap_pts"], "blend": r["blend"]["coef_dev"],     # ajustado solo con DEV
                        "roi": {k: {"roi": v["TEST"]["roi"], "n": v["TEST"]["n"]} for k, v in r["roi_spread_-110"].items()}}
     return ev
 

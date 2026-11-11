@@ -19,7 +19,15 @@ mercado**, y las discrepancias entre ambos no contienen información real. Detal
 ```
 python scripts/portal.py --open        # o doble clic en portal.bat (Windows) / ./portal.sh (Mac, Linux)
 ```
-Genera `viz/portal-nba.html`, una página autocontenida con la jornada de hoy:
+Genera dos páginas autocontenidas y abre la primera:
+
+**`viz/takes-nba.html` (resumen visual).** La jornada en frases claras: «Gana Houston Rockets · 68 %», «Más de 21,5 puntos · 59 %».
+Cuatro pestañas (Top del día, Partidos, Jugadores, Combinadas), colores por nivel de probabilidad (fuerte ≥ 65 %, media ≥ 57 %,
+ajustada) y, al tocar un take, sus datos: proyección, línea, últimos partidos, modelo frente a casa, bajas. Se pueden montar
+combinadas con su probabilidad y su cuota. El porcentaje grande **combina el modelo y la casa** (el modelo a secas es demasiado
+confiado); los takes con jugador en duda o con una diferencia sospechosa con la casa quedan marcados y fuera del Top.
+
+**`viz/portal-nba.html` (tablas completas, `--open-portal` para abrirla directamente):**
 - **Jornada**: cada partido con la probabilidad del modelo v2, las cuotas de DraftKings (vía ESPN, gratis y sin clave),
   descanso y parte de lesiones.
 - **Jugadores**: proyección de puntos, rebotes, asistencias, triples y combinadas (P+R+A, P+R, P+A, R+A) de cada jugador,
@@ -40,7 +48,7 @@ entre −1,5 % y +2,4 % según el filtro, con intervalos que incluyen pérdidas:
 ```
 uv sync                                                # crea .venv con Python 3.13 y las versiones exactas de uv.lock (https://docs.astral.sh/uv/)
 uv run pre-commit install                              # una vez: lint automático antes de cada commit
-uv run pytest -q                                       # 67 tests
+uv run pytest -q                                       # 75 tests
 uv run python scripts/run_pipeline.py                  # evaluación completa -> docs/RESULTADOS.json y .md
 uv run python scripts/run_report.py                    # informe de los partidos del snapshot (10-nov-2026)
 ```

@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Takes NBA</title>
+<style>
+:root{--bg:#f3f4f7;--card:#fff;--ink:#12151b;--mute:#667085;--line:#e2e5eb;--soft:#eef0f4;--accent:#1f5fbf;
+  --fuerte:#0a8a55;--fuerte-bg:#e2f6ec;--media:#b26a00;--media-bg:#fff0d4;--ajustada:#6b7280;--ajustada-bg:#eceef2;
+  --bad:#b3261e;--bad-bg:#fde8e6;--track:#e4e7ec;--shadow:0 1px 2px rgba(16,24,40,.06),0 4px 14px rgba(16,24,40,.05)}
+@media (prefers-color-scheme:dark){:root{--bg:#0d0f14;--card:#171a21;--ink:#eceef2;--mute:#98a2b3;--line:#272c36;--soft:#1f232c;--accent:#7fb0ff;
+  --fuerte:#3ddc97;--fuerte-bg:#10301f;--media:#f5b94d;--media-bg:#35280c;--ajustada:#9aa3b2;--ajustada-bg:#232832;
+  --bad:#ff8a80;--bad-bg:#3b1715;--track:#2a303b;--shadow:none}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+header{padding:20px 0 6px}
+h1{font-size:26px;line-height:1.15;margin:0;letter-spacing:-.02em}
+h1 span{color:var(--mute);font-weight:500;font-size:17px;margin-left:6px;white-space:nowrap}
+h2{font-size:18px;margin:26px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--mute);font-size:13px}
+a{color:var(--accent)}
+nav{position:sticky;top:0;z-index:6;background:var(--bg);padding:10px 0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+.tab,.chip-btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;cursor:pointer;font:inherit;white-space:nowrap}
+.tab{padding:8px 16px;font-weight:600}
+.tab.on,.chip-btn.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.tab b{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:99px;background:var(--accent);color:#fff;font-size:12px;line-height:20px;text-align:center}
+.chip-btn{padding:5px 12px;font-size:13px}
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--mute);margin:2px 0 10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));align-items:start}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 12px}
+.filters .scroll{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+input[type=search],select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 10px;min-width:0}
+input[type=search]{flex:1 1 200px}
+label.check{font-size:13px;color:var(--mute);display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+
+/* ---- tarjeta de take ---- */
+.take{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;
+  --c:var(--ajustada);--cbg:var(--ajustada-bg)}
+.take.fuerte{--c:var(--fuerte);--cbg:var(--fuerte-bg)}.take.media{--c:var(--media);--cbg:var(--media-bg)}
+.take::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c)}
+.take .head{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px 14px 14px 20px;cursor:pointer;
+  background:none;border:0;width:100%;text-align:left;color:inherit;font:inherit}
+.take .head:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:16px}
+.badge{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:12.5px;letter-spacing:.02em;color:#fff;flex:none}
+.who{font-size:12.5px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.05em;overflow-wrap:anywhere}
+.name{font-size:17px;font-weight:750;line-height:1.2;letter-spacing:-.01em;overflow-wrap:anywhere}
+.call{font-size:15px;font-weight:800;line-height:1.25;text-transform:uppercase;letter-spacing:.01em;color:var(--c);overflow-wrap:anywhere}
+.take.game .call{font-size:18px}
+.ctx{font-size:12.5px;color:var(--mute);margin-top:2px}
+.ring{--p:50;width:68px;height:68px;border-radius:50%;display:grid;place-items:center;flex:none;
+  background:conic-gradient(var(--c) calc(var(--p)*1%),var(--track) 0)}
+.ring span{width:54px;height:54px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-weight:800;font-size:19px;
+  font-variant-numeric:tabular-nums;color:var(--c);letter-spacing:-.02em}
+.ring small{font-size:11px;font-weight:700;margin-left:1px}
+.foot{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:0 14px 12px 20px}
+.pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:12px;background:var(--soft);color:var(--mute);white-space:nowrap}
+.pill.t{background:var(--cbg);color:var(--c);font-weight:700}
+.pill.warn{background:var(--media-bg);color:var(--media)}.pill.bad{background:var(--bad-bg);color:var(--bad)}
+.add{margin-left:auto;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 12px;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.add.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.more{border-top:1px solid var(--line);padding:14px 16px 16px 20px;background:var(--soft)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.tile dt{font-size:11.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.tile dd{margin:0;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+.tile dd small{font-size:12px;font-weight:500;color:var(--mute)}
+dl{margin:0}
+h3{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);margin:16px 0 6px}
+.cmp{display:grid;grid-template-columns:auto 1fr auto;gap:5px 10px;align-items:center;font-size:13.5px}
+.cmp .bar{height:10px;border-radius:99px;background:var(--track);overflow:hidden}
+.cmp .bar i{display:block;height:100%;border-radius:99px;background:var(--mute)}
+.cmp .bar i.main{background:var(--c)}
+.cmp b{font-variant-numeric:tabular-nums}
+.bars{display:flex;align-items:flex-end;gap:4px;height:84px;position:relative;margin-top:20px;padding-top:2px}
+.bars .b{flex:1;background:var(--track);border-radius:4px 4px 0 0;min-height:3px;position:relative}
+.bars .b.hit{background:var(--c)}
+.bars .b span{position:absolute;top:-17px;left:0;right:0;text-align:center;font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
+.bars .ln{position:absolute;left:0;right:0;border-top:2px dashed var(--ink);opacity:.55;pointer-events:none}
+.bars .ln em{position:absolute;right:0;top:-18px;font-size:11px;font-style:normal;background:var(--soft);padding:0 4px;color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.two{grid-template-columns:1fr}}
+ul.inj{list-style:none;margin:0;padding:0;font-size:13.5px}
+ul.inj li{padding:3px 0;display:flex;justify-content:space-between;gap:10px}
+.why{font-size:13.5px;margin:6px 0 0;padding-left:18px}.why li{margin:2px 0}
+.note{background:var(--media-bg);color:var(--media);border-radius:12px;padding:10px 12px;font-size:13.5px;margin:10px 0}
+.info{background:var(--soft);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--mute);margin:14px 0}
+.empty{padding:28px 12px;text-align:center;color:var(--mute);background:var(--card);border:1px dashed var(--line);border-radius:16px}
+
+/* ---- combinadas ---- */
+.parlay{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px;--c:var(--ajustada)}
+.parlay.fuerte{--c:var(--fuerte)}.parlay.media{--c:var(--media)}
+.parlay .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.parlay .kind{font-size:19px;font-weight:800;letter-spacing:-.01em}
+.legs{list-style:none;margin:12px 0 0;padding:0}
+.legs li{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.legs li b{display:block;overflow-wrap:anywhere}.legs li small{color:var(--mute)}
+.legs .pc{font-weight:800;font-variant-numeric:tabular-nums}
+.x{border:0;background:var(--soft);color:var(--mute);border-radius:50%;width:26px;height:26px;cursor:pointer;font:inherit;line-height:1}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.more-btn{display:block;margin:14px auto 0;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 18px;font:inherit;cursor:pointer}
+footer{padding:26px 0 60px;color:var(--mute);font-size:12.5px}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Takes NBA <span id="hdate"></span></h1>
+  <div class="sub" id="hmeta"></div>
+  <div id="warnings"></div>
+</header>
+<nav id="nav" aria-label="Secciones"></nav>
+<div class="legend" id="legend"></div>
+<main>
+  <section id="tab-top"></section>
+  <section id="tab-partidos" class="hide"></section>
+  <section id="tab-jugadores" class="hide"></section>
+  <section id="tab-combinadas" class="hide"></section>
+</main>
+<footer id="footer"></footer>
+</div>
+<script>
+const S = /*__TAKES__*/null;
+const TEAM_COLOR = {ATL:"#C8102E",BOS:"#007A33",BKN:"#3a3a3a",CHA:"#00788C",CHI:"#CE1141",CLE:"#860038",DAL:"#00538C",DEN:"#0E2240",DET:"#C8102E",
+  GSW:"#1D428A",HOU:"#CE1141",IND:"#002D62",LAC:"#C8102E",LAL:"#552583",MEM:"#5D76A9",MIA:"#98002E",MIL:"#00471B",MIN:"#236192",NOP:"#0C2340",
+  NYK:"#F58426",OKC:"#007AC1",ORL:"#0077C0",PHI:"#006BB6",PHX:"#E56020",POR:"#E03A3E",SAC:"#5A2D81",SAS:"#6b7280",TOR:"#CE1141",UTA:"#3E2680",WAS:"#002B5C"};
+const TIER_LABEL = {fuerte:"Fuerte", media:"Media", ajustada:"Ajustada"};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pct = p => p == null ? "–" : Math.round(p * 100) + " %";
+const num = (x, d = 1) => x == null ? "–" : Number(x).toFixed(d).replace(".", ",");
+const signed = (x, d = 1) => x == null ? "–" : (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toFixed(d).replace(".", ",");
+const tierOf = p => p >= S.tiers.fuerte ? "fuerte" : p >= S.tiers.media ? "media" : "ajustada";
+const hhmm = iso => { const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleTimeString("es-ES", {hour:"2-digit", minute:"2-digit"}); };
+
+const ALL = [...S.games, ...S.players];
+const BY_ID = new Map(ALL.map(t => [t.id, t]));
+const GAME = new Map(S.slate.map(g => [g.game_id, g]));
+const CLEAN_BLOCK = ["duda", "revisar", "sin_precio", "empezado", "discrepan"];
+const isClean = t => t.price != null && !t.flags.some(f => CLEAN_BLOCK.includes(f));
+
+/* ---- combinada del usuario (se recuerda en este navegador para la jornada) ---- */
+const SLIP_KEY = "takes-nba-slip-" + S.date;
+let slip = [];
+try { slip = (JSON.parse(localStorage.getItem(SLIP_KEY)) || []).filter(id => BY_ID.has(id)); } catch (e) { slip = []; }
+const saveSlip = () => { try { localStorage.setItem(SLIP_KEY, JSON.stringify(slip)); } catch (e) {} };
+function toggleSlip(id) {
+  slip = slip.includes(id) ? slip.filter(x => x !== id) : [...slip, id];
+  saveSlip(); renderNav(); renderParlays();
+  document.querySelectorAll("[data-add]").forEach(b => { if (b.dataset.add === id) paintAdd(b, id); });
+}
+const paintAdd = (b, id) => { const on = slip.includes(id); b.classList.toggle("on", on); b.textContent = on ? "✓ En tu combinada" : "+ Combinada"; b.setAttribute("aria-pressed", on); };
+
+/* ---- piezas ---- */
+const badge = team => `<div class="badge" style="background:${TEAM_COLOR[team] || "#667085"}" aria-hidden="true">${esc(team)}</div>`;
+const ring = p => `<div class="ring" style="--p:${Math.round(p * 100)}" role="img" aria-label="${pct(p)} de probabilidad"><span>${Math.round(p * 100)}<small>%</small></span></div>`;
+function flagPills(t) {
+  const out = [];
+  if (t.flags.includes("empezado")) out.push(`<span class="pill">Ya empezó</span>`);
+  if (t.flags.includes("duda")) out.push(`<span class="pill warn">Jugador en duda</span>`);
+  if (t.flags.includes("revisar")) out.push(`<span class="pill bad">Revisar noticias</span>`);
+  if (t.flags.includes("discrepan")) out.push(`<span class="pill warn">Modelo y casa no coinciden</span>`);
+  if (t.flags.includes("sin_precio")) out.push(`<span class="pill">Sin cuota fiable</span>`);
+  return out.join("");
+}
+function cmpRows(rows) {
+  return `<div class="cmp">` + rows.filter(r => r[1] != null).map(([lab, p, main]) =>
+    `<span>${lab}</span><div class="bar"><i class="${main ? "main" : ""}" style="width:${Math.round(p * 100)}%"></i></div><b>${pct(p)}</b>`).join("") + `</div>`;
+}
+const tile = (k, v, small) => `<div class="tile"><dt>${k}</dt><dd>${v}${small ? ` <small>${small}</small>` : ""}</dd></div>`;
+
+function playerDetail(t) {
+  const d = t.detail, over = t.side === "over", max = Math.max(d.line * 1.25, ...d.last, 1);
+  const bars = d.last.length ? `<h3>Últimos ${d.last.length} partidos · ${d.hits[0]} de ${d.hits[1]} ${over ? "por encima" : "por debajo"} de la línea</h3>
+    <div class="bars">${d.last.map(v => `<div class="b ${(over ? v > d.line : v < d.line) ? "hit" : ""}" style="height:${Math.max(4, v / max * 100)}%"><span>${v}</span></div>`).join("")}
+      <div class="ln" style="bottom:${d.line / max * 100}%"><em>línea ${num(d.line)}</em></div></div>
+    <div class="sub" style="margin-top:4px">Del más antiguo al más reciente. En color, los partidos en los que este take habría salido.</div>` : "";
+  const why = [];
+  why.push(`El modelo proyecta <b>${num(d.mu)}</b> y la línea es <b>${num(d.line)}</b> (${signed(d.mu - d.line)}).`);
+  if (d.p_house != null) why.push(`La casa le da un ${pct(d.p_house)} a este lado (quitando su margen); el modelo, un ${pct(d.p_model)}.`);
+  if (d.min != null) why.push(`Minutos esperados: ${num(d.min)}${d.min_l10 != null ? ` (media reciente ${num(d.min_l10)})` : ""}.`);
+  if (t.flags.includes("revisar")) why.push(`<b>Ojo:</b> una diferencia tan grande con la casa casi siempre es una noticia (lesión, rotación) que el modelo no conoce.`);
+  if (t.flags.includes("duda")) why.push(`<b>Ojo:</b> el jugador aparece en el parte de lesiones (${esc(d.status)}). Si no juega, la apuesta se anula.`);
+  const fair = 1 / t.p;
+  return `<dl class="tiles">${tile("Proyección", num(d.mu))}${tile("Línea", num(d.line))}${tile("Últ. 5", num(d.l5))}${tile("Últ. 10", num(d.l10))}
+      ${tile("Temporada", num(d.season), d.gp ? d.gp + " pj" : "")}${tile("Cuota", t.price == null ? "–" : num(t.price, 2), t.price == null ? "" : "justa " + num(fair, 2))}</dl>
+    <h3>Probabilidad de este take</h3>
+    ${cmpRows([["Combinada", t.p, true], ["Solo modelo", d.p_model], ["Solo casa", d.p_house]])}
+    ${bars}
+    <h3>Por qué</h3><ul class="why">${why.map(x => `<li>${x}</li>`).join("")}</ul>`;
+}
+
+function gameDetail(t) {
+  const d = t.detail, pick = S.team_names[t.team] || t.team, opp = S.team_names[t.opp] || t.opp;
+  const inj = (title, list) => `<div><h3>${esc(title)}</h3>${list.length ? `<ul class="inj">${list.map(i => `<li><span>${esc(i.player)}</span><span class="sub">${esc(i.status)}${i.detail ? " · " + esc(i.detail) : ""}</span></li>`).join("")}</ul>` : `<div class="sub">Sin bajas en el parte.</div>`}</div>`;
+  const rest = n => n == null ? "–" : n <= 1 ? "jugó ayer" : n + " días";
+  const why = [];
+  why.push(`El modelo espera que ${esc(pick)} ${d.margin_model >= 0 ? "gane" : "pierda"} por <b>${num(Math.abs(d.margin_model))}</b> puntos${d.spread_pick != null ? `; la casa pone la línea en <b>${signed(d.spread_pick)}</b>` : ""}.`);
+  if (d.p_market != null) why.push(`La casa le da un ${pct(d.p_market)} (${esc(d.market_kind || "")}); el modelo, un ${pct(d.p_model)}.`);
+  if (d.avail_pts) why.push(`Bajas y disponibilidad: ${signed(d.avail_pts)} puntos para ${esc(pick)}.`);
+  if (t.flags.includes("discrepan")) why.push(`<b>Ojo:</b> el modelo y la casa eligen ganadores distintos. Históricamente la casa acierta más.`);
+  const ev = S.evidence;
+  if (ev.games_accuracy_model != null) why.push(`Historial 2022-26: el modelo acierta el ganador el ${pct(ev.games_accuracy_model)} de las veces; la casa, el ${pct(ev.games_accuracy_market)}.`);
+  return `<dl class="tiles">${tile("Margen esperado", signed(d.margin_model), "pts")}${tile("Línea de la casa", signed(d.spread_pick))}
+      ${tile("Total", num(d.total))}${tile("Cuota", t.price == null ? "–" : num(t.price, 2), "justa " + num(1 / t.p, 2))}
+      ${tile("Descanso", rest(d.rest_pick), "rival: " + rest(d.rest_opp))}${tile("Nivel", signed(d.rating_pick), "rival " + signed(d.rating_opp))}</dl>
+    <h3>Probabilidad de que gane ${esc(pick)}</h3>
+    ${cmpRows([["Combinada", t.p, true], ["Solo modelo", d.p_model], ["Solo casa", d.p_market]])}
+    ${d.p_cover_pick != null ? `<div class="sub" style="margin-top:6px">Cubrir la línea (${signed(d.spread_pick)}): ${pct(d.p_cover_pick)} según el modelo. Ese dato solo es una curiosidad: en el historial, seguir al modelo contra la línea pierde dinero.</div>` : ""}
+    <div class="two">${inj("Bajas de " + pick, d.injuries_pick)}${inj("Bajas de " + opp, d.injuries_opp)}</div>
+    <h3>Por qué</h3><ul class="why">${why.map(x => `<li>${x}</li>`).join("")}</ul>`;
+}
+
+function card(t) {
+  const g = GAME.get(t.game_id), when = g ? hhmm(g.tip_utc) : "";
+  const isGame = t.kind === "game";
+  const text = isGame
+    ? `<div class="call">${esc(t.title)}</div><div class="ctx">${esc(t.subtitle)}${when ? " · " + when : ""}</div>`
+    : `<div class="name">${esc(t.name)}</div><div class="call">${esc(t.title)}</div><div class="ctx">${esc(t.subtitle)}${when ? " · " + when : ""}</div>`;
+  return `<article class="take ${t.tier} ${t.kind}" data-id="${esc(t.id)}">
+    <button class="head" type="button" aria-expanded="false">${badge(t.team)}<div>${text}</div>${ring(t.p)}</button>
+    <div class="foot"><span class="pill t">${TIER_LABEL[t.tier]}</span>${t.price != null ? `<span class="pill">Cuota ${num(t.price, 2)}</span>` : ""}
+      ${!isGame && t.detail.hits[1] ? `<span class="pill">${t.detail.hits[0]}/${t.detail.hits[1]} últimos</span>` : ""}${flagPills(t)}
+      ${t.price != null && !t.flags.includes("empezado") ? `<button class="add" type="button" data-add="${esc(t.id)}"></button>` : ""}</div>
+    <div class="more hide"></div></article>`;
+}
+
+function mount(el, takes, emptyMsg) {
+  el.innerHTML = takes.length ? takes.map(card).join("") : `<div class="empty">${emptyMsg}</div>`;
+  el.querySelectorAll("[data-add]").forEach(b => paintAdd(b, b.dataset.add));
+}
+
+document.addEventListener("click", e => {
+  const add = e.target.closest("[data-add]");
+  if (add) { toggleSlip(add.dataset.add); return; }
+  const rm = e.target.closest("[data-rm]");
+  if (rm) { toggleSlip(rm.dataset.rm); return; }
+  const head = e.target.closest(".take .head");
+  if (head) {
+    const art = head.closest(".take"), more = art.querySelector(".more"), t = BY_ID.get(art.dataset.id);
+    const open = more.classList.contains("hide");
+    if (open && !more.innerHTML) more.innerHTML = t.kind === "game" ? gameDetail(t) : playerDetail(t);
+    more.classList.toggle("hide", !open); head.setAttribute("aria-expanded", open);
+    return;
+  }
+  const tab = e.target.closest(".tab");
+  if (tab) show(tab.dataset.tab);
+});
+
+/* ---- pestañas ---- */
+const TABS = [["top", "Top del día"], ["partidos", "Partidos"], ["jugadores", "Jugadores"], ["combinadas", "Combinadas"]];
+let current = "top";
+function renderNav() {
+  $("nav").innerHTML = TABS.map(([k, lab]) => `<button class="tab ${k === current ? "on" : ""}" type="button" data-tab="${k}">${lab}${k === "combinadas" && slip.length ? `<b>${slip.length}</b>` : ""}</button>`).join("");
+}
+function show(k) {
+  current = k;
+  TABS.forEach(([t]) => $("tab-" + t).classList.toggle("hide", t !== k));
+  renderNav(); window.scrollTo({top: 0});
+}
+
+/* ---- Top ---- */
+function renderTop() {
+  const top = S.top.map(id => BY_ID.get(id)).filter(Boolean);
+  $("tab-top").innerHTML = `<h2>Los takes más claros de hoy</h2>
+    <div class="sub">Ordenados por probabilidad. Solo entran los que tienen cuota, sin jugadores en duda y sin diferencias sospechosas con la casa. Toca uno para ver los datos.</div>
+    <div class="grid" id="top-grid" style="margin-top:12px"></div>`;
+  mount($("top-grid"), top, S.slate.length ? "Hoy no hay ningún take limpio todavía. Suele pasar si la casa aún no ha publicado cuotas." : "Hoy no hay partidos.");
+}
+
+/* ---- Partidos ---- */
+function renderGames() {
+  $("tab-partidos").innerHTML = `<h2>Quién gana cada partido</h2><div class="sub">${S.games.length} partidos, del más claro al más igualado.</div><div class="grid" id="games-grid" style="margin-top:12px"></div>`;
+  mount($("games-grid"), S.games, "Hoy no hay partidos.");
+}
+
+/* ---- Jugadores ---- */
+const F = {q: "", game: "", market: "", side: "", clean: true, best: true, limit: 30};
+function playerList() {
+  const q = F.q.trim().toLowerCase();
+  let list = S.players.filter(t => (!F.game || t.game_id === F.game) && (!F.market || t.market === F.market) && (!F.side || t.side === F.side)
+    && (!F.clean || isClean(t)) && (!q || t.name.toLowerCase().includes(q) || (S.team_names[t.team] || "").toLowerCase().includes(q)));
+  if (F.best) { const seen = new Set(); list = list.filter(t => !seen.has(t.pid) && seen.add(t.pid)); }
+  return list;
+}
+function renderPlayers() {
+  const el = $("tab-jugadores");
+  if (!el.dataset.ready) {
+    el.dataset.ready = 1;
+    el.innerHTML = `<h2>Takes de jugadores</h2>
+      <div class="filters"><input type="search" id="f-q" placeholder="Buscar jugador o equipo" aria-label="Buscar jugador o equipo">
+        <select id="f-market" aria-label="Estadística"><option value="">Todas las estadísticas</option>${Object.entries(S.labels).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("")}</select>
+        <select id="f-side" aria-label="Más o menos"><option value="">Más y menos</option><option value="over">Solo «más de»</option><option value="under">Solo «menos de»</option></select></div>
+      <div class="filters"><div class="scroll" id="f-games"></div></div>
+      <div class="filters"><label class="check"><input type="checkbox" id="f-best" checked> Solo el mejor take de cada jugador</label>
+        <label class="check"><input type="checkbox" id="f-clean" checked> Ocultar dudosos y sin cuota</label><span class="sub" id="f-count"></span></div>
+      <div class="grid" id="players-grid"></div><button class="more-btn hide" id="f-more" type="button">Ver más</button>`;
+    $("f-games").innerHTML = `<button class="chip-btn on" type="button" data-game="">Todos</button>` +
+      S.slate.map(g => `<button class="chip-btn" type="button" data-game="${esc(g.game_id)}">${esc(g.away)} @ ${esc(g.home)}</button>`).join("");
+    $("f-q").addEventListener("input", e => { F.q = e.target.value; F.limit = 30; drawPlayers(); });
+    $("f-market").addEventListener("change", e => { F.market = e.target.value; F.limit = 30; drawPlayers(); });
+    $("f-side").addEventListener("change", e => { F.side = e.target.value; F.limit = 30; drawPlayers(); });
+    $("f-best").addEventListener("change", e => { F.best = e.target.checked; F.limit = 30; drawPlayers(); });
+    $("f-clean").addEventListener("change", e => { F.clean = e.target.checked; F.limit = 30; drawPlayers(); });
+    $("f-games").addEventListener("click", e => { const b = e.target.closest("[data-game]"); if (!b) return;
+      F.game = b.dataset.game; F.limit = 30; $("f-games").querySelectorAll(".chip-btn").forEach(x => x.classList.toggle("on", x === b)); drawPlayers(); });
+    $("f-more").addEventListener("click", () => { F.limit += 30; drawPlayers(); });
+  }
+  drawPlayers();
+}
+function drawPlayers() {
+  const list = playerList();
+  mount($("players-grid"), list.slice(0, F.limit), "Ningún take con esos filtros.");
+  $("f-count").textContent = list.length + (list.length === 1 ? " take" : " takes");
+  $("f-more").classList.toggle("hide", list.length <= F.limit);
+}
+
+/* ---- Combinadas ---- */
+const legName = t => t.kind === "game" ? esc(t.title) : `${esc(t.name)}: ${esc(t.title.toLowerCase())}`;
+function combo(ids) {                       // la única cuenta que hace la página: producto de probabilidades y de cuotas
+  const legs = ids.map(id => BY_ID.get(id)).filter(Boolean);
+  const p = legs.reduce((a, t) => a * t.p, 1), price = legs.every(t => t.price != null) ? legs.reduce((a, t) => a * t.price, 1) : null;
+  const games = legs.map(t => t.game_id);
+  return {legs, p, price, correlated: new Set(games).size < games.length};
+}
+function parlayCard(title, ids, removable) {
+  const c = combo(ids);
+  return `<div class="parlay ${tierOf(c.p)}"><div class="top"><div><div class="kind">${esc(title)}</div><div class="sub">${c.legs.length} selecciones</div></div>${ring(c.p)}</div>
+    <ul class="legs">${c.legs.map(t => `<li><div><b>${legName(t)}</b><small>${esc(t.kind === "game" ? t.subtitle : t.subtitle)}</small></div>
+      <span class="pc">${pct(t.p)}</span>${removable ? `<button class="x" type="button" data-rm="${esc(t.id)}" aria-label="Quitar de la combinada">×</button>` : `<span class="sub">${t.price != null ? num(t.price, 2) : ""}</span>`}</li>`).join("")}</ul>
+    <dl class="sum">${tile("Probabilidad", pct(c.p))}${tile("Cuota", c.price == null ? "–" : num(c.price, 2))}${tile("Cuota justa", num(1 / c.p, 2))}</dl>
+    ${c.correlated ? `<div class="note">Hay dos selecciones del mismo partido: no son independientes, así que la probabilidad real puede ser distinta de la que se muestra (y muchas casas no dejan combinarlas).</div>` : ""}
+    ${c.price != null && c.price < 1 / c.p ? `<div class="sub" style="margin-top:8px">La casa paga ${num(c.price, 2)} y lo justo sería ${num(1 / c.p, 2)}: en una combinada el margen de la casa se multiplica en cada selección.</div>` : ""}</div>`;
+}
+function renderParlays() {
+  const NAMES = {2: "Doble", 3: "Triple", 4: "Cuádruple"};
+  const auto = S.parlays.map(p => parlayCard(NAMES[p.n] || p.n + " selecciones", p.legs, false)).join("");
+  const mine = slip.length ? parlayCard("Tu combinada", slip, true)
+    : `<div class="empty">Aún no has añadido nada. Pulsa <b>+ Combinada</b> en cualquier take y aparecerá aquí con su probabilidad y su cuota.</div>`;
+  $("tab-combinadas").innerHTML = `<h2>Tu combinada</h2><div class="sub">Se guarda en este navegador durante la jornada.</div><div style="margin-top:12px">${mine}</div>
+    <h2>Combinadas del día</h2><div class="sub">Los takes limpios más probables, uno por partido para que no dependan entre sí.</div>
+    <div class="grid" style="margin-top:12px">${auto || `<div class="empty">No hay suficientes takes limpios para montar una combinada.</div>`}</div>`;
+}
+
+/* ---- arranque ---- */
+(function init() {
+  const d = new Date(S.date + "T12:00:00");
+  $("hdate").textContent = d.toLocaleDateString("es-ES", {weekday: "long", day: "numeric", month: "long"});
+  const gen = new Date(S.generated_utc);
+  $("hmeta").innerHTML = `${S.games.length} partidos · ${S.players.length} takes de jugadores · actualizado ${gen.toLocaleTimeString("es-ES", {hour: "2-digit", minute: "2-digit"})} · <a href="portal-nba.html">Portal completo (tablas)</a>`;
+  $("warnings").innerHTML = S.warnings.map(w => `<div class="note">${esc(w)}</div>`).join("");
+  $("legend").innerHTML = `<span><i style="background:var(--fuerte)"></i>Fuerte (${pct(S.tiers.fuerte)} o más)</span><span><i style="background:var(--media)"></i>Media (${pct(S.tiers.media)}–${pct(S.tiers.fuerte)})</span>
+    <span><i style="background:var(--ajustada)"></i>Ajustada</span><span>El porcentaje combina el modelo y la casa de apuestas.</span>`;
+  const ev = S.evidence, tr = S.track, bits = [];
+  if (ev.props_hit_all != null) bits.push(`En ${ev.props_n.toLocaleString("es-ES")} líneas de jugadores de esta temporada, seguir al modelo acertó el ${num(ev.props_hit_all * 100)} % (rentabilidad ${signed(ev.props_roi_all * 100)} %).`);
+  if (tr.days && tr.games) bits.push(`Predicciones guardadas (${tr.days} ${tr.days === 1 ? "día" : "días"}): ganador acertado en el ${pct(tr.games.acierto_modelo)} de ${tr.games.n} partidos.`);
+  $("footer").innerHTML = `<div class="info"><b>Cómo leer esto.</b> Cada take es lo que el modelo cree más probable, con un porcentaje que combina el modelo y la casa.
+    No hay ventaja demostrada sobre la casa: un 60 % significa que falla 4 de cada 10 veces, y la cuota ya lo descuenta. ${bits.join(" ")}</div>
+    Datos: ESPN y DraftKings. Jornada del ${esc(S.date)}.`;
+  renderNav(); renderTop(); renderGames(); renderPlayers(); renderParlays();
+})();
+</script>
+</body>
+</html>

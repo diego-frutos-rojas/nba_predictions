@@ -9,7 +9,7 @@ real. Después se ampliará a fútbol (Poisson / Dixon-Coles). El objetivo NO es
 ```
 uv sync                                     # entorno exacto (uv.lock). uv: https://docs.astral.sh/uv/ · anteponer `uv run` a los comandos
 ruff check .                                # lint (también en CI y en pre-commit)
-pytest -q                                   # deben pasar siempre (67 tests, incluye detección de fuga temporal)
+pytest -q                                   # deben pasar siempre (75 tests, incluye detección de fuga temporal)
 python scripts/portal.py --open             # portal del día -> viz/portal-nba.html (necesita ESPN y GitHub)
 python scripts/run_props.py                 # evaluación del modelo de jugadores (--fit reajusta SOLO con DEV)
 python scripts/fetch_market_history.py      # líneas de cierre de props de la temporada en curso (ESPN)
@@ -45,6 +45,11 @@ entre casas; las discrepancias modelo-mercado se muestran con su evidencia hist�
 `scripts/portal.py` → `nba_model/daily.py` (todo se calcula en Python) → `web/portal_template.html` → `viz/portal-nba.html`.
 Datos en vivo de ESPN (`nba_model/espn.py`: funciones `parse_*` puras con fixtures reales en `tests/fixtures/`), caché en
 `data/live/` (`nba_model/live.py`) y predicciones del día en `data/predictions/` (no borrar: son el historial real).
+- **Página de takes** (resumen visual): el mismo estado → `nba_model/takes.py` → `web/takes_template.html` → `viz/takes-nba.html`.
+  No añade ningún modelo. El porcentaje de cada take es la probabilidad **combinada** modelo + casa (coeficientes ya medidos:
+  `RESULTADOS.json` → `blend.coef_dev` para partidos, `RESULTADOS_PROPS.json` → `mercado.blend` para jugadores), no la del modelo
+  a secas. Los tramos de color (`TIER_STRONG`, `TIER_MEDIUM`) son de presentación y están fijados: no moverlos mirando resultados.
+  La página solo multiplica probabilidades y cuotas (combinada manual); `tests/test_takes.py` la recorre con jsdom.
 - La única matemática repetida en JS es el bloque `CALC-START/END` de la plantilla (réplica de `daily.side_eval` y
   `daily.edge_bucket`); `tests/test_daily.py::test_page_math_matches_python` la comprueba con node. Si cambias una, cambia la otra.
 - `nba_model/props.py`: constantes fijadas a priori, coeficientes por mínimos cuadrados SOLO con DEV (`models/props_v1.json`).
