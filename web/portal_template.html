@@ -5,74 +5,145 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Portal NBA</title>
 <style>
-:root{--bg:#f4f5f7;--card:#fff;--ink:#16181d;--mute:#667085;--line:#e3e6eb;--accent:#1f5fbf;--good:#0a7f4f;--goodbg:#e3f5ec;
-  --warn:#9a5b00;--warnbg:#fff1d6;--bad:#b3261e;--badbg:#fde8e6;--chip:#eef1f5;--bar:#c9d3e3}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#181b21;--ink:#e8eaee;--mute:#98a2b3;--line:#2a2f38;--accent:#7fb0ff;
-  --good:#4fd19a;--goodbg:#123326;--warn:#f2b757;--warnbg:#3a2c0f;--bad:#ff8a80;--badbg:#3b1715;--chip:#232830;--bar:#3a4252}}
+:root{--bg:#f3f5f8;--side:#ffffff;--card:#fff;--card2:#f6f8fb;--ink:#141821;--mute:#5f6b7c;--line:#dfe4ec;--accent:#1f5fbf;--accentbg:#e6eefb;
+  --good:#0a7f4f;--goodbg:#e0f4ea;--warn:#8f5400;--warnbg:#fff0d2;--bad:#b3261e;--badbg:#fde8e6;--chip:#edf0f5;--bar:#cbd4e2;--onaccent:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1220;--side:#0e1729;--card:#121d33;--card2:#17243f;--ink:#e9edf5;--mute:#93a1b8;--line:#22314f;--accent:#6ea8ff;--accentbg:#17294b;
+  --good:#58d6a3;--goodbg:#10362c;--warn:#f2b757;--warnbg:#3a2c0f;--bad:#ff8a80;--badbg:#3b1715;--chip:#1b2946;--bar:#2c3c5e;--onaccent:#0b1220}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header{padding:18px 16px 0;max-width:1180px;margin:0 auto}
-h1{font-size:22px;margin:0 0 2px}
-h2{font-size:17px;margin:22px 0 10px}
-h3{font-size:15px;margin:0 0 6px}
-.sub{color:var(--mute);font-size:13px}
-main{max-width:1180px;margin:0 auto;padding:0 16px 60px}
-nav{display:flex;gap:6px;margin:14px 0 4px;flex-wrap:wrap;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:5}
-nav button,.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 14px;border-radius:999px;cursor:pointer;font:inherit}
-nav button.on,.btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
-@media (prefers-color-scheme:dark){nav button.on,.btn.on{color:#0f1115}}
-.btn.small{padding:3px 10px;font-size:13px}
+a{color:inherit;text-decoration:none}
+h1{font-size:22px;margin:0}h2{font-size:17px;margin:22px 0 10px}h3{font-size:15px;margin:0 0 6px}
+.sub{color:var(--mute);font-size:13px}.mute{color:var(--mute)}.pos{color:var(--good)}.neg{color:var(--bad)}.hide{display:none}
+svg.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+/* ---- estructura: barra lateral + contenido ---- */
+.app{display:grid;grid-template-columns:264px minmax(0,1fr);min-height:100vh}
+.app.mini{grid-template-columns:68px minmax(0,1fr)}
+.side{background:var(--side);border-right:1px solid var(--line);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:14px 12px;overflow-y:auto}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px 14px;font-weight:750;font-size:18px}
+.brand b{color:var(--accent)}
+.iconbtn{border:0;background:none;color:var(--mute);cursor:pointer;padding:6px;border-radius:8px;display:inline-flex}.iconbtn:hover{background:var(--chip);color:var(--ink)}
+.grp{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:14px 10px 6px;font-weight:650}
+.nav a,.nav span.soon{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:9px;color:var(--mute);margin:2px 0;border-left:3px solid transparent}
+.nav a:hover{background:var(--chip);color:var(--ink)}
+.nav a.on{background:var(--accentbg);color:var(--ink);border-left-color:var(--accent);font-weight:600}
+.nav span.soon{opacity:.55;cursor:default}.nav .tag{margin-left:auto;font-size:10px;border:1px solid var(--line);border-radius:99px;padding:0 7px;letter-spacing:.06em}
+.nav .cnt{margin-left:auto;font-size:12px;background:var(--chip);border-radius:99px;padding:0 8px}
+.side .grow{flex:1}
+.app.mini .lbl,.app.mini .grp,.app.mini .tag,.app.mini .cnt,.app.mini .brand .name{display:none}
+.app.mini .brand{justify-content:center}.app.mini .nav a,.app.mini .nav span.soon{justify-content:center;padding:10px 0}
+.topbar{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:6}
+.topbar .menu{display:none}
+.page{padding:22px 24px 60px;max-width:1240px}
+.phead{display:flex;gap:14px;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
+.phead .l{display:flex;gap:14px;align-items:center}.phead .pic{width:40px;height:40px;border-radius:10px;background:var(--accentbg);color:var(--accent);display:grid;place-items:center;flex:none}
+@media (max-width:880px){
+  .app,.app.mini{grid-template-columns:minmax(0,1fr)}
+  .side{position:fixed;z-index:20;width:264px;left:0;transform:translateX(-105%);transition:transform .18s}
+  body.navopen .side{transform:none;box-shadow:0 0 0 100vmax rgba(0,0,0,.45)}
+  .app.mini .lbl,.app.mini .grp,.app.mini .tag,.app.mini .cnt,.app.mini .brand .name{display:revert}
+  .topbar{padding:10px 16px}.topbar .menu{display:inline-flex}.topbar .meta{display:none}
+  .page{padding:16px 16px 60px}.collapse{display:none}
+}
+/* ---- piezas ---- */
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 14px;border-radius:9px;cursor:pointer;font:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}.btn.on{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn.small{padding:4px 10px;font-size:13px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
 .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
 .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.team{font-weight:650;font-size:16px}
 .chip{display:inline-block;background:var(--chip);border-radius:999px;padding:1px 9px;font-size:12px;color:var(--mute);white-space:nowrap}
 .chip.good{background:var(--goodbg);color:var(--good)}.chip.warn{background:var(--warnbg);color:var(--warn)}.chip.bad{background:var(--badbg);color:var(--bad)}
-.probbar{height:8px;border-radius:99px;background:var(--bar);overflow:hidden;margin:8px 0 4px;display:flex}
-.probbar i{display:block;height:100%;background:var(--accent)}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:13.5px;margin-top:8px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px;margin:0}
 .kv dt{color:var(--mute)}.kv dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;text-wrap:balance}
-details{margin-top:8px}summary{cursor:pointer;color:var(--accent);font-size:13.5px}
-.inj{font-size:13px;margin:4px 0 0;padding:0;list-style:none}.inj li{padding:2px 0}
-.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
-select,input[type=search],input[type=number]{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+.note{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:13.5px;margin:0 0 12px}
+.info{background:var(--chip);border-radius:10px;padding:10px 12px;font-size:13.5px;margin:12px 0;color:var(--ink)}
+details>summary{cursor:pointer;color:var(--accent);font-size:13.5px}
+ul.plain{padding-left:18px;margin:6px 0}
+.inj{font-size:13px;margin:4px 0 0;padding:0;list-style:none}.inj li{padding:5px 0;border-bottom:1px solid var(--line)}.inj li:last-child{border:0}
+select,input[type=search],input[type=number]{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 8px;max-width:100%}
 .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
 table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
-th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
-th{font-weight:600;color:var(--mute);background:var(--card);position:sticky;top:0;cursor:pointer;user-select:none}
-th:first-child,td:first-child{text-align:left}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--mute);background:var(--card2);user-select:none;font-size:12.5px}th[data-sort]{cursor:pointer}
+th:first-child,td:first-child,th.l,td.l{text-align:left}
 tr:last-child td{border-bottom:0}
 td input[type=number]{width:64px;padding:3px 5px;text-align:right}
 td input.manual{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .pname{font-weight:600;cursor:pointer}.pname:hover{text-decoration:underline}
 .dots{display:inline-flex;gap:2px;vertical-align:middle}.dots i{width:7px;height:7px;border-radius:50%;background:var(--bar);display:inline-block}.dots i.h{background:var(--good)}
-.pick{display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:12px 14px;border-bottom:1px solid var(--line)}
-.pick:last-child{border-bottom:0}.pick .big{font-size:15.5px;font-weight:650}.pick .num{text-align:right;font-variant-numeric:tabular-nums}
-.note{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:13.5px;margin:10px 0}
-.info{background:var(--chip);border-radius:10px;padding:10px 12px;font-size:13.5px;margin:10px 0;color:var(--ink)}
-.pos{color:var(--good)}.neg{color:var(--bad)}.mute{color:var(--mute)}
+.badge{display:inline-grid;place-items:center;min-width:38px;height:22px;border-radius:6px;background:var(--chip);font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--mute)}
+.star{border:0;background:none;cursor:pointer;color:var(--mute);padding:2px;display:inline-flex}.star.on{color:#e0a82e}.star.on svg{fill:currentColor}
+/* pestañas */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow-x:auto}
+.tabs button{border:0;background:none;color:var(--mute);font:inherit;padding:9px 13px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tabs button.on{color:var(--good);border-bottom-color:var(--good);font-weight:600}
+.pills{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:5px;margin-bottom:16px;overflow-x:auto}
+.pills button{border:0;background:none;color:var(--ink);font:inherit;font-weight:600;font-size:13.5px;padding:7px 14px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.pills button.on{background:var(--accent);color:var(--onaccent)}
+/* lista de partidos */
+.league{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.league>summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--card2);color:var(--ink);font-size:15px}
+.league>summary::-webkit-details-marker{display:none}
+.fx{display:grid;grid-template-columns:74px minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
+.fx:hover{background:var(--card2)}
+.fx .t{text-align:center;font-variant-numeric:tabular-nums;border-right:1px solid var(--line);padding-right:12px}
+.fx .teams div{display:flex;gap:8px;align-items:center;padding:2px 0;flex-wrap:wrap}
+.fx .nums{text-align:right;font-variant-numeric:tabular-nums;font-weight:650}.fx .nums div{padding:2px 0}
+.fx .x{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.datebar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.datepill{background:var(--goodbg);color:var(--good);border-radius:9px;padding:5px 18px;text-align:center;font-weight:700;line-height:1.2}
+.datepill small{display:block;font-size:11px;letter-spacing:.1em}
+@media (max-width:700px){.fx{grid-template-columns:60px minmax(0,1fr) auto}.fx .x{grid-column:1/-1;justify-content:flex-start}}
+/* ficha de partido */
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.hero .top,.hero .foot{display:flex;justify-content:space-between;gap:10px;padding:10px 18px;font-size:13px;flex-wrap:wrap}
+.hero .top{border-bottom:1px solid var(--line);font-weight:650}.hero .foot{border-top:1px solid var(--line);justify-content:center;color:var(--mute);gap:6px 22px}
+.hero .mid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;text-align:center;padding:24px 12px;gap:10px}
+.hero .tm .big{font-size:19px;font-weight:700;margin-top:8px}.hero .tm .badge{min-width:58px;height:44px;border-radius:50%;font-size:14px}
+.hero .ko{font-size:34px;font-weight:750;line-height:1.1;font-variant-numeric:tabular-nums}
+.hero .ko small{display:block;font-size:11px;letter-spacing:.12em;color:var(--mute);font-weight:600}
+/* filtros + resultados */
+.split{display:grid;grid-template-columns:250px minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:980px){.split{grid-template-columns:minmax(0,1fr)}}
+.filters{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.filters label.f{display:block;font-size:13px;color:var(--mute);margin:12px 0 5px}.filters label.f:first-child{margin-top:0}
+.filters select,.filters input[type=number],.filters input[type=search]{width:100%}
+.filters hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+.seg{display:flex;gap:5px;flex-wrap:wrap}.seg button{flex:1;border:1px solid var(--line);background:var(--card2);color:var(--mute);font:inherit;font-size:13px;padding:6px 8px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--goodbg);color:var(--good);border-color:transparent;font-weight:650}
+.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;margin:8px 0;cursor:pointer}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.fhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;font-weight:650}
+.fhead button{border:0;background:none;color:var(--accent);font:inherit;font-size:12.5px;text-decoration:underline;cursor:pointer}
+.rtools{display:flex;justify-content:flex-end;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+/* tarjeta de apuesta de jugador */
+.bets{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.bet{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.bet>div{padding:12px 16px;border-top:1px solid var(--line)}.bet>div:first-child{border-top:0;background:var(--card2);font-size:13px;padding:9px 16px}
+.bet .who{font-size:16.5px;font-weight:700}.bet .posb{font-size:11px;background:var(--chip);border-radius:99px;padding:1px 7px;color:var(--mute);vertical-align:middle;font-weight:600}
+.bet .odds{text-align:right}.bet .odds b{display:block;font-size:20px;color:var(--good);font-variant-numeric:tabular-nums}
+.bet .mk{font-size:18px;font-weight:700;color:var(--good)}
+.bet small,.lbls{font-size:12px;color:var(--mute);display:block}
+.bet .bigp{font-size:19px;font-weight:750;font-variant-numeric:tabular-nums}
+.segbar{display:inline-flex;gap:2px;vertical-align:middle}.segbar i{width:3px;height:13px;background:var(--bar);border-radius:1px}.segbar i.h{background:var(--good)}
+.tiles{display:flex;gap:6px;overflow-x:auto;margin-top:8px}
+.tiles b{min-width:40px;text-align:center;padding:5px 0;border-radius:7px;background:var(--chip);color:var(--mute);font-variant-numeric:tabular-nums;border-bottom:3px solid var(--bar)}
+.tiles b.h{background:var(--goodbg);color:var(--good);border-bottom-color:var(--good)}
 dialog{border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);max-width:760px;width:calc(100% - 24px);padding:18px}
-dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
 .bars{display:flex;align-items:flex-end;gap:3px;height:56px;margin-top:6px}.bars div{flex:1;background:var(--bar);border-radius:3px 3px 0 0;min-height:2px;position:relative}
 .bars div.h{background:var(--good)}.bars span{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:10.5px;color:var(--mute)}
-.hide{display:none}
-ul.plain{padding-left:18px;margin:6px 0}
 </style>
 </head>
 <body>
-<header>
-  <h1>Portal NBA <span id="hdate" class="sub"></span></h1>
-  <div class="sub" id="hmeta"></div>
-  <div id="warnings"></div>
-</header>
-<main>
-  <nav id="nav"></nav>
-  <section id="tab-jornada"></section>
-  <section id="tab-jugadores" class="hide"></section>
-  <section id="tab-picks" class="hide"></section>
-  <section id="tab-historial" class="hide"></section>
-  <section id="tab-guia" class="hide"></section>
-</main>
+<div class="app" id="app">
+  <aside class="side" id="side"></aside>
+  <div>
+    <div class="topbar"><button class="iconbtn menu" id="menu" aria-label="Abrir navegación"></button><div class="sub" id="hdate"></div><div class="sub meta" id="hmeta"></div></div>
+    <main class="page"><div id="warnings"></div><div id="page"></div></main>
+  </div>
+</div>
 <dialog id="dlg"></dialog>
 <script>
 const STATE = /*__STATE__*/null;
@@ -102,7 +173,6 @@ function edgeBucket(edge, thresholds) {
   return best;
 }
 /*CALC-END*/
-
 const $ = (s, el) => (el || document).querySelector(s);
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const pct = (x, d) => x == null || isNaN(x) ? "–" : (100 * x).toFixed(d == null ? 0 : d) + " %";
@@ -111,12 +181,54 @@ const num = (x, d) => x == null || isNaN(x) ? "–" : Number(x).toFixed(d == nul
 const sgn = (x, d) => x == null || isNaN(x) ? "–" : (x > 0 ? "+" : "") + Number(x).toFixed(d == null ? 1 : d);
 const L = STATE ? STATE.labels : {};
 const STATUS = {out: "baja", questionable: "duda", doubtful: "muy dudoso", probable: "probable", available: ""};
+const POS = {G: "base/escolta", F: "alero", C: "pívot"};
 const gameById = {};
 const storeKey = STATE ? "portal-nba-" + STATE.date : "portal-nba";
-let manual = {};
-try { manual = JSON.parse(localStorage.getItem(storeKey) || "{}"); } catch (e) { manual = {}; }
-const saveManual = () => { try { localStorage.setItem(storeKey, JSON.stringify(manual)); } catch (e) {} };
-const ui = {tab: "jornada", game: "", market: "pts", q: "", sort: "mu", dir: -1, minEdge: "0.06", hideDoubt: false, onePer: true};
+const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || "null") || d; } catch (e) { return d; } };
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+let manual = load(storeKey, {});
+let favs = load(storeKey + "-fav", {});
+const saveManual = () => save(storeKey, manual);
+
+// Estado de la interfaz (filtros de cada página). No se guarda entre sesiones salvo líneas manuales y favoritos.
+const DEFAULTS = {
+  pb: {market: "all", game: "", side: "all", win: "10", minHit: "", minOdds: "", maxOdds: "", minEdge: "0.06", hideDoubt: false, onePer: true, q: "", sort: "edge", compact: false},
+  tb: {game: "", market: "all", minOdds: "", maxOdds: ""},
+  ps: {games: [], stat: "pts", mode: "tasa", n: "", win: "10", minRate: "60", pos: ["G", "F", "C"], minMin: "0", venue: ["casa", "fuera"], starters: false, hideDoubt: false, hideStarted: true},
+  st: {game: "", market: "pts", q: "", sort: "mu", dir: -1},
+  fx: {tab: "jugador"},
+};
+const ui = JSON.parse(JSON.stringify(DEFAULTS));
+const setPath = (path, v) => { const [a, b] = path.split("."); ui[a][b] = v; };
+const getPath = path => { const [a, b] = path.split("."); return ui[a][b]; };
+
+const ICONS = {
+  cal: "M4 6h16v14H4zM4 10h16M8 3v4M16 3v4", search: "M11 4a7 7 0 1 0 0 14a7 7 0 0 0 0-14zM20 20l-4-4",
+  user: "M12 12a4 4 0 1 0 0-8a4 4 0 0 0 0 8zM5 20c0-3.5 3-6 7-6s7 2.5 7 6",
+  users: "M9 11a3.5 3.5 0 1 0 0-7a3.5 3.5 0 0 0 0 7zM2.5 20c0-3 2.8-5.5 6.5-5.5s6.5 2.5 6.5 5.5M16 4.2a3.5 3.5 0 0 1 0 6.6M18 14.8c2 .8 3.5 2.7 3.5 5.2",
+  table: "M4 5h16v14H4zM4 10h16M10 5v14", pulse: "M3 12h4l3-7l4 14l3-7h4", chart: "M4 20V10M10 20V4M16 20v-8M21 20H3",
+  book: "M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11",
+  star: "M12 3.5l2.6 5.4l5.9.8l-4.3 4.1l1 5.9L12 16.9l-5.2 2.8l1-5.9L3.5 9.7l5.9-.8z",
+  menu: "M4 6h16M4 12h16M4 18h16", chev: "M15 6l-6 6l6 6", arrow: "M5 12h14M13 6l6 6l-6 6", list: "M4 7h16M4 12h16M4 17h16",
+};
+const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[n]}"/></svg>`;
+
+// Páginas: [id, etiqueta, icono, grupo, título, subtítulo]
+const PAGES = [
+  ["partidos", "Partidos", "cal", "Jornada", "Partidos", "La jornada de hoy: horarios, marcadores, probabilidad del modelo y lo que dice el mercado."],
+  ["buscador", "Buscador de props", "search", "Análisis", "Buscador de props", "Encuentra jugadores que cumplen tu criterio en sus últimos partidos: puntos, rebotes, asistencias, triples y combinadas."],
+  ["jugadores", "Apuestas de jugador", "user", "Análisis", "Apuestas de jugador", "Cada línea con precio: cuota, probabilidad del modelo frente a la casa y forma reciente."],
+  ["equipos", "Apuestas de equipo", "users", "Análisis", "Apuestas de equipo", "Ganador, hándicap y total de cada partido: cuota de la casa frente a la probabilidad del modelo."],
+  ["proyecciones", "Proyecciones", "table", "Análisis", "Proyecciones de jugadores", "La tabla completa de proyecciones. Escribe la línea y las cuotas de tu casa para recalcular al momento."],
+  ["historial", "Historial", "chart", "Seguimiento", "Historial", "Lo que acertaron de verdad las predicciones de los días anteriores."],
+  ["guia", "Cómo leerlo", "book", "Seguimiento", "Cómo leerlo", "Qué hace cada página, cómo se calcula y qué límites tiene."],
+];
+const SOON = [["Probabilidad en directo", "pulse", "Análisis"]];
+
+function route() {
+  const h = (location.hash || "#/partidos").replace(/^#\/?/, "").split("/");
+  return {page: h[0] || "partidos", arg: h[1] || ""};
+}
 
 // Línea vigente de un jugador y mercado: la escrita a mano si existe; si no, la de DraftKings.
 function lineOf(pl, m) {
@@ -136,11 +248,17 @@ function evalOf(pl, m) {
   e.hit = pl.markets[m].last.filter(v => v > ln.value).length;
   return e;
 }
-function gameLabel(g) { return g.away + " @ " + g.home; }
-function tipTime(g) {
-  const d = new Date(g.tip_utc);
-  return isNaN(d) ? "" : d.toLocaleString("es-ES", {weekday: "short", hour: "2-digit", minute: "2-digit"}) + " h";
+// Aciertos y racha de una serie (antiguo -> reciente) frente a una línea, para el lado indicado.
+function hitInfo(vals, line, side) {
+  const ok = v => side === "under" ? v < line : v > line;
+  let st = 0;
+  for (let i = vals.length - 1; i >= 0 && ok(vals[i]); i--) st++;
+  return {h: vals.filter(ok).length, n: vals.length, st, ok};
 }
+function gameLabel(g) { return g.away + " @ " + g.home; }
+function tipDate(g) { const d = new Date(g.tip_utc); return isNaN(d) ? null : d; }
+function tipTime(g) { const d = tipDate(g); return d ? d.toLocaleString("es-ES", {weekday: "short", hour: "2-digit", minute: "2-digit"}) + " h" : ""; }
+function tipHour(g) { const d = tipDate(g); return d ? d.toLocaleTimeString("es-ES", {hour: "2-digit", minute: "2-digit"}) : "–"; }
 function gapReading(g) {
   if (g.gap_pts == null) return ["sin línea", ""];
   const sd = (STATE.evidence.games && STATE.evidence.games.gap_sd) || 3.3, z = Math.abs(g.gap_pts) / sd;
@@ -148,119 +266,316 @@ function gapReading(g) {
   if (z < 1.5) return ["discrepancia moderada", "warn"];
   return ["discrepancia grande: revisa bajas y alineaciones", "bad"];
 }
+const statusChip = p => p.status !== "available" ? `<span class="chip warn">${STATUS[p.status] || esc(p.status)}</span>` : "";
+const star = key => `<button class="star ${favs[key] ? "on" : ""}" data-fav="${esc(key)}" title="${favs[key] ? "Quitar de favoritos" : "Guardar en favoritos"}" aria-label="Favorito">${ic("star")}</button>`;
+const seg = (path, opts) => `<div class="seg">${opts.map(o => `<button data-set="${path}" data-v="${esc(o[0])}" class="${String(getPath(path)) === String(o[0]) ? "on" : ""}">${esc(o[1])}</button>`).join("")}</div>`;
+const chk = (path, label) => `<label class="chk"><input type="checkbox" data-ui="${path}" ${getPath(path) ? "checked" : ""}> ${esc(label)}</label>`;
+const gameSelect = (path, all) => `<select data-ui="${path}"><option value="">${all}</option>${STATE.games.map(g => `<option value="${esc(g.game_id)}" ${getPath(path) === g.game_id ? "selected" : ""}>${esc(gameLabel(g))}</option>`).join("")}</select>`;
+const numIn = (path, ph, step) => `<input type="number" min="0" step="${step || 1}" data-ui="${path}" placeholder="${esc(ph)}" value="${esc(getPath(path))}">`;
+const segbar = p => `<span class="segbar" title="${pct(p)}">${Array.from({length: 20}, (_, i) => `<i class="${i < Math.round(20 * p) ? "h" : ""}"></i>`).join("")}</span>`;
 
-function renderHeader() {
-  $("#hdate").textContent = "· jornada del " + new Date(STATE.date + "T12:00:00").toLocaleDateString("es-ES", {weekday: "long", day: "numeric", month: "long", year: "numeric"});
+// ---------------------------------------------------------------- estructura común
+function renderShell() {
+  const r = route(), nFav = Object.keys(favs).length;
+  let html = `<div class="brand"><span class="name">Portal <b>NBA</b></span><button class="iconbtn collapse" id="collapse" title="Plegar la navegación" aria-label="Plegar la navegación">${ic("chev")}</button></div><nav class="nav">`;
+  let grp = "";
+  const active = r.page === "partido" ? "partidos" : r.page;
+  for (const [id, label, icon, g] of PAGES) {
+    if (g !== grp) { html += `<div class="grp">${g}</div>`; grp = g; }
+    html += `<a href="#/${id}" class="${active === id ? "on" : ""}" title="${esc(label)}">${ic(icon)}<span class="lbl">${esc(label)}</span></a>`;
+    if (id === "proyecciones") html += SOON.map(s => `<span class="soon" title="${esc(s[0])} (pronto)">${ic(s[1])}<span class="lbl">${esc(s[0])}</span><span class="tag">PRONTO</span></span>`).join("");
+  }
+  html += `</nav><div class="grow"></div><nav class="nav"><a href="#/favoritos" class="${active === "favoritos" ? "on" : ""}" title="Favoritos">${ic("star")}<span class="lbl">Favoritos</span><span class="cnt">${nFav}</span></a></nav>`;
+  $("#side").innerHTML = html;
+  $("#menu").innerHTML = ic("menu");
+  $("#hdate").textContent = "Jornada del " + new Date(STATE.date + "T12:00:00").toLocaleDateString("es-ES", {weekday: "long", day: "numeric", month: "long", year: "numeric"});
   const gen = new Date(STATE.generated_utc);
   $("#hmeta").textContent = "Generado el " + gen.toLocaleString("es-ES", {day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"}) +
     " · resultados hasta el " + STATE.data_through + " · " + STATE.games.length + " partidos · " + STATE.players.length + " jugadores proyectados";
   $("#warnings").innerHTML = STATE.warnings.map(w => `<div class="note">${esc(w)}</div>`).join("");
-  const tabs = [["jornada", "Jornada"], ["jugadores", "Jugadores"], ["picks", "Picks"], ["historial", "Historial"], ["guia", "Cómo leerlo"]];
-  $("#nav").innerHTML = tabs.map(t => `<button data-tab="${t[0]}" class="${ui.tab === t[0] ? "on" : ""}">${t[1]}</button>`).join("");
-  $("#nav").onclick = e => { const b = e.target.closest("button"); if (b) { ui.tab = b.dataset.tab; render(); } };
+}
+function pageHead(id, right) {
+  const p = PAGES.find(x => x[0] === id);
+  return `<div class="phead"><div class="l"><div class="pic">${ic(p[2])}</div><div><h1>${esc(p[4])}</h1><div class="sub">${esc(p[5])}</div></div></div>${right ? `<div class="sub">${right}</div>` : ""}</div>`;
+}
+const updated = () => "Actualizado " + new Date(STATE.generated_utc).toLocaleString("es-ES", {day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"});
+
+// ---------------------------------------------------------------- Partidos
+function renderPartidos(el) {
+  const d = new Date(STATE.date + "T12:00:00");
+  const rows = STATE.games.map(g => {
+    const ph = g.model.prob_home, [txt, cls] = gapReading(g), pre = g.state === "pre";
+    const b2b = s => g.rest[s] <= 1 ? `<span class="chip warn">jugó ayer</span>` : "";
+    const nInj = g.injuries.home.length + g.injuries.away.length;
+    const st = pre ? "–" : g.state === "in" ? `<span class="pos">● ${esc(g.detail)}</span>` : "Final";
+    return `<a class="fx" href="#/partido/${esc(g.game_id)}">
+      <div class="t"><div>${esc(tipHour(g))}</div><div class="sub">${st}</div></div>
+      <div class="teams"><div><span class="badge">${esc(g.away)}</span><span>${esc(g.away_name)}</span>${b2b("away")}</div>
+        <div><span class="badge">${esc(g.home)}</span><span>${esc(g.home_name)}</span>${b2b("home")}</div></div>
+      <div class="nums" title="${pre ? "Probabilidad de victoria según el modelo" : "Marcador"}"><div>${pre ? pct(1 - ph) : g.away_pts}</div><div>${pre ? pct(ph) : g.home_pts}</div></div>
+      <div class="x"><span class="chip ${cls}">${txt}</span><span class="chip ${nInj ? "warn" : ""}">Bajas ${nInj}</span><span class="chip">${g.n_lines ? g.n_lines + " líneas" : "sin líneas"}</span><span class="btn small">Ver partido ${ic("arrow")}</span></div></a>`;
+  }).join("");
+  el.innerHTML = pageHead("partidos") + `<div class="datebar"><div class="datepill">Jornada<small>${esc(d.toLocaleDateString("es-ES", {day: "2-digit", month: "short", year: "numeric"}).toUpperCase())}</small></div>
+      <span class="sub">Horas en tu zona horaria. El porcentaje es la probabilidad de victoria del modelo.</span></div>` +
+    (STATE.games.length ? `<details class="league" open><summary><span><b>NBA</b> <span class="sub">Estados Unidos · ${STATE.games.length} partido${STATE.games.length === 1 ? "" : "s"}</span></span><span class="sub">plegar / desplegar</span></summary>${rows}</details>`
+      : `<div class="card">No hay partidos de la NBA en esta fecha.</div>`) +
+    `<div class="info">El modelo de partidos no bate al mercado (log loss ${num(STATE.evidence.games ? STATE.evidence.games.log_loss.v2_elo : null, 4)} frente a ${num(STATE.evidence.games ? STATE.evidence.games.log_loss.mercado : null, 4)} en 2022-26). Úsalo para entender el partido, no para apostar contra la línea: una diferencia grande casi siempre es una noticia que el modelo no conoce.</div>`;
 }
 
-function renderJornada() {
-  const el = $("#tab-jornada");
-  if (!STATE.games.length) { el.innerHTML = `<div class="card">No hay partidos de la NBA en esta fecha.</div>`; return; }
-  el.innerHTML = `<div class="grid">` + STATE.games.map(g => {
-    const m = g.model, k = g.market, ph = m.prob_home, [txt, cls] = gapReading(g);
-    const fav = k.spread_home == null ? "–" : (k.spread_home === 0 ? "igualado" : (k.spread_home < 0 ? g.home : g.away) + " " + (-Math.abs(k.spread_home)).toFixed(1));
-    const mfav = (m.margin >= 0 ? g.home : g.away) + " por " + Math.abs(m.margin).toFixed(1);
-    const b2b = s => g.rest[s] <= 1 ? ` <span class="chip warn">jugó ayer</span>` : "";
-    const inj = s => g.injuries[s].length ? g.injuries[s].map(i => `<li><b>${esc(i.player)}</b> <span class="chip ${i.status === "out" ? "bad" : "warn"}">${STATUS[i.status] || esc(i.status)}</span> <span class="mute">${esc(i.detail)}</span></li>`).join("") : `<li class="mute">sin bajas en el parte</li>`;
-    const live = g.state === "pre" ? `<span class="chip">${esc(tipTime(g))}</span>` : `<span class="chip ${g.state === "in" ? "warn" : ""}">${esc(g.detail)} · ${g.away_pts}-${g.home_pts}</span>`;
-    const nInj = g.injuries.home.length + g.injuries.away.length;
-    return `<div class="card">
-      <div class="row"><span class="team">${esc(g.away_name)}${b2b("away")}</span><span>${pct(1 - ph)}</span></div>
-      <div class="row"><span class="team">@ ${esc(g.home_name)}${b2b("home")}</span><span>${pct(ph)}</span></div>
-      <div class="probbar" title="Probabilidad de victoria según el modelo"><i style="width:${(100 * (1 - ph)).toFixed(1)}%"></i></div>
-      <div class="row sub"><span>${live}</span><span class="chip ${cls}">${txt}</span></div>
-      <dl class="kv">
-        <dt>Modelo</dt><dd>${esc(mfav)} · gana ${esc(g.home)} ${pct(ph)}</dd>
-        <dt>Mercado (${esc(k.provider || "sin cuotas")})</dt><dd>${esc(fav)}${k.prob_home != null ? " · gana " + esc(g.home) + " " + pct(k.prob_home) : ""}</dd>
-        <dt>Diferencia modelo − mercado</dt><dd>${g.gap_pts == null ? "–" : "el modelo ve a " + esc(g.gap_pts >= 0 ? g.home : g.away) + " " + num(Math.abs(g.gap_pts)) + " pts mejor"}</dd>
+// ---------------------------------------------------------------- Ficha de partido
+function renderPartido(el, gid) {
+  const g = gameById[gid];
+  if (!g) { el.innerHTML = `<div class="card">Ese partido no está en la jornada. <a href="#/partidos" style="color:var(--accent)">Volver a los partidos</a></div>`; return; }
+  const m = g.model, k = g.market, pre = g.state === "pre", [txt, cls] = gapReading(g);
+  const fav = k.spread_home == null ? "sin hándicap" : (k.spread_home === 0 ? "igualado" : (k.spread_home < 0 ? g.home : g.away) + " " + (-Math.abs(k.spread_home)).toFixed(1));
+  const tm = (abbr, name, p, s) => `<div class="tm"><span class="badge">${esc(abbr)}</span><div class="big">${esc(name)}</div><div class="sub">gana ${pct(p)} según el modelo${g.rest[s] <= 1 ? " · jugó ayer" : ""}</div></div>`;
+  const tabs = [["jugador", "Apuestas de jugador"], ["equipo", "Apuestas de equipo"], ["stats", "Proyecciones"], ["modelo", "Modelo y mercado"], ["bajas", "Bajas"]];
+  el.innerHTML = `<div class="hero">
+      <div class="top"><span><a href="#/partidos" style="color:var(--accent)">Partidos</a> · NBA</span><span>${esc(tipTime(g))}</span></div>
+      <div class="mid">${tm(g.away, g.away_name, 1 - m.prob_home, "away")}
+        <div class="ko"><small>${pre ? "INICIO" : g.state === "in" ? esc(g.detail).toUpperCase() : "FINAL"}</small>${pre ? esc(tipHour(g)) : g.away_pts + " – " + g.home_pts}<small>@</small></div>
+        ${tm(g.home, g.home_name, m.prob_home, "home")}</div>
+      <div class="foot"><span>Modelo: <b>${esc((m.margin >= 0 ? g.home : g.away) + " por " + Math.abs(m.margin).toFixed(1))}</b></span><span>Mercado: <b>${esc(fav)}</b></span>
+        <span>Total: <b>${k.total == null ? "–" : num(k.total)}</b></span><span class="chip ${cls}">${txt}</span></div></div>
+    <div class="pills">${tabs.map(t => `<button data-set="fx.tab" data-v="${t[0]}" class="${ui.fx.tab === t[0] ? "on" : ""}">${t[1]}</button>`).join("")}</div><div id="fxbody"></div>`;
+  const body = $("#fxbody");
+  if (ui.fx.tab === "jugador") body.innerHTML = playerBetsHtml(gid);
+  else if (ui.fx.tab === "equipo") body.innerHTML = teamBetsHtml(gid);
+  else if (ui.fx.tab === "stats") body.innerHTML = statsHtml(gid);
+  else if (ui.fx.tab === "bajas") {
+    const inj = s => g.injuries[s].length ? g.injuries[s].map(i => `<li><b>${esc(i.player)}</b> <span class="chip ${i.status === "out" ? "bad" : "warn"}">${STATUS[i.status] || esc(i.status)}</span> <span class="mute">${esc(i.detail)}</span>${i.comment ? `<div class="sub">${esc(i.comment)}</div>` : ""}</li>`).join("") : `<li class="mute">sin bajas en el parte</li>`;
+    body.innerHTML = `<div class="grid"><div class="card"><h3>${esc(g.away_name)}</h3><ul class="inj">${inj("away")}</ul></div><div class="card"><h3>${esc(g.home_name)}</h3><ul class="inj">${inj("home")}</ul></div></div>
+      <div class="info">Parte de lesiones de ESPN en el momento de generar el portal. No hay quintetos confirmados: un jugador en «duda» se proyecta como si jugara.</div>`;
+  } else {
+    body.innerHTML = `<div class="grid"><div class="card"><h3>De dónde sale el margen del modelo</h3><dl class="kv">
+        <dt>Nivel de ${esc(g.home)} − ${esc(g.away)}</dt><dd>${sgn(m.rating_home - m.rating_away)}</dd><dt>Factor cancha</dt><dd>${sgn(m.hca)}</dd>
+        <dt>Bajas y regresos</dt><dd>${sgn(m.avail_pts)}</dd><dt>Descanso</dt><dd>${sgn(m.margin - (m.rating_home - m.rating_away) - m.hca - m.avail_pts)}</dd>
+        <dt>Margen esperado (local)</dt><dd><b>${sgn(m.margin)}</b> ± ${num(m.sigma)}</dd><dt>Gana ${esc(g.home)}</dt><dd>${pct(m.prob_home)}</dd>
+        <dt>P(${esc(g.home)} cubre el hándicap)</dt><dd>${m.p_cover_home == null ? "–" : pct(m.p_cover_home)}</dd></dl></div>
+      <div class="card"><h3>Mercado (${esc(k.provider || "sin cuotas")})</h3><dl class="kv">
+        <dt>Favorito</dt><dd>${esc(fav)}${k.prob_home != null ? " · gana " + esc(g.home) + " " + pct(k.prob_home) : ""}</dd>
+        <dt>Hándicap de apertura</dt><dd>${k.spread_home_open == null ? "–" : esc(g.home) + " " + sgn(k.spread_home_open)}</dd>
         <dt>Total de puntos</dt><dd>${k.total == null ? "–" : num(k.total) + (k.over_odds ? ` · más ${num(k.over_odds, 2)} / menos ${num(k.under_odds, 2)}` : "")}</dd>
         <dt>Ganador (cuota)</dt><dd>${k.ml_home ? esc(g.away) + " " + num(k.ml_away, 2) + " · " + esc(g.home) + " " + num(k.ml_home, 2) : "–"}</dd>
         <dt>Hándicap (cuota)</dt><dd>${k.spread_odds_home ? esc(g.away) + " " + sgn(-k.spread_home) + " a " + num(k.spread_odds_away, 2) + " · " + esc(g.home) + " " + sgn(k.spread_home) + " a " + num(k.spread_odds_home, 2) : "–"}</dd>
-        <dt>P(${esc(g.home)} cubre el hándicap)</dt><dd>${m.p_cover_home == null ? "–" : pct(m.p_cover_home)}</dd>
-      </dl>
-      <details><summary>De dónde sale el margen del modelo</summary>
-        <dl class="kv"><dt>Nivel de ${esc(g.home)} − ${esc(g.away)}</dt><dd>${sgn(m.rating_home - m.rating_away)}</dd>
-        <dt>Factor cancha</dt><dd>${sgn(m.hca)}</dd><dt>Bajas y regresos</dt><dd>${sgn(m.avail_pts)}</dd>
-        <dt>Descanso</dt><dd>${sgn(m.margin - (m.rating_home - m.rating_away) - m.hca - m.avail_pts)}</dd>
-        <dt>Margen esperado (local)</dt><dd><b>${sgn(m.margin)}</b> ± ${num(m.sigma)}</dd></dl></details>
-      <details><summary>Parte de lesiones (${nInj})</summary>
-        <h3 style="margin-top:8px">${esc(g.away)}</h3><ul class="inj">${inj("away")}</ul>
-        <h3 style="margin-top:8px">${esc(g.home)}</h3><ul class="inj">${inj("home")}</ul></details>
-      <div style="margin-top:10px"><button class="btn small" data-game="${esc(g.game_id)}">Ver jugadores</button>
-        <span class="sub">${g.n_lines ? g.n_lines + " líneas de DraftKings" : "sin líneas de jugador todavía"}</span></div>
-    </div>`;
-  }).join("") + `</div>
-  <div class="info">El modelo de partidos no bate al mercado (log loss ${num(STATE.evidence.games ? STATE.evidence.games.log_loss.v2_elo : null, 4)} frente a ${num(STATE.evidence.games ? STATE.evidence.games.log_loss.mercado : null, 4)} en 2022-26). Úsalo para entender el partido, no para apostar contra la línea: una diferencia grande casi siempre es una noticia que el modelo no conoce.</div>`;
-  el.onclick = e => { const b = e.target.closest("button[data-game]"); if (b) { ui.game = b.dataset.game; ui.tab = "jugadores"; render(); window.scrollTo(0, 0); } };
+        <dt>Diferencia modelo − mercado</dt><dd>${g.gap_pts == null ? "–" : "el modelo ve a " + esc(g.gap_pts >= 0 ? g.home : g.away) + " " + num(Math.abs(g.gap_pts)) + " pts mejor"}</dd>
+        <dt>Días de descanso</dt><dd>${esc(g.away)} ${g.rest.away} · ${esc(g.home)} ${g.rest.home}</dd></dl></div></div>`;
+  }
 }
 
-function playersFiltered() {
-  const q = ui.q.trim().toLowerCase();
-  return STATE.players.filter(p => (!ui.game || p.game_id === ui.game) && (!q || p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q)));
+// ---------------------------------------------------------------- Apuestas de jugador
+function betList(fixed) {
+  const f = ui.pb, q = f.q.trim().toLowerCase(), win = parseInt(f.win, 10), out = [];
+  for (const p of STATE.players) {
+    const g = gameById[p.game_id];
+    if (!g || g.state !== "pre") continue;
+    if (fixed ? p.game_id !== fixed : (f.game && p.game_id !== f.game)) continue;
+    if (q && !p.name.toLowerCase().includes(q) && !p.team.toLowerCase().includes(q)) continue;
+    for (const m of STATE.markets) {
+      if (f.market !== "all" && m !== f.market) continue;
+      const e = evalOf(p, m);
+      if (!e || e.edge == null) continue;
+      out.push(betOf(p, m, e, g, win));
+    }
+  }
+  const lo = parseFloat(f.minOdds), hi = parseFloat(f.maxOdds), mh = parseFloat(f.minHit);
+  const res = out.filter(x => x.e.edge >= parseFloat(f.minEdge) && (f.side === "all" || x.e.side === f.side) && (!f.hideDoubt || !x.flags.includes("duda")) &&
+    (isNaN(lo) || x.price >= lo) && (isNaN(hi) || x.price <= hi) && (isNaN(mh) || (x.hi.n && 100 * x.hi.h / x.hi.n >= mh)));
+  const key = {edge: x => x.e.edge, prob: x => x.prob, hit: x => (x.hi.n ? x.hi.h / x.hi.n : 0) + x.hi.st / 1000, odds: x => x.price}[f.sort];
+  return res.sort((a, b) => key(b) - key(a));
 }
-function renderJugadores() {
-  const el = $("#tab-jugadores"), m = ui.market;
-  const rows = playersFiltered().map(p => ({p, mk: p.markets[m], e: evalOf(p, m)}));
+function betOf(p, m, e, g, win) {
+  const over = e.side === "over";
+  return {p, m, e, g, over, price: over ? e.line.over : e.line.under, prob: over ? e.p_over : e.p_under, fair: over ? e.fair_over : 1 - e.fair_over,
+    hi: hitInfo(p.markets[m].last.slice(-win), e.line.value, e.side), key: "p|" + p.pid + "|" + m,
+    flags: [].concat(p.status !== "available" ? ["duda"] : [], e.edge >= STATE.big_edge ? ["revisar"] : [])};
+}
+const betName = x => `${x.over ? "Más" : "Menos"} de ${num(x.e.line.value)} ${esc(L[x.m])}`;
+function betCard([x, more]) {
+  const {p, m, e, g, hi} = x, bt = (STATE.evidence.props || {}).apuestas || {}, b = bt[edgeBucket(e.edge, STATE.thresholds)];
+  const vals = p.markets[m].last.slice(-parseInt(ui.pb.win, 10)).reverse();
+  return `<article class="bet">
+    <div class="row"><a href="#/partido/${esc(g.game_id)}">${esc(gameLabel(g))}</a><span class="row"><span class="mute">${esc(tipTime(g))}</span>${star(x.key)}</span></div>
+    <div><div class="row"><div><span class="who pname" data-pid="${p.pid}">${esc(p.name)}</span> <span class="posb" title="${POS[p.pos] || ""}">${esc(p.pos)}</span><div class="sub">${esc(p.team)} ${p.home ? "vs" : "@"} ${esc(p.opp)} · ${num(p.min)} min</div></div>
+        <div class="odds"><small>Cuota${e.line.manual ? " (tuya)" : ""}</small><b>${num(x.price, 2)}</b></div></div>
+      <div class="row" style="margin-top:8px"><span class="mk">${betName(x)}</span><span>${x.flags.map(f => `<span class="chip warn">${f}</span>`).join(" ") || `<span class="sub">en el parte: disponible</span>`}</span></div></div>
+    <div class="row"><div><small>Acierto · últimos ${hi.n}</small><span class="bigp">${hi.n ? pct(hi.h / hi.n) : "–"}</span> <span class="sub">${hi.h} de ${hi.n}</span></div>
+      <div style="text-align:right"><small>Racha actual</small><span class="bigp">${hi.st}</span> <span class="sub">seguidos</span></div></div>
+    <div><div class="row"><span><small>Probabilidad del modelo</small>${segbar(x.prob)} <b>${pct(x.prob)}</b></span><span style="text-align:right"><small>Casa sin margen ${pct(x.fair)}</small><b class="${e.edge >= 0.06 ? "pos" : ""}">${pp(e.edge)}</b></span></div>
+      <div class="sub" style="margin-top:6px">Proyección ${num(p.markets[m].mu)} · valor esperado ${sgn(100 * e.ev)} %${more ? ` · y ${more} mercado${more > 1 ? "s" : ""} más de este jugador` : ""}</div></div>
+    <div><small>Últimos partidos · el más reciente primero</small><div class="tiles">${vals.map(v => `<b class="${hi.ok(v) ? "h" : ""}">${v}</b>`).join("") || `<span class="sub">sin partidos</span>`}</div></div>
+    <div class="sub">Historial de este nivel de ventaja: ${b && b.n ? `${pct(b.acierto, 1)} de acierto, rentabilidad ${sgn(100 * b.roi)} % [${sgn(100 * b.lo)}; ${sgn(100 * b.hi)}] en ${b.n} apuestas simuladas` : "sin datos"}</div>
+  </article>`;
+}
+function betTable(list) {
+  return `<div class="tablewrap"><table><thead><tr><th></th><th class="l">Jugador</th><th class="l">Apuesta</th><th>Cuota</th><th>P modelo</th><th>P casa</th><th>Ventaja</th><th>Acierto</th><th>Últimos</th></tr></thead><tbody>${list.map(([x]) =>
+    `<tr><td>${star(x.key)}</td><td class="l"><span class="pname" data-pid="${x.p.pid}">${esc(x.p.name)}</span> <span class="mute">${esc(x.p.team)} ${x.p.home ? "vs" : "@"} ${esc(x.p.opp)}</span> ${x.flags.map(f => `<span class="chip warn">${f}</span>`).join(" ")}</td>
+      <td class="l">${betName(x)}</td><td>${num(x.price, 2)}</td><td>${pct(x.prob)}</td><td>${pct(x.fair)}</td><td class="${x.e.edge >= 0.06 ? "pos" : ""}">${pp(x.e.edge)}</td><td>${x.hi.h}/${x.hi.n}</td>
+      <td><span class="dots">${x.p.markets[x.m].last.slice(-parseInt(ui.pb.win, 10)).map(v => `<i class="${x.hi.ok(v) ? "h" : ""}"></i>`).join("")}</span></td></tr>`).join("")}</tbody></table></div>`;
+}
+function evidenceRow(x, label) {
+  if (!x || !x.n) return `<tr><td>${label}</td><td colspan="3" class="mute">sin datos</td></tr>`;
+  return `<tr><td>${label}</td><td>${x.n}</td><td>${pct(x.acierto, 1)}</td><td class="${x.roi >= 0 ? "pos" : "neg"}">${sgn(100 * x.roi)} %${x.lo != null ? ` <span class="mute">[${sgn(100 * x.lo)}; ${sgn(100 * x.hi)}]</span>` : ""}</td></tr>`;
+}
+function playerBetsHtml(fixed) {
+  const f = ui.pb, ev = STATE.evidence.props || {}, bt = ev.apuestas || {}, tr = (STATE.track && STATE.track.picks) || {}, thr = STATE.thresholds;
+  if (fixed && gameById[fixed].state !== "pre") return `<div class="card">El partido ya ha empezado: no se muestran apuestas de un partido en juego o terminado.</div>`;
+  let list = betList(fixed);
+  // si un mercado de un jugador es sospechoso, lo son todos los suyos (comparten la misma causa)
+  const susPid = new Set(list.filter(x => x.flags.includes("revisar")).map(x => x.p.pid));
+  const sus = list.filter(x => susPid.has(x.p.pid)); list = list.filter(x => !susPid.has(x.p.pid));
+  const group = l => { if (!f.onePer) return l.map(x => [x, 0]); const seen = {}, out = []; for (const x of l) { if (seen[x.p.pid] == null) { seen[x.p.pid] = out.length; out.push([x, 0]); } else out[seen[x.p.pid]][1]++; } return out; };
+  const show = l => f.compact ? betTable(l) : `<div class="bets">${l.map(betCard).join("")}</div>`;
+  const gl = group(list), gs = group(sus);
+  return `<div class="note"><b>Léelo antes de apostar.</b> «Ventaja» es lo que el modelo cree saber frente a la casa, no un beneficio asegurado. En ${ev.partidos || "–"} partidos de esta temporada (${esc(ev.desde || "")} a ${esc(ev.hasta || "")}) seguir al modelo a los precios de DraftKings dio un resultado cercano a cero, con un margen de error que incluye pérdidas. Solo mayores de 18 años; apuesta solo lo que puedas permitirte perder.
+      <details><summary>Ver la evidencia por nivel de ventaja</summary><div class="tablewrap" style="margin-top:8px"><table><thead><tr><th>Ventaja mínima</th><th>Apuestas</th><th>Acierto</th><th>Rentabilidad (IC 95 %)</th></tr></thead><tbody>
+      ${thr.map(t => evidenceRow(bt[t], `≥ ${(100 * parseFloat(t)).toFixed(0)} pp · backtest`)).join("")}${thr.map(t => evidenceRow(tr[t], `≥ ${(100 * parseFloat(t)).toFixed(0)} pp · portal en vivo`)).join("")}</tbody></table></div></details></div>
+    <div class="tabs">${[["all", "Todas"]].concat(STATE.markets.map(k => [k, L[k]])).map(t => `<button data-set="pb.market" data-v="${t[0]}" class="${f.market === t[0] ? "on" : ""}">${esc(t[1])}</button>`).join("")}</div>
+    <div class="split"><div><div class="fhead"><span>Filtros</span><button data-reset="pb">Restablecer</button></div><div class="filters">
+        <label class="f">Buscar</label><input type="search" id="pbq" data-live="pb.q" placeholder="Jugador o equipo" value="${esc(f.q)}">
+        ${fixed ? "" : `<label class="f">Partido</label>${gameSelect("pb.game", "Todos los partidos")}`}
+        <label class="f">Lado</label>${seg("pb.side", [["all", "Todos"], ["over", "Más"], ["under", "Menos"]])}
+        <label class="f">Ventaja mínima</label>${seg("pb.minEdge", thr.map(t => [t, (100 * parseFloat(t)).toFixed(0) + " pp"]))}
+        <hr><label class="f">Partidos recientes</label>${seg("pb.win", [["5", "5"], ["10", "10"]])}
+        <div class="sub" style="margin-top:6px">Ventana fija: no se elige la que mejor queda para cada jugador.</div>
+        <label class="f">Acierto mínimo (%)</label>${numIn("pb.minHit", "Cualquiera")}
+        <hr><div class="two"><div><label class="f">Cuota mín.</label>${numIn("pb.minOdds", "–", 0.05)}</div><div><label class="f">Cuota máx.</label>${numIn("pb.maxOdds", "–", 0.05)}</div></div>
+        <hr>${chk("pb.hideDoubt", "Ocultar jugadores en duda")}${chk("pb.onePer", "Una apuesta por jugador")}</div></div>
+      <div><div class="rtools"><span class="sub">Ordenar por</span><select data-ui="pb.sort">${[["edge", "Ventaja"], ["prob", "Probabilidad del modelo"], ["hit", "Acierto reciente"], ["odds", "Cuota"]].map(o => `<option value="${o[0]}" ${f.sort === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select>
+          <button class="btn ${f.compact ? "on" : ""}" data-toggle="pb.compact">${ic("list")} Vista compacta</button></div>
+        <div class="sub" style="margin-bottom:10px">${gl.length} apuesta${gl.length === 1 ? "" : "s"} con este filtro</div>
+        ${gl.length ? show(gl) : `<div class="card mute">Ninguna apuesta con este filtro. Puede que aún no haya líneas: vuelve a generar el portal más cerca de los partidos.</div>`}
+        ${gs.length ? `<h2>Discrepancias sospechosas (${gs.length})</h2><div class="sub" style="margin-bottom:10px">Ventaja de más de ${(100 * STATE.big_edge).toFixed(0)} pp: casi siempre hay una noticia que el modelo no conoce (vuelta de lesión, límite de minutos, cambio de papel). Compruébalo antes de fiarte.</div>${show(gs)}` : ""}
+      </div></div>`;
+}
+
+// ---------------------------------------------------------------- Apuestas de equipo
+function teamRows(fixed, all) {
+  const f = ui.tb, out = [];
+  for (const g of STATE.games) {
+    if (fixed ? g.game_id !== fixed : (f.game && g.game_id !== f.game)) continue;
+    const m = g.model, k = g.market, home = m.prob_home >= 0.5;
+    if (k.ml_home && k.ml_away) out.push({g, kind: "ganador", name: "Ganador: " + (home ? g.home : g.away), price: home ? k.ml_home : k.ml_away, pm: home ? m.prob_home : 1 - m.prob_home,
+      pk: k.prob_home == null ? null : (home ? k.prob_home : 1 - k.prob_home)});
+    if (k.spread_home != null && m.p_cover_home != null) { const c = m.p_cover_home >= 0.5;
+      out.push({g, kind: "handicap", name: "Hándicap: " + (c ? g.home + " " + sgn(k.spread_home) : g.away + " " + sgn(-k.spread_home)), price: c ? k.spread_odds_home : k.spread_odds_away, pm: c ? m.p_cover_home : 1 - m.p_cover_home, pk: null}); }
+    if (k.total != null) out.push({g, kind: "total", name: "Total de puntos " + num(k.total), price: null, pm: null, pk: null, extra: k.over_odds ? `más ${num(k.over_odds, 2)} / menos ${num(k.under_odds, 2)}` : ""});
+  }
+  if (all) return out;                                       // favoritos: sin los filtros de la página de equipos
+  const lo = parseFloat(f.minOdds), hi = parseFloat(f.maxOdds);
+  return out.filter(x => (f.market === "all" || x.kind === f.market) && (isNaN(lo) || (x.price != null && x.price >= lo)) && (isNaN(hi) || (x.price != null && x.price <= hi)));
+}
+function teamTable(rows) {
+  return `<div class="tablewrap"><table><thead><tr><th></th><th class="l">Partido</th><th class="l">Mercado</th><th>Cuota</th><th>P modelo</th><th>P mercado</th><th title="Margen del modelo menos el del mercado, en puntos del local">Dif. (pts)</th><th class="l">Lectura</th></tr></thead><tbody>${rows.map(x => {
+    const g = x.g, [txt, cls] = gapReading(g);
+    return `<tr><td>${star("g|" + g.game_id + "|" + x.kind)}</td><td class="l"><a href="#/partido/${esc(g.game_id)}"><b>${esc(gameLabel(g))}</b></a><div class="sub">${esc(tipTime(g))}</div></td><td class="l"><b>${esc(x.name)}</b></td>
+      <td>${x.price ? num(x.price, 2) : esc(x.extra || "–")}</td><td>${x.pm == null ? `<span class="mute">sin modelo</span>` : `${segbar(x.pm)} ${pct(x.pm)}`}</td><td>${x.pk == null ? "–" : pct(x.pk)}</td>
+      <td>${x.kind === "total" ? "–" : sgn(g.gap_pts)}</td><td class="l">${x.kind === "total" ? `<span class="chip">solo precio</span>` : `<span class="chip ${cls}">${txt}</span>`}</td></tr>`;
+  }).join("") || `<tr><td colspan="8" class="mute l">Sin mercados para este filtro.</td></tr>`}</tbody></table></div>`;
+}
+function teamBetsHtml(fixed) {
+  return `<div class="tabs">${[["all", "Todos"], ["ganador", "Ganador"], ["handicap", "Hándicap"], ["total", "Total"]].map(t => `<button data-set="tb.market" data-v="${t[0]}" class="${ui.tb.market === t[0] ? "on" : ""}">${t[1]}</button>`).join("")}</div>
+    <div class="split"><div><div class="fhead"><span>Filtros</span><button data-reset="tb">Restablecer</button></div><div class="filters">
+      ${fixed ? "" : `<label class="f">Partido</label>${gameSelect("tb.game", "Todos los partidos")}`}
+      <div class="two"><div><label class="f">Cuota mín.</label>${numIn("tb.minOdds", "–", 0.05)}</div><div><label class="f">Cuota máx.</label>${numIn("tb.maxOdds", "–", 0.05)}</div></div></div></div>
+    <div>${teamTable(teamRows(fixed))}
+      <div class="info">Estas filas NO son recomendaciones: en 2022-26 apostar al hándicap siguiendo al modelo perdió entre un 6 % y un 10 % (peor que apostar al azar). Se muestra el lado que prefiere el modelo y cuánto se aleja del mercado; «modelo − mercado» va en puntos desde el punto de vista del local. No hay modelo de totales: se enseña solo el precio.</div></div></div>`;
+}
+
+// ---------------------------------------------------------------- Proyecciones (tabla con líneas manuales)
+function statsHtml(fixed) {
+  const f = ui.st, m = f.market, q = f.q.trim().toLowerCase(), game = fixed || f.game;
+  const rows = STATE.players.filter(p => (!game || p.game_id === game) && (!q || p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q))).map(p => ({p, mk: p.markets[m], e: evalOf(p, m)}));
   const key = {name: r => r.p.name, min: r => r.p.min, mu: r => r.mk.mu, l5: r => r.mk.l5, l10: r => r.mk.l10, season: r => r.mk.season,
     def: r => r.mk.def, line: r => r.e ? r.e.line.value : null, pover: r => r.e ? r.e.p_over : null, edge: r => r.e && r.e.edge != null ? r.e.edge : null,
-    diff: r => r.e ? r.mk.mu - r.e.line.value : null}[ui.sort];
-  rows.sort((a, b) => { const x = key(a), y = key(b); if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (x > y ? 1 : x < y ? -1 : 0) * ui.dir; });
-  const th = (k, t, tip) => `<th data-sort="${k}" title="${esc(tip || "")}">${t}${ui.sort === k ? (ui.dir < 0 ? " ▾" : " ▴") : ""}</th>`;
-  el.innerHTML = `<div class="tools">
-      <select id="fgame"><option value="">Todos los partidos</option>${STATE.games.map(g => `<option value="${esc(g.game_id)}" ${ui.game === g.game_id ? "selected" : ""}>${esc(gameLabel(g))}</option>`).join("")}</select>
-      <span>${STATE.markets.map(k => `<button class="btn small ${k === m ? "on" : ""}" data-market="${k}">${esc(L[k])}</button>`).join(" ")}</span>
-      <input type="search" id="fq" placeholder="Buscar jugador o equipo" value="${esc(ui.q)}">
-    </div>
+    diff: r => r.e ? r.mk.mu - r.e.line.value : null}[f.sort];
+  rows.sort((a, b) => { const x = key(a), y = key(b); if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (x > y ? 1 : x < y ? -1 : 0) * f.dir; });
+  const th = (k, t, tip) => `<th data-sort="${k}" title="${esc(tip || "")}">${t}${f.sort === k ? (f.dir < 0 ? " ▾" : " ▴") : ""}</th>`;
+  return `<div class="tabs">${STATE.markets.map(k => `<button data-set="st.market" data-v="${k}" class="${k === m ? "on" : ""}">${esc(L[k])}</button>`).join("")}</div>
+    <div class="rtools" style="justify-content:flex-start">${fixed ? "" : gameSelect("st.game", "Todos los partidos")}<input type="search" id="stq" data-live="st.q" placeholder="Buscar jugador o equipo" value="${esc(f.q)}"></div>
     <div class="sub" style="margin-bottom:8px">Escribe tu propia línea y cuotas (decimales) de tu casa en las casillas: la probabilidad y la ventaja se recalculan al momento y se guardan en este navegador. Pulsa el nombre para ver el detalle.</div>
     <div class="tablewrap"><table><thead><tr>
-      ${th("name", "Jugador")}${th("min", "Min", "Minutos proyectados")}${th("mu", "Proy.", "Media proyectada por el modelo")}
+      <th></th>${th("name", "Jugador")}${th("min", "Min", "Minutos proyectados")}${th("mu", "Proy.", "Media proyectada por el modelo")}
       ${th("l5", "Últ. 5")}${th("l10", "Últ. 10")}${th("season", "Temp.")}${th("def", "Rival", "Lo que concede el rival en esta estadística frente a la media de la liga")}
-      ${th("line", "Línea")}<th>Más</th><th>Menos</th>${th("diff", "Proy.−línea")}${th("pover", "P(más)")}<th title="Partidos de los últimos 10 por encima de la línea">Últ. 10</th>${th("edge", "Ventaja", "P del modelo menos P de la casa sin margen, para el lado que prefiere el modelo")}
+      ${th("line", "Línea")}<th>Más</th><th>Menos</th>${th("diff", "Proy.−línea")}${th("pover", "P(más)")}<th title="Partidos recientes por encima de la línea">Recientes</th>${th("edge", "Ventaja", "P del modelo menos P de la casa sin margen, para el lado que prefiere el modelo")}
     </tr></thead><tbody>${rows.map(({p, mk, e}) => {
       const k = p.pid + "|" + m, ln = e ? e.line : null, man = manual[k] || {};
-      const st = p.status !== "available" ? ` <span class="chip warn">${STATUS[p.status] || esc(p.status)}</span>` : "";
-      const inp = (f, v, step) => `<input type="number" step="${step}" min="0" data-k="${k}" data-f="${f}" class="${man[f] != null ? "manual" : ""}" value="${v == null ? "" : v}">`;
+      const inp = (fl, v, step) => `<input type="number" step="${step}" min="0" data-k="${k}" data-f="${fl}" class="${man[fl] != null ? "manual" : ""}" value="${v == null ? "" : v}">`;
       const edge = e && e.edge != null ? `<span class="chip ${e.edge >= 0.06 ? "good" : ""}">${e.side === "over" ? "más" : "menos"} ${pp(e.edge)}</span>` : "–";
       const dots = e ? `<span class="dots" title="${e.hit} de ${mk.last.length} por encima">${mk.last.map(v => `<i class="${v > ln.value ? "h" : ""}"></i>`).join("")}</span>` : "–";
-      return `<tr><td><span class="pname" data-pid="${p.pid}">${esc(p.name)}</span> <span class="mute">${esc(p.team)} ${p.home ? "vs" : "@"} ${esc(p.opp)}</span>${st}</td>
+      return `<tr><td>${star("p|" + k)}</td><td class="l"><span class="pname" data-pid="${p.pid}">${esc(p.name)}</span> <span class="mute">${esc(p.team)} ${p.home ? "vs" : "@"} ${esc(p.opp)}</span> ${statusChip(p)}</td>
         <td>${num(p.min)}</td><td><b>${num(mk.mu)}</b></td><td>${num(mk.l5)}</td><td>${num(mk.l10)}</td><td>${num(mk.season)}</td>
         <td class="${mk.def > 0.03 ? "pos" : mk.def < -0.03 ? "neg" : "mute"}">${sgn(100 * mk.def, 0)} %</td>
         <td>${inp("line", ln ? ln.value : null, 0.5)}</td><td>${inp("over", ln ? ln.over : null, 0.01)}</td><td>${inp("under", ln ? ln.under : null, 0.01)}</td>
         <td>${e ? sgn(mk.mu - ln.value) : "–"}</td><td>${e ? pct(e.p_over) : "–"}</td><td>${dots}</td><td>${edge}</td></tr>`;
-    }).join("") || `<tr><td colspan="14" class="mute">Sin jugadores para este filtro.</td></tr>`}</tbody></table></div>
-    <div class="tools"><button class="btn small" id="clearman">Borrar mis líneas manuales</button><span class="sub">Cuotas en formato decimal. «Rival» en verde = el rival concede más de lo normal.</span></div>`;
-  $("#fgame").onchange = e => { ui.game = e.target.value; render(); };
-  $("#fq").oninput = e => { ui.q = e.target.value; const pos = e.target.selectionStart; renderJugadores(); const n = $("#fq"); n.focus(); n.setSelectionRange(pos, pos); };
-  $("#clearman").onclick = () => { manual = {}; saveManual(); render(); };
-  el.onclick = e => {
-    const b = e.target.closest("button[data-market]"); if (b) { ui.market = b.dataset.market; render(); return; }
-    const h = e.target.closest("th[data-sort]"); if (h) { if (ui.sort === h.dataset.sort) ui.dir = -ui.dir; else { ui.sort = h.dataset.sort; ui.dir = h.dataset.sort === "name" ? 1 : -1; } render(); return; }
-    const n = e.target.closest(".pname"); if (n) openPlayer(Number(n.dataset.pid));
-  };
-  el.onchange = e => {
-    const i = e.target.closest("input[data-k]"); if (!i) return;
-    const k = i.dataset.k, f = i.dataset.f, v = i.value === "" ? null : parseFloat(i.value);
-    const cur = manual[k] || {};
-    if (f === "line" && v == null) { delete manual[k]; }
-    else {
-      if (cur.line == null && f !== "line") {                    // cuota manual sobre la línea de DraftKings
-        const [pid, mm] = k.split("|"), pl = STATE.players.find(x => String(x.pid) === pid), base = pl.markets[mm].line;
-        if (!base) return;
-        cur.line = base.value;
-      }
-      cur[f] = v; manual[k] = cur;
-    }
-    saveManual(); render();
-  };
+    }).join("") || `<tr><td colspan="15" class="mute l">Sin jugadores para este filtro.</td></tr>`}</tbody></table></div>
+    <div class="rtools" style="justify-content:flex-start;margin-top:10px"><button class="btn small" id="clearman">Borrar mis líneas manuales</button><span class="sub">Cuotas en formato decimal. «Rival» en verde = el rival concede más de lo normal.</span></div>`;
 }
 
+// ---------------------------------------------------------------- Buscador de props
+function searchRows() {
+  const f = ui.ps, win = parseInt(f.win, 10), n = parseFloat(f.n), minRate = parseFloat(f.minRate), minMin = parseFloat(f.minMin) || 0, out = [];
+  if (isNaN(n)) return null;
+  for (const p of STATE.players) {
+    const g = gameById[p.game_id];
+    if (!g || (f.games.length && !f.games.includes(p.game_id)) || (f.hideStarted && g.state !== "pre")) continue;
+    if (!f.pos.includes(p.pos) || p.min < minMin || !f.venue.includes(p.home ? "casa" : "fuera")) continue;
+    if ((f.starters && p.start_rate < 0.5) || (f.hideDoubt && p.status !== "available")) continue;
+    const mk = p.markets[f.stat], vals = mk.last.slice(-win);
+    if (!vals.length) continue;
+    const h = vals.filter(v => v >= n).length, avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+    if (f.mode === "tasa" ? 100 * h / vals.length < minRate : avg < n) continue;
+    out.push({p, g, mk, vals, h, avg, pm: sideEval(mk.sv, n - 0.5, null, null).p_over});      // P(X >= n) = P(X > n - 0,5)
+  }
+  return out.sort((a, b) => f.mode === "tasa" ? (b.h / b.vals.length - a.h / a.vals.length) || (b.pm - a.pm) : b.avg - a.avg);
+}
+function renderBuscador(el) {
+  const f = ui.ps, rows = searchRows(), lab = (L[f.stat] || "").toLowerCase();
+  const tog = (path, opts) => `<div class="seg">${opts.map(o => `<button data-tog="${path}" data-v="${o[0]}" class="${getPath(path).includes(o[0]) ? "on" : ""}">${o[1]}</button>`).join("")}</div>`;
+  const res = rows == null ? `<div class="card"><h3>Elige una estadística y una cifra</h3><div class="sub">Por ejemplo: «Puntos», 20 o más, en al menos el 60 % de los últimos 10 partidos. El buscador repasa a todos los jugadores de la jornada.</div></div>`
+    : `<div class="sub" style="margin-bottom:10px">${rows.length} jugador${rows.length === 1 ? "" : "es"} con ${f.mode === "tasa" ? `${esc(f.n)} o más ${esc(lab)} en al menos el ${esc(f.minRate)} % de sus últimos ${esc(f.win)} partidos` : `una media de ${esc(f.n)} o más ${esc(lab)} en sus últimos ${esc(f.win)} partidos`}</div>
+      <div class="tablewrap"><table><thead><tr><th></th><th class="l">Jugador</th><th class="l">Partido</th><th>Min proy.</th><th>Acierto</th><th class="l">Últimos (reciente primero)</th><th>Media</th><th>Proyección</th><th title="Probabilidad del modelo de llegar a esa cifra esta noche">P modelo</th><th>Línea casa</th></tr></thead><tbody>${rows.map(r => {
+        const ln = lineOf(r.p, f.stat);
+        return `<tr><td>${star("p|" + r.p.pid + "|" + f.stat)}</td><td class="l"><span class="pname" data-pid="${r.p.pid}">${esc(r.p.name)}</span> <span class="mute">${esc(r.p.pos)} · ${esc(r.p.team)}</span> ${statusChip(r.p)}</td>
+          <td class="l"><a href="#/partido/${esc(r.g.game_id)}">${esc(gameLabel(r.g))}</a></td><td>${num(r.p.min)}</td><td><b>${pct(r.h / r.vals.length)}</b> <span class="mute">${r.h}/${r.vals.length}</span></td>
+          <td class="l"><span class="tiles" style="margin:0">${r.vals.slice().reverse().map(v => `<b class="${v >= parseFloat(f.n) ? "h" : ""}" style="min-width:30px;padding:2px 0">${v}</b>`).join("")}</span></td>
+          <td>${num(r.avg)}</td><td><b>${num(r.mk.mu)}</b></td><td>${pct(r.pm)}</td><td>${ln ? num(ln.value) : "–"}</td></tr>`;
+      }).join("") || `<tr><td colspan="10" class="mute l">Ningún jugador cumple el criterio. Prueba con una cifra o un porcentaje más bajos.</td></tr>`}</tbody></table></div>
+      <div class="info">El acierto reciente describe lo que ya pasó en pocos partidos; no es una probabilidad. Compáralo con «P modelo», que tiene en cuenta minutos, rival y bajas, y recuerda que la casa ya conoce estas rachas.</div>`;
+  el.innerHTML = pageHead("buscador") + `<div class="split" style="grid-template-columns:${window.innerWidth > 980 ? "300px minmax(0,1fr)" : "minmax(0,1fr)"}"><div class="filters">
+      <div class="fhead"><span>Elige partidos</span><button data-reset="ps">Restablecer</button></div><div class="sub">Sin marcar ninguno se buscan todos.</div>
+      <div style="margin-top:8px">${STATE.games.map(g => `<label class="chk"><input type="checkbox" data-arr="ps.games" value="${esc(g.game_id)}" ${f.games.includes(g.game_id) ? "checked" : ""}> ${esc(gameLabel(g))} <span class="mute">${esc(tipHour(g))}</span></label>`).join("")}</div>
+      <label class="f">Estadística</label><select data-ui="ps.stat">${STATE.markets.map(k => `<option value="${k}" ${f.stat === k ? "selected" : ""}>${esc(L[k])}</option>`).join("")}</select>
+      <hr><div class="fhead"><span>Criterio</span></div>${seg("ps.mode", [["tasa", "Acierto"], ["media", "Media"]])}
+      <div class="two"><div><label class="f">Cifra (o más)</label>${numIn("ps.n", "p. ej. 20", 1)}</div><div><label class="f">Partidos recientes</label><select data-ui="ps.win">${["5", "10"].map(w => `<option ${f.win === w ? "selected" : ""}>${w}</option>`).join("")}</select></div></div>
+      ${f.mode === "tasa" ? `<label class="f">Acierto mínimo: <b>${esc(f.minRate)} %</b></label><input type="range" min="0" max="100" step="10" data-ui="ps.minRate" value="${esc(f.minRate)}">` : ""}
+      <hr><div class="fhead"><span>Jugador</span></div><label class="f">Posiciones</label>${tog("ps.pos", [["G", "Bases"], ["F", "Aleros"], ["C", "Pívots"]])}
+      <label class="f">Minutos proyectados mínimos: <b>${esc(f.minMin)}</b></label><input type="range" min="0" max="36" step="2" data-ui="ps.minMin" value="${esc(f.minMin)}">
+      <label class="f">Juega esta noche</label>${tog("ps.venue", [["casa", "En casa"], ["fuera", "Fuera"]])}
+      <hr><div class="fhead"><span>Más filtros</span></div>${chk("ps.starters", "Solo titulares habituales")}${chk("ps.hideDoubt", "Ocultar jugadores en duda")}${chk("ps.hideStarted", "Ocultar partidos empezados")}
+    </div><div>${res}</div></div>`;
+}
+
+// ---------------------------------------------------------------- Favoritos
+function renderFavoritos(el) {
+  const keys = Object.keys(favs), win = parseInt(ui.pb.win, 10), cards = [], plain = [], trows = [];
+  for (const k of keys) {
+    const [t, a, b] = k.split("|");
+    if (t === "p") {
+      const p = STATE.players.find(x => String(x.pid) === a), g = p && gameById[p.game_id], e = p && p.markets[b] ? evalOf(p, b) : null;
+      if (!p) continue;
+      if (e && e.edge != null) cards.push([betOf(p, b, e, g, win), 0]); else plain.push({p, m: b, g, k});
+    } else if (t === "g") { const r = teamRows(a, true).find(x => x.kind === b) || null; if (r) trows.push(r); }
+  }
+  const head = `<div class="phead"><div class="l"><div class="pic">${ic("star")}</div><div><h1>Favoritos</h1><div class="sub">Lo que has marcado con la estrella en la jornada de hoy. Se guarda en este navegador.</div></div></div>${keys.length ? `<button class="btn small" id="clearfav">Vaciar favoritos</button>` : ""}</div>`;
+  if (!keys.length) { el.innerHTML = head + `<div class="card"><h3>Todavía no hay favoritos</h3><div class="sub">Pulsa la estrella de una apuesta de jugador, de un mercado de equipo o de una fila de la tabla de proyecciones para tenerla aquí a mano.</div></div>`; return; }
+  el.innerHTML = head + (cards.length ? `<h2 style="margin-top:0">Apuestas de jugador (${cards.length})</h2><div class="bets">${cards.map(betCard).join("")}</div>` : "") +
+    (plain.length ? `<h2>Jugadores sin precio (${plain.length})</h2><div class="tablewrap"><table><thead><tr><th></th><th class="l">Jugador</th><th class="l">Estadística</th><th>Proyección</th><th>Últ. 5</th><th>Últ. 10</th></tr></thead><tbody>${plain.map(x =>
+      `<tr><td>${star(x.k)}</td><td class="l"><span class="pname" data-pid="${x.p.pid}">${esc(x.p.name)}</span> <span class="mute">${esc(x.p.team)} ${x.p.home ? "vs" : "@"} ${esc(x.p.opp)}</span></td><td class="l">${esc(L[x.m])}</td><td><b>${num(x.p.markets[x.m].mu)}</b></td><td>${num(x.p.markets[x.m].l5)}</td><td>${num(x.p.markets[x.m].l10)}</td></tr>`).join("")}</tbody></table></div>` : "") +
+    (trows.length ? `<h2>Mercados de equipo (${trows.length})</h2>${teamTable(trows)}` : "");
+}
+
+// ---------------------------------------------------------------- Detalle de jugador
 function openPlayer(pid) {
   const p = STATE.players.find(x => x.pid === pid); if (!p) return;
   const g = gameById[p.game_id];
@@ -270,7 +585,7 @@ function openPlayer(pid) {
     return `<div class="card"><div class="row"><h3>${esc(L[m])}</h3><span><b>${num(mk.mu)}</b> proyectado</span></div>
       <div class="sub">Últ. 5: ${num(mk.l5)} · últ. 10: ${num(mk.l10)} · temporada: ${num(mk.season)} · rival ${sgn(100 * mk.def, 0)} %</div>
       <div class="bars" style="margin-top:20px">${bars}</div>
-      <div class="sub" style="margin-top:6px">${e ? `Línea ${num(e.line.value)}${e.line.manual ? " (tuya)" : ""}: P(más) ${pct(e.p_over)} · P(menos) ${pct(e.p_under)}${e.edge != null ? ` · ventaja ${e.side === "over" ? "más" : "menos"} ${pp(e.edge)} · valor esperado ${sgn(100 * e.ev)} %` : ""} · ${e.hit}/${mk.last.length} por encima` : "Sin línea: escríbela en la tabla para ver la probabilidad."}</div></div>`;
+      <div class="sub" style="margin-top:6px">${e ? `Línea ${num(e.line.value)}${e.line.manual ? " (tuya)" : ""}: P(más) ${pct(e.p_over)} · P(menos) ${pct(e.p_under)}${e.edge != null ? ` · ventaja ${e.side === "over" ? "más" : "menos"} ${pp(e.edge)} · valor esperado ${sgn(100 * e.ev)} %` : ""} · ${e.hit}/${mk.last.length} por encima` : "Sin línea: escríbela en la tabla de proyecciones para ver la probabilidad."}</div></div>`;
   }).join("");
   $("#dlg").innerHTML = `<div class="row"><h2 style="margin:0">${esc(p.name)} <span class="sub">${esc(p.pos)} · ${esc(p.team)} ${p.home ? "vs" : "@"} ${esc(p.opp)}</span></h2><button class="btn small" id="dclose">Cerrar</button></div>
     <div class="sub" style="margin:6px 0 12px">Minutos proyectados ${num(p.min)} (media últimos 10: ${num(p.min_l10)}) · ${p.gp} partidos esta temporada${p.status !== "available" ? " · estado: " + (STATUS[p.status] || p.status) : ""}${g ? " · " + esc(tipTime(g)) : ""}. Barras: últimos partidos (izquierda = más antiguo); en verde los que superan la línea.</div>
@@ -279,70 +594,13 @@ function openPlayer(pid) {
   $("#dlg").showModal();
 }
 
-function allPicks() {
-  const out = [];
-  for (const p of STATE.players) {
-    const g = gameById[p.game_id];
-    if (!g || g.state !== "pre") continue;
-    for (const m of STATE.markets) {
-      const e = evalOf(p, m);
-      if (!e || e.edge == null) continue;
-      out.push({p, m, e, flags: [].concat(p.status !== "available" ? ["duda"] : [], e.edge >= STATE.big_edge ? ["revisar"] : [])});
-    }
-  }
-  return out.sort((a, b) => b.e.edge - a.e.edge);
-}
-function evidenceRow(t, x, label) {
-  if (!x || !x.n) return `<tr><td>${label}</td><td colspan="3" class="mute">sin datos</td></tr>`;
-  return `<tr><td>${label}</td><td>${x.n}</td><td>${pct(x.acierto, 1)}</td><td class="${x.roi >= 0 ? "pos" : "neg"}">${sgn(100 * x.roi)} %${x.lo != null ? ` <span class="mute">[${sgn(100 * x.lo)}; ${sgn(100 * x.hi)}]</span>` : ""}</td></tr>`;
-}
-function renderPicks() {
-  const el = $("#tab-picks"), ev = (STATE.evidence.props || {}), bt = ev.apuestas || {}, tr = (STATE.track && STATE.track.picks) || {};
-  let picks = allPicks().filter(x => x.e.edge >= parseFloat(ui.minEdge) && (!ui.hideDoubt || !x.flags.includes("duda")));
-  // si un mercado de un jugador es sospechoso, lo son todos los suyos (comparten la misma causa)
-  const susPid = new Set(picks.filter(x => x.flags.includes("revisar")).map(x => x.p.pid));
-  const sus = picks.filter(x => susPid.has(x.p.pid)); picks = picks.filter(x => !susPid.has(x.p.pid));
-  const group = list => { if (!ui.onePer) return list.map(x => [x, 0]); const seen = {}, out = []; for (const x of list) { if (seen[x.p.pid] == null) { seen[x.p.pid] = out.length; out.push([x, 0]); } else out[seen[x.p.pid]][1]++; } return out; };
-  const card = ([x, more]) => {
-    const {p, m, e} = x, over = e.side === "over", price = over ? e.line.over : e.line.under, prob = over ? e.p_over : e.p_under, fair = over ? e.fair_over : 1 - e.fair_over;
-    const b = bt[edgeBucket(e.edge, STATE.thresholds)];
-    return `<div class="pick"><div><div class="big"><span class="pname" data-pid="${p.pid}">${esc(p.name)}</span> — ${over ? "más" : "menos"} de ${num(e.line.value)} ${esc(L[m].toLowerCase())} <span class="chip">cuota ${num(price, 2)}</span>${e.line.manual ? ` <span class="chip">línea tuya</span>` : ""}${x.flags.map(f => ` <span class="chip warn">${f}</span>`).join("")}</div>
-      <div class="sub">${esc(p.team)} ${p.home ? "vs" : "@"} ${esc(p.opp)} · proyección ${num(p.markets[m].mu)} · últimos 10: ${e.hit}/${p.markets[m].last.length} por encima · ${num(p.min)} min${more ? ` · y ${more} mercado${more > 1 ? "s" : ""} más de este jugador` : ""}</div>
-      <div class="sub">Historial de este nivel de ventaja: ${b && b.n ? `${pct(b.acierto, 1)} de acierto, rentabilidad ${sgn(100 * b.roi)} % [${sgn(100 * b.lo)}; ${sgn(100 * b.hi)}] en ${b.n} apuestas simuladas` : "sin datos"}</div></div>
-      <div class="num"><div><b>${pct(prob)}</b> modelo</div><div class="sub">${pct(fair)} casa</div><div class="${e.edge >= 0.06 ? "pos" : ""}"><b>${pp(e.edge)}</b></div><div class="sub">VE ${sgn(100 * e.ev)} %</div></div></div>`;
-  };
-  const thr = STATE.thresholds;
-  el.innerHTML = `<div class="note"><b>Léelo antes de apostar.</b> «Ventaja» es lo que el modelo cree saber frente a la casa, no un beneficio asegurado. En ${ev.partidos || "–"} partidos de esta temporada (${esc(ev.desde || "")} a ${esc(ev.hasta || "")}) seguir al modelo a los precios de DraftKings dio lo que ves en la tabla: cerca de cero, con un margen de error que incluye pérdidas. La prueba real es la columna «Portal en vivo», que se rellena cada día que generas el portal. Solo mayores de 18 años; apuesta solo lo que puedas permitirte perder.</div>
-    <div class="tablewrap"><table><thead><tr><th>Ventaja mínima</th><th>Apuestas</th><th>Acierto</th><th>Rentabilidad (IC 95 %)</th></tr></thead><tbody>
-      ${thr.map(t => evidenceRow(t, bt[t], `≥ ${(100 * parseFloat(t)).toFixed(0)} pp · backtest`)).join("")}
-      ${thr.map(t => evidenceRow(t, tr[t], `≥ ${(100 * parseFloat(t)).toFixed(0)} pp · portal en vivo`)).join("")}
-    </tbody></table></div>
-    <div class="tools"><span class="sub">Ventaja mínima:</span>${thr.map(t => `<button class="btn small ${ui.minEdge === t ? "on" : ""}" data-edge="${t}">${(100 * parseFloat(t)).toFixed(0)} pp</button>`).join("")}
-      <label><input type="checkbox" id="hd" ${ui.hideDoubt ? "checked" : ""}> ocultar jugadores en duda</label>
-      <label><input type="checkbox" id="op" ${ui.onePer ? "checked" : ""}> un pick por jugador</label></div>
-    <h2>Picks de jugadores (${group(picks).length})</h2>
-    <div class="card" style="padding:0">${group(picks).map(card).join("") || `<div class="pick mute">Ningún pick con este filtro. Puede que aún no haya líneas: vuelve a generar el portal más cerca de los partidos.</div>`}</div>
-    ${sus.length ? `<h2>Discrepancias sospechosas (${group(sus).length})</h2><div class="sub">Ventaja de más de ${(100 * STATE.big_edge).toFixed(0)} pp: casi siempre hay una noticia que el modelo no conoce (vuelta de lesión, límite de minutos, cambio de papel). Compruébalo antes de fiarte.</div>
-      <div class="card" style="padding:0;margin-top:8px">${group(sus).map(card).join("")}</div>` : ""}
-    <h2>Partidos: modelo frente a mercado</h2>
-    <div class="tablewrap"><table><thead><tr><th>Partido</th><th>Margen modelo</th><th>Hándicap mercado</th><th>Diferencia</th><th>P(local) modelo</th><th>P(local) mercado</th><th>Lectura</th></tr></thead><tbody>
-      ${STATE.games.map(g => `<tr><td>${esc(gameLabel(g))}</td><td>${sgn(g.model.margin)}</td><td>${g.market.spread_home == null ? "–" : sgn(-g.market.spread_home)}</td><td>${sgn(g.gap_pts)}</td><td>${pct(g.model.prob_home)}</td><td>${pct(g.market.prob_home)}</td><td><span class="chip ${gapReading(g)[1]}">${gapReading(g)[0]}</span></td></tr>`).join("")}
-    </tbody></table></div>
-    <div class="info">Estas diferencias de partido NO son picks: en 2022-26 apostar al hándicap siguiendo al modelo perdió entre un 6 % y un 10 % (peor que apostar al azar). Márgenes desde el punto de vista del local.</div>`;
-  el.onclick = e => {
-    const b = e.target.closest("button[data-edge]"); if (b) { ui.minEdge = b.dataset.edge; render(); return; }
-    const n = e.target.closest(".pname"); if (n) openPlayer(Number(n.dataset.pid));
-  };
-  $("#hd").onchange = e => { ui.hideDoubt = e.target.checked; render(); };
-  $("#op").onchange = e => { ui.onePer = e.target.checked; render(); };
-}
-
-function renderHistorial() {
-  const el = $("#tab-historial"), t = STATE.track || {days: 0};
-  if (!t.days) { el.innerHTML = `<div class="card"><h3>Todavía no hay historial</h3><div class="sub">Cada vez que generas el portal se guardan las predicciones del día en <code>data/predictions/</code>. A partir de mañana, aquí verás cuánto acertaron de verdad (líneas y precios tal como estaban cuando lo generaste).</div></div>`; return; }
+// ---------------------------------------------------------------- Historial y guía
+function renderHistorial(el) {
+  const t = STATE.track || {days: 0};
+  if (!t.days) { el.innerHTML = pageHead("historial") + `<div class="card"><h3>Todavía no hay historial</h3><div class="sub">Cada vez que generas el portal se guardan las predicciones del día en <code>data/predictions/</code>. A partir de mañana, aquí verás cuánto acertaron de verdad (líneas y precios tal como estaban cuando lo generaste).</div></div>`; return; }
   const pk = t.picks || {}, er = t.error || {}, gm = t.games;
-  el.innerHTML = `<div class="sub">Predicciones guardadas de ${t.days} día(s), del ${esc(t.from)} al ${esc(t.to)} · ${t.n_lines || 0} líneas de jugador puntuadas (las de jugadores que no jugaron se anulan).</div>
-    <h2>Picks de jugadores siguiendo al modelo</h2>
+  el.innerHTML = pageHead("historial") + `<div class="sub">Predicciones guardadas de ${t.days} día(s), del ${esc(t.from)} al ${esc(t.to)} · ${t.n_lines || 0} líneas de jugador puntuadas (las de jugadores que no jugaron se anulan).</div>
+    <h2>Apuestas de jugador siguiendo al modelo</h2>
     <div class="tablewrap"><table><thead><tr><th>Ventaja mínima</th><th>Apuestas</th><th>Acierto</th><th>Rentabilidad</th><th>Unidades</th></tr></thead><tbody>
     ${STATE.thresholds.map(k => { const x = pk[k]; return !x || !x.n ? `<tr><td>≥ ${(100 * parseFloat(k)).toFixed(0)} pp</td><td colspan="4" class="mute">sin apuestas</td></tr>` : `<tr><td>≥ ${(100 * parseFloat(k)).toFixed(0)} pp</td><td>${x.n}</td><td>${pct(x.acierto, 1)}</td><td class="${x.roi >= 0 ? "pos" : "neg"}">${sgn(100 * x.roi)} %</td><td class="${x.unidades >= 0 ? "pos" : "neg"}">${sgn(x.unidades, 2)}</td></tr>`; }).join("")}
     </tbody></table></div>
@@ -353,14 +611,15 @@ function renderHistorial() {
     ${gm ? `<h2>Partidos</h2><div class="card">En ${gm.n} partidos: el modelo acertó el ganador el ${pct(gm.acierto_modelo, 1)} y el mercado el ${pct(gm.acierto_mercado, 1)}. Log loss (menor es mejor): modelo ${num(gm.log_loss_modelo, 4)}, mercado ${num(gm.log_loss_mercado, 4)}.</div>` : ""}
     <div class="info">Con pocas semanas de datos estas cifras se mueven mucho por pura suerte: hacen falta varios cientos de apuestas para sacar conclusiones.</div>`;
 }
-
-function renderGuia() {
+function renderGuia(el) {
   const ev = STATE.evidence.props || {}, r = ev.test_rmse || {}, b = ev.blend || {};
-  $("#tab-guia").innerHTML = `<div class="card"><h3>Qué hace cada pestaña</h3><ul class="plain">
-    <li><b>Jornada</b>: cada partido con la probabilidad del modelo, lo que dice el mercado (DraftKings, vía ESPN), descanso y parte de lesiones.</li>
-    <li><b>Jugadores</b>: proyección de puntos, rebotes, asistencias, triples y combinadas para esta noche, con su forma reciente, el rival y la probabilidad de superar la línea. Puedes escribir la línea y las cuotas de tu casa.</li>
-    <li><b>Picks</b>: las líneas donde el modelo ve más diferencia con la casa, con el historial real de ese tipo de señal.</li>
-    <li><b>Historial</b>: lo que acertaron de verdad las predicciones de los días anteriores.</li></ul></div>
+  el.innerHTML = pageHead("guia") + `<div class="card"><h3>Qué hace cada página</h3><ul class="plain">
+    <li><b>Partidos</b>: la jornada con la probabilidad del modelo y la lectura frente al mercado (DraftKings, vía ESPN). Al abrir un partido ves sus apuestas de jugador y de equipo, las proyecciones, el desglose del modelo y las bajas.</li>
+    <li><b>Buscador de props</b>: jugadores que han llegado a una cifra en sus últimos partidos, con la probabilidad del modelo para esta noche.</li>
+    <li><b>Apuestas de jugador</b>: las líneas con precio, con la probabilidad del modelo, la de la casa y el historial real de ese nivel de ventaja.</li>
+    <li><b>Apuestas de equipo</b>: ganador, hándicap y total de cada partido. No son recomendaciones.</li>
+    <li><b>Proyecciones</b>: la tabla completa, donde puedes escribir la línea y las cuotas de tu casa.</li>
+    <li><b>Favoritos</b>: lo que marcas con la estrella. <b>Historial</b>: lo que acertaron de verdad las predicciones de los días anteriores.</li></ul></div>
   <div class="card" style="margin-top:12px"><h3>Cómo se calcula la proyección de un jugador</h3><ul class="plain">
     <li><b>Minutos</b>: mezcla de sus minutos recientes y habituales, corregida por bajas de compañeros, plantilla disponible, descanso y riesgo de paliza.</li>
     <li><b>Ritmo por minuto</b>: forma reciente y de temporada, encogida hacia su media de carrera para no creerse una racha de tres partidos.</li>
@@ -369,20 +628,79 @@ function renderGuia() {
     ${r.pts ? `<div class="sub">Error (RMSE) en 2022-26: puntos ${num(r.pts.modelo, 2)} (media de temporada ${num(r.pts.temporada, 2)}), rebotes ${num(r.reb.modelo, 2)} (${num(r.reb.temporada, 2)}), asistencias ${num(r.ast.modelo, 2)} (${num(r.ast.temporada, 2)}), triples ${num(r.fg3m.modelo, 2)} (${num(r.fg3m.temporada, 2)}).</div>` : ""}</div>
   <div class="card" style="margin-top:12px"><h3>Límites que conviene tener presentes</h3><ul class="plain">
     <li>La casa sabe más que el modelo: sus líneas fallan algo menos que nuestras proyecciones. ${b.n ? `Aun así el modelo aporta algo propio (peso ${num(b.coef_modelo, 2)} ± ${num(b.se_modelo, 2)} frente a ${num(b.coef_casa, 2)} de la casa en ${b.n} líneas).` : ""}</li>
+    <li>El «acierto» y la «racha» de los últimos partidos son descriptivos: con 5 o 10 partidos, una racha perfecta es casi siempre suerte. La ventana es fija a propósito, no la que mejor queda para cada jugador.</li>
     <li>El modelo no lee noticias: límites de minutos, cambios de quinteto o molestias que no estén en el parte de ESPN no los ve. Por eso las diferencias enormes se marcan como «revisar».</li>
-    <li>Las líneas y cuotas son de DraftKings (EE. UU.). Tu casa tendrá otras: escríbelas en la pestaña Jugadores.</li>
+    <li>Las líneas y cuotas son de DraftKings (EE. UU.). Tu casa tendrá otras: escríbelas en la página Proyecciones.</li>
     <li>Si un jugador no juega, la apuesta se anula; si está en «duda», la proyección supone que juega.</li>
     <li>Genera el portal cerca de la hora de los partidos: el parte de lesiones y las líneas cambian durante el día.</li>
     <li>Herramienta de análisis, no asesoramiento. Solo mayores de 18 años. Juego responsable: 900 200 225 (España).</li></ul></div>`;
 }
 
+// ---------------------------------------------------------------- render y eventos
 function render() {
-  renderHeader();
-  for (const t of ["jornada", "jugadores", "picks", "historial", "guia"]) $("#tab-" + t).classList.toggle("hide", ui.tab !== t);
-  ({jornada: renderJornada, jugadores: renderJugadores, picks: renderPicks, historial: renderHistorial, guia: renderGuia})[ui.tab]();
+  const r = route(), el = $("#page");
+  renderShell();
+  if (r.page === "partido") renderPartido(el, r.arg);
+  else if (r.page === "buscador") renderBuscador(el);
+  else if (r.page === "jugadores") el.innerHTML = pageHead("jugadores", updated()) + playerBetsHtml("");
+  else if (r.page === "equipos") el.innerHTML = pageHead("equipos", updated()) + teamBetsHtml("");
+  else if (r.page === "proyecciones") el.innerHTML = pageHead("proyecciones", updated()) + statsHtml("");
+  else if (r.page === "favoritos") renderFavoritos(el);
+  else if (r.page === "historial") renderHistorial(el);
+  else if (r.page === "guia") renderGuia(el);
+  else renderPartidos(el);
 }
-if (STATE) { STATE.games.forEach(g => { gameById[g.game_id] = g; }); render(); }
-else document.querySelector("main").innerHTML = '<div class="card">Esta es la plantilla. Genera el portal con <code>python scripts/portal.py</code>.</div>';
+function bindEvents() {
+  window.addEventListener("hashchange", () => { document.body.classList.remove("navopen"); render(); window.scrollTo(0, 0); });
+  document.addEventListener("click", e => {
+    const t = e.target;
+    if (t.closest("#menu")) { document.body.classList.toggle("navopen"); return; }
+    if (document.body.classList.contains("navopen") && !t.closest("#side")) document.body.classList.remove("navopen");
+    if (t.closest("#collapse")) { const mini = $("#app").classList.toggle("mini"); save("portal-nba-mini", {v: mini}); return; }
+    let b;
+    if ((b = t.closest("[data-fav]"))) { e.preventDefault(); const k = b.dataset.fav; if (favs[k]) delete favs[k]; else favs[k] = 1; save(storeKey + "-fav", favs); render(); return; }
+    if ((b = t.closest("[data-set]"))) { setPath(b.dataset.set, b.dataset.v); render(); return; }
+    if ((b = t.closest("[data-toggle]"))) { setPath(b.dataset.toggle, !getPath(b.dataset.toggle)); render(); return; }
+    if ((b = t.closest("[data-tog]"))) { const a = getPath(b.dataset.tog), i = a.indexOf(b.dataset.v); if (i < 0) a.push(b.dataset.v); else a.splice(i, 1); render(); return; }
+    if ((b = t.closest("[data-reset]"))) { ui[b.dataset.reset] = JSON.parse(JSON.stringify(DEFAULTS[b.dataset.reset])); render(); return; }
+    if ((b = t.closest("th[data-sort]"))) { const f = ui.st, k = b.dataset.sort; if (f.sort === k) f.dir = -f.dir; else { f.sort = k; f.dir = k === "name" ? 1 : -1; } render(); return; }
+    if ((b = t.closest(".pname[data-pid]"))) { openPlayer(Number(b.dataset.pid)); return; }
+    if (t.closest("#clearman")) { manual = {}; saveManual(); render(); return; }
+    if (t.closest("#clearfav")) { favs = {}; save(storeKey + "-fav", favs); render(); }
+  });
+  document.addEventListener("change", e => {
+    const t = e.target;
+    if (t.matches("input[data-k]")) {                          // línea o cuota escrita a mano en la tabla de proyecciones
+      const k = t.dataset.k, f = t.dataset.f, v = t.value === "" ? null : parseFloat(t.value), cur = manual[k] || {};
+      if (f === "line" && v == null) { delete manual[k]; }
+      else {
+        if (cur.line == null && f !== "line") {                // cuota manual sobre la línea de DraftKings
+          const [pid, mm] = k.split("|"), pl = STATE.players.find(x => String(x.pid) === pid), base = pl.markets[mm].line;
+          if (!base) return;
+          cur.line = base.value;
+        }
+        cur[f] = v; manual[k] = cur;
+      }
+      saveManual(); render(); return;
+    }
+    if (t.matches("[data-arr]")) { const a = getPath(t.dataset.arr), i = a.indexOf(t.value); if (t.checked && i < 0) a.push(t.value); if (!t.checked && i >= 0) a.splice(i, 1); render(); return; }
+    if (t.matches("[data-ui]")) { setPath(t.dataset.ui, t.type === "checkbox" ? t.checked : t.value); render(); }
+  });
+  document.addEventListener("input", e => {
+    const t = e.target;
+    if (!t.matches("[data-live]")) return;
+    setPath(t.dataset.live, t.value);
+    const id = t.id, pos = t.selectionStart;
+    render();
+    const n = document.getElementById(id);
+    if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (err) {} }
+  });
+}
+if (STATE) {
+  STATE.games.forEach(g => { gameById[g.game_id] = g; });
+  if (load("portal-nba-mini", {}).v) $("#app").classList.add("mini");
+  bindEvents(); render();
+} else document.querySelector("#page").innerHTML = '<div class="card">Esta es la plantilla. Genera el portal con <code>python scripts/portal.py</code>.</div>';
 </script>
 </body>
 </html>

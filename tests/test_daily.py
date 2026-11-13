@@ -8,11 +8,10 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from nba_model import daily, espn, props, props_eval
+from nba_model import daily, props, props_eval
 
 ROOT = Path(__file__).resolve().parents[1]
-FIX = Path(__file__).parent / "fixtures"
-load = lambda name: json.load(open(FIX / name, encoding="utf-8"))      # noqa: E731
+# Los fixtures `offline_root` y `state` (portal del 10-nov-2026 sin red) están en conftest.py.
 
 
 def test_side_eval_basics():
@@ -61,32 +60,6 @@ def test_page_math_matches_python(tmp_path):
             assert (js[k] == v) if isinstance(v, str) else math.isclose(js[k], v, abs_tol=1e-12), (k, c["line"])
         if "edge" in py:
             assert js["bucket"] == daily.edge_bucket(py["edge"])
-
-
-@pytest.fixture(scope="module")
-def offline_root(tmp_path_factory):
-    """Copia ligera del proyecto (enlaces a datos, modelos y plantilla) con data/live y data/predictions vacíos."""
-    root = tmp_path_factory.mktemp("portal")
-    (root / "data").mkdir()
-    for rel in ("data/raw", "models", "docs", "web"):
-        try:
-            (root / rel).symlink_to(ROOT / rel, target_is_directory=True)
-        except OSError:
-            # Windows sin modo desarrollador no permite enlaces simbólicos: se copia la carpeta.
-            shutil.copytree(ROOT / rel, root / rel)
-    return root
-
-
-@pytest.fixture(scope="module")
-def state(offline_root):
-    mp = pytest.MonkeyPatch()
-    mp.setattr(espn, "fetch_scoreboard", lambda date: espn.parse_scoreboard(load("scoreboard_2026-11-10.json")))
-    mp.setattr(espn, "fetch_injuries", lambda: espn.parse_injuries(load("injuries.json")))
-    mp.setattr(espn, "fetch_props", lambda gid: espn.parse_props(load("props_401909960.json")["items"]) if gid == "401909960" else [])
-    try:
-        return daily.build_state(offline_root, "2026-11-10", fetch=False, log=lambda *a: None)
-    finally:
-        mp.undo()
 
 
 def test_build_state_offline(state, offline_root):
@@ -157,3 +130,24 @@ def test_grade_history_against_real_box(offline_root):
     assert t["error"]["pts"]["mae_modelo"] == 2.0 and t["error"]["pts"]["mae_linea"] == 4.5
     assert t["games"]["acierto_modelo"] == 1.0 and t["games"]["acierto_mercado"] == 0.0     # ganó el visitante
     assert daily.grade_history(offline_root, before="2026-11-08") == {"days": 0}
+
+
+def test_template_pages_and_script():
+    """La plantilla del portal conserva sus páginas, el marcador de estado y un script sintácticamente válido."""
+    import re
+    import tempfile
+    tpl = (ROOT / "web/portal_template.html").read_text(encoding="utf-8")
+    assert tpl.count("/*__STATE__*/null") == 1 and "/*CALC-START*/" in tpl and "/*CALC-END*/" in tpl
+    pages = set(re.findall(r'^\s*\["(\w+)", "[^"]+", "\w+", "(?:Jornada|Análisis|Seguimiento)"', tpl, re.M))
+    assert pages == {"partidos", "buscador", "jugadores", "equipos", "proyecciones", "historial", "guia"}
+    for page in pages | {"partido", "favoritos"}:                        # cada página tiene su rama en render()
+        assert f'r.page === "{page}"' in tpl or page == "partidos"
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("node no está instalado")
+    script = re.search(r"<script>(.*)</script>", tpl, re.S).group(1)
+    with tempfile.TemporaryDirectory() as d:
+        f = Path(d) / "portal.js"
+        f.write_text(script, encoding="utf-8")
+        r = subprocess.run([node, "--check", str(f)], capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr

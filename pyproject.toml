@@ -46,5 +46,6 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 # scripts y tests añaden la raíz a sys.path antes de importar `nba_model`
 "scripts/*" = ["E402"]
+"webapp/*" = ["E402"]
 "tests/*" = ["E402"]
 "conftest.py" = ["E402"]

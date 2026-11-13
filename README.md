@@ -20,16 +20,29 @@ mercado**, y las discrepancias entre ambos no contienen información real. Detal
 python scripts/portal.py --open        # o doble clic en portal.bat (Windows) / ./portal.sh (Mac, Linux)
 ```
 Genera `viz/portal-nba.html`, una página autocontenida con la jornada de hoy:
-- **Jornada**: cada partido con la probabilidad del modelo v2, las cuotas de DraftKings (vía ESPN, gratis y sin clave),
-  descanso y parte de lesiones.
-- **Jugadores**: proyección de puntos, rebotes, asistencias, triples y combinadas (P+R+A, P+R, P+A, R+A) de cada jugador,
-  con forma reciente, rival, línea de la casa y probabilidad de superarla. Se puede escribir la línea y las cuotas de otra casa.
-- **Picks**: líneas donde el modelo más discrepa de la casa, con el historial medido de ese nivel de discrepancia.
-- **Historial**: acierto real de las predicciones guardadas en días anteriores (`data/predictions/`).
+- **Partidos**: la jornada con la probabilidad del modelo v2 y la lectura frente al mercado (DraftKings, vía ESPN, gratis y
+  sin clave). Cada partido tiene su ficha: apuestas de jugador y de equipo, proyecciones, desglose del modelo y bajas.
+- **Buscador de props**: jugadores que han llegado a una cifra en sus últimos 5 o 10 partidos, con la probabilidad del modelo.
+- **Apuestas de jugador**: líneas con precio (tarjetas o vista compacta) con cuota, probabilidad del modelo frente a la casa,
+  acierto reciente y el historial medido de ese nivel de discrepancia. Filtros por mercado, lado, ventaja, cuota y partido.
+- **Apuestas de equipo**: ganador, hándicap y total de cada partido frente al modelo (no son recomendaciones).
+- **Proyecciones**: puntos, rebotes, asistencias, triples y combinadas (P+R+A, P+R, P+A, R+A) de cada jugador, con forma
+  reciente, rival y línea de la casa. Se puede escribir la línea y las cuotas de otra casa.
+- **Favoritos** (estrella, se guarda en el navegador) e **Historial**: acierto real de las predicciones guardadas en días
+  anteriores (`data/predictions/`).
 
 Conviene generarlo cerca de la hora de los partidos (lesiones y líneas cambian durante el día). Otras opciones:
 `--date AAAA-MM-DD` (otra jornada) y `--no-fetch` (no actualiza resultados). Necesita conexión a `site.api.espn.com`,
 `sports.core.api.espn.com` y GitHub.
+
+## Sitio web (`webapp/`)
+```
+python webapp/build.py --open          # o doble clic en sitio.bat (Windows) / ./sitio.sh (Mac, Linux)
+```
+El mismo contenido que el portal, como sitio de varias páginas y con lo que no cabe en un solo archivo: navegación por
+días (anteriores con su resultado, siguientes con el calendario), ficha de cada partido con cara a cara y quintetos
+probables, y la página de liga (clasificación, líderes y tablas). Hace también el trabajo de `scripts/portal.py`
+(guarda las predicciones del día), así que basta con ejecutar uno de los dos. Detalle en `webapp/README.md`.
 
 **Qué esperar del modelo de jugadores** (detalle en `docs/RESULTADOS_PROPS.md` y `docs/AUDITORIA.md`, sección 9): proyecta
 mejor que la media de temporada o de los últimos 10 partidos en todos los bloques (RMSE de puntos en TEST 6,01 frente a
@@ -40,7 +53,7 @@ entre −1,5 % y +2,4 % según el filtro, con intervalos que incluyen pérdidas:
 ```
 uv sync                                                # crea .venv con Python 3.13 y las versiones exactas de uv.lock (https://docs.astral.sh/uv/)
 uv run pre-commit install                              # una vez: lint automático antes de cada commit
-uv run pytest -q                                       # 67 tests
+uv run pytest -q                                       # 76 tests
 uv run python scripts/run_pipeline.py                  # evaluación completa -> docs/RESULTADOS.json y .md
 uv run python scripts/run_report.py                    # informe de los partidos del snapshot (10-nov-2026)
 ```
@@ -57,6 +70,7 @@ Para reafinar parámetros (solo con DEV 2014-2019): `python scripts/run_pipeline
 - `nba_model/props.py`: **modelo de jugadores** (minutos, ritmo por minuto, rival, bajas, distribución). `props_eval.py`: su evaluación.
 - `nba_model/espn.py`: lectores de la API pública de ESPN (jornada, cuotas, lesiones, cajas, props). `live.py`: caché en `data/live/`.
 - `nba_model/daily.py` + `web/portal_template.html` + `scripts/portal.py`: el portal diario.
+- `nba_model/site.py` + `webapp/`: el sitio web de varias páginas (`webapp/build.py` lo genera en `webapp/dist`).
 - `scripts/run_props.py`: evalúa (o reajusta con `--fit`, solo DEV) el modelo de jugadores. `scripts/fetch_market_history.py`:
   baja las líneas de cierre de props de la temporada en curso para medirlo contra la casa.
 - `models/params_v2.json`, `models/props_v1.json`: parámetros congelados (afinados solo con DEV).

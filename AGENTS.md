@@ -9,8 +9,9 @@ real. Después se ampliará a fútbol (Poisson / Dixon-Coles). El objetivo NO es
 ```
 uv sync                                     # entorno exacto (uv.lock). uv: https://docs.astral.sh/uv/ · anteponer `uv run` a los comandos
 ruff check .                                # lint (también en CI y en pre-commit)
-pytest -q                                   # deben pasar siempre (67 tests, incluye detección de fuga temporal)
+pytest -q                                   # deben pasar siempre (76 tests, incluye detección de fuga temporal)
 python scripts/portal.py --open             # portal del día -> viz/portal-nba.html (necesita ESPN y GitHub)
+python webapp/build.py --open               # sitio web de varias páginas -> webapp/dist (misma jornada y mismo guardado que el portal)
 python scripts/run_props.py                 # evaluación del modelo de jugadores (--fit reajusta SOLO con DEV)
 python scripts/fetch_market_history.py      # líneas de cierre de props de la temporada en curso (ESPN)
 python scripts/run_pipeline.py              # evaluación completa con parámetros congelados
@@ -52,6 +53,16 @@ Datos en vivo de ESPN (`nba_model/espn.py`: funciones `parse_*` puras con fixtur
 - ESPN no etiqueta over/under en las props: van en ese orden y se verifica con el mercado de hitos (`espn.parse_props`,
   `side_ok`). No usar precios con `side_ok = False`.
 - Los umbrales de ventaja (`props_eval.EDGE_THRESHOLDS`) están pre-fijados: no moverlos mirando resultados.
+
+## Sitio web
+`webapp/build.py` → `nba_model/site.py` (datos) → `webapp/src/` (HTML, CSS y JS) → `webapp/dist/` (generado, no se versiona).
+Parte del mismo estado que el portal (`daily.build_state`) y añade resúmenes descriptivos del histórico: clasificación, forma,
+cara a cara, registros de partido de cada jugador, días anteriores con su resultado y calendario. Ver `webapp/README.md`.
+- **Sin matemática del modelo en el JS del sitio**: `calc.js` se extrae del bloque `CALC-START/END` de la plantilla del portal al
+  generar; lo demás llega calculado de Python. `tests/test_site.py` comprueba que no hay otra copia.
+- «Acierto», «racha» y «forma» usan una ventana fija igual para todos. No añadir una ventana "automática" que elija la mejor
+  para cada jugador: es buscar el dato que mejor queda (va contra la regla 3: promediar, no elegir).
+- Nada de lo que se enseña puede usar datos del día o posteriores (hay test con las fechas).
 
 ## Problemas conocidos
 0. El portal depende de la API pública (no documentada) de ESPN: si cambia el formato, fallarán los tests de `test_espn.py`

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Portal NBA</title>
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="side" id="side"></aside>
+  <div>
+    <div class="topbar"><button class="iconbtn menu" id="menu" aria-label="Abrir navegación"></button><div class="sub" id="hdate"></div><div class="sub meta" id="hmeta"></div></div>
+    <main class="page"><div id="warnings"></div><div id="page"><div class="card">Cargando…</div></div></main>
+  </div>
+</div>
+<dialog id="dlg"></dialog>
+<script>window.NBA = {days: {}};</script>
+<script src="data/index.js"></script>
+<!--DAYS-->
+<script src="data/league.js"></script>
+<script src="assets/js/calc.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/partidos.js"></script>
+<script src="assets/js/analisis.js"></script>
+<script src="assets/js/liga.js"></script>
+<script src="assets/js/seguimiento.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

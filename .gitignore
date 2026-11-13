@@ -9,5 +9,7 @@ venv/
 
 # generados: cada ejecución del portal los reescribe (evita conflictos entre los dos)
 viz/portal-nba.html
+viz/sitio-nba.html
+webapp/dist/
 .ruff_cache/
 .coverage
